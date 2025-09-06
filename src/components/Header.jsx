@@ -2,182 +2,194 @@ import React from "react";
 
 function Header({ user, onLoginClick, onRegisterClick, onLogout, onMenuClick }) {
   return (
-    <header
-      style={{
-        background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
-        color: "white",
-        padding: "12px 30px",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        boxShadow: "0 4px 20px rgba(0,0,0,0.25)",
-        borderBottom: "1px solid rgba(255,255,255,0.07)",
-        position: "relative",
-        overflow: "hidden",
-      }}
-    >
-      {/* Efecto de partículas sutiles en el fondo */}
-      <div style={{
-        position: "absolute",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: "radial-gradient(circle at 20% 30%, rgba(67, 118, 160, 0.15) 0%, transparent 50%)",
-        pointerEvents: "none"
-      }}></div>
-      
-      {/* Botón menú hamburguesa con diseño moderno */}
-      <button
-        onClick={onMenuClick}
-        style={{
-          background: "rgba(255,255,255,0.1)",
-          border: "none",
-          color: "white",
-          fontSize: "20px",
-          cursor: "pointer",
-          width: "42px",
-          height: "42px",
-          borderRadius: "50%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          transition: "all 0.3s ease",
-          backdropFilter: "blur(10px)",
-          zIndex: 1
-        }}
-        onMouseEnter={(e) => {
-          e.target.style.background = "rgba(255,255,255,0.2)";
-          e.target.style.transform = "rotate(90deg)";
-        }}
-        onMouseLeave={(e) => {
-          e.target.style.background = "rgba(255,255,255,0.1)";
-          e.target.style.transform = "rotate(0deg)";
-        }}
-      >
-        ☰
-      </button>
+    <header style={headerStyle}>
+      <div style={containerStyle}>
+        {/* Logo y menú hamburguesa */}
+        <div style={leftSectionStyle}>
+          <button 
+            style={menuButtonStyle}
+            onClick={onMenuClick}
+            aria-label="Abrir menú"
+          >
+            ☰
+          </button>
+          <div style={logoStyle}>
+            <span style={logoIconStyle}>✂️</span>
+            <h1 style={logoTextStyle}>Apolo Barber & Spa</h1>
+          </div>
+        </div>
 
-      {/* Espacio vacío donde antes estaba el logo */}
-      <div style={{ width: '50px' }}></div>
-
-      <nav style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-        {user ? (
-          <>
-            <div style={{
-              display: "flex",
-              alignItems: "center",
-              background: "rgba(255,255,255,0.1)",
-              padding: "8px 16px",
-              borderRadius: "25px",
-              marginRight: "10px",
-              backdropFilter: "blur(10px)"
-            }}>
-              <div style={{
-                width: "10px",
-                height: "10px",
-                borderRadius: "50%",
-                background: "#4CAF50",
-                marginRight: "10px",
-                boxShadow: "0 0 10px #4CAF50"
-              }}></div>
-              <span style={{ fontSize: "14px" }}>
-                {user.email.split('@')[0]}
-              </span>
+        {/* Botones de usuario */}
+        <div style={rightSectionStyle}>
+          {user ? (
+            <div style={userSectionStyle}>
+              <span style={userWelcomeStyle}>Hola, {user.email}</span>
+              <button 
+                style={logoutButtonStyle}
+                onClick={onLogout}
+              >
+                Cerrar Sesión
+              </button>
             </div>
-            <button
-              onClick={onLogout}
-              style={{
-                background: "rgba(255,255,255,0.1)",
-                color: "white",
-                border: "none",
-                padding: "10px 18px",
-                borderRadius: "25px",
-                cursor: "pointer",
-                fontWeight: "500",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                transition: "all 0.3s ease",
-                backdropFilter: "blur(10px)"
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.background = "rgba(255,255,255,0.2)";
-                e.target.style.transform = "translateY(-2px)";
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.background = "rgba(255,255,255,0.1)";
-                e.target.style.transform = "translateY(0)";
-              }}
-            >
-              <span>🚪</span>
-              Salir
-            </button>
-          </>
-        ) : (
-          <>
-            <button
-              onClick={onLoginClick}
-              style={{
-                background: "transparent",
-                color: "white",
-                border: "1px solid rgba(255,255,255,0.3)",
-                padding: "10px 20px",
-                borderRadius: "25px",
-                cursor: "pointer",
-                fontWeight: "500",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                transition: "all 0.3s ease"
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.background = "rgba(255,255,255,0.1)";
-                e.target.style.borderColor = "rgba(255,255,255,0.5)";
-                e.target.style.transform = "translateY(-2px)";
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.background = "transparent";
-                e.target.style.borderColor = "rgba(255,255,255,0.3)";
-                e.target.style.transform = "translateY(0)";
-              }}
-            >
-              
-              Entrar
-            </button>
-            <button
-              onClick={onRegisterClick}
-              style={{
-                background: "linear-gradient(135deg, #4376a0ff, #5c9bd5)",
-                color: "white",
-                border: "none",
-                padding: "10px 20px",
-                borderRadius: "25px",
-                cursor: "pointer",
-                fontWeight: "500",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                transition: "all 0.3s ease",
-                boxShadow: "0 4px 15px rgba(67, 118, 160, 0.3)"
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.transform = "translateY(-2px)";
-                e.target.style.boxShadow = "0 6px 20px rgba(67, 118, 160, 0.5)";
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.transform = "translateY(0)";
-                e.target.style.boxShadow = "0 4px 15px rgba(67, 118, 160, 0.3)";
-              }}
-            >
-              
-              Registrarse
-            </button>
-          </>
-        )}
-      </nav>
+          ) : (
+            <div style={authButtonsStyle}>
+              <button 
+                style={loginButtonStyle}
+                onClick={onLoginClick}
+              >
+                Iniciar Sesión
+              </button>
+              <button 
+                style={registerButtonStyle}
+                onClick={onRegisterClick}
+              >
+                Registrarse
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
     </header>
   );
 }
+
+// Estilos
+const headerStyle = {
+  backgroundColor: "#2c3e50",
+  color: "white",
+  padding: "15px 0",
+  boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+  position: "sticky",
+  top: 0,
+  zIndex: 100,
+  width: "100%"
+};
+
+const containerStyle = {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  maxWidth: "1200px",
+  margin: "0 auto",
+  padding: "0 20px"
+};
+
+const leftSectionStyle = {
+  display: "flex",
+  alignItems: "center",
+  gap: "15px"
+};
+
+const menuButtonStyle = {
+  backgroundColor: "transparent",
+  border: "1px solid rgba(255,255,255,0.3)",
+  padding: "10px 12px",
+  borderRadius: "6px",
+  cursor: "pointer",
+  fontSize: "16px",
+  color: "white",
+  fontWeight: "500",
+  transition: "all 0.3s ease",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  width: "40px",
+  height: "40px",
+  ":hover": {
+    backgroundColor: "rgba(255,255,255,0.1)"
+  }
+};
+
+const logoStyle = {
+  display: "flex",
+  alignItems: "center",
+  gap: "10px"
+};
+
+const logoIconStyle = {
+  fontSize: "28px"
+};
+
+const logoTextStyle = {
+  fontSize: "20px",
+  fontWeight: "600",
+  color: "white",
+  margin: 0,
+  display: { xs: "none", md: "block" } // Oculta en móviles, muestra en desktop
+};
+
+const rightSectionStyle = {
+  display: "flex",
+  alignItems: "center"
+};
+
+const userSectionStyle = {
+  display: "flex",
+  alignItems: "center",
+  gap: "15px"
+};
+
+const userWelcomeStyle = {
+  fontSize: "14px",
+  color: "#ecf0f1",
+  fontWeight: "500",
+  display: { xs: "none", md: "block" } // Oculta en móviles, muestra en desktop
+};
+
+const logoutButtonStyle = {
+  backgroundColor: "transparent",
+  color: "white",
+  border: "1px solid rgba(255,255,255,0.3)",
+  padding: "8px 15px",
+  borderRadius: "6px",
+  cursor: "pointer",
+  fontSize: "14px",
+  fontWeight: "500",
+  transition: "all 0.3s ease",
+  ":hover": {
+    backgroundColor: "rgba(255,255,255,0.1)"
+  }
+};
+
+const authButtonsStyle = {
+  display: "flex",
+  alignItems: "center",
+  gap: "10px"
+};
+
+const loginButtonStyle = {
+  backgroundColor: "transparent",
+  color: "white",
+  border: "1px solid rgba(255,255,255,0.3)",
+  padding: "8px 15px",
+  borderRadius: "6px",
+  cursor: "pointer",
+  fontSize: "14px",
+  fontWeight: "500",
+  transition: "all 0.3s ease",
+  ":hover": {
+    backgroundColor: "rgba(255,255,255,0.1)"
+  }
+};
+
+const registerButtonStyle = {
+  backgroundColor: "#3498db",
+  color: "white",
+  border: "none",
+  padding: "8px 15px",
+  borderRadius: "6px",
+  cursor: "pointer",
+  fontSize: "14px",
+  fontWeight: "500",
+  transition: "all 0.3s ease",
+  ":hover": {
+    backgroundColor: "#2980b9",
+    transform: "translateY(-1px)"
+  }
+};
+
+// Aplicar estilos responsive
+logoTextStyle.display = window.innerWidth < 768 ? "none" : "block";
+userWelcomeStyle.display = window.innerWidth < 768 ? "none" : "block";
 
 export default Header;
