@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+// Ya no necesitamos 'setDoc' ni 'doc', pero los dejamos por si los reactivas
 import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "../firebase";
 
@@ -8,7 +9,7 @@ export default function Register({ onRegister, onSwitchToLogin, onClose }) {
     nombre: "",
     email: "",
     password: "",
-    confirmPassword: ""
+    confirmPassword: "",
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -16,69 +17,71 @@ export default function Register({ onRegister, onSwitchToLogin, onClose }) {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
     if (error) setError("");
   };
 
   const validateForm = () => {
-    if (!formData.nombre || !formData.email || !formData.password || !formData.confirmPassword) {
+    // ... (esta función no necesita cambios)
+    if (
+      !formData.nombre ||
+      !formData.email ||
+      !formData.password ||
+      !formData.confirmPassword
+    ) {
       setError("Todos los campos son obligatorios");
       return false;
     }
-    
     if (formData.password.length < 6) {
       setError("La contraseña debe tener al menos 6 caracteres");
       return false;
     }
-    
     if (formData.password !== formData.confirmPassword) {
       setError("Las contraseñas no coinciden");
       return false;
     }
-    
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       setError("Por favor ingresa un email válido");
       return false;
     }
-    
     return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     if (!validateForm()) return;
-    
+
     setLoading(true);
     setError("");
-    
+
     try {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         formData.email,
-        formData.password
+        formData.password,
       );
       const user = userCredential.user;
 
+      // --- PASO DE FIRESTORE OMITIDO ---
+      // Se comenta la escritura en Firestore para evitar el error de permisos.
+      /*
       await setDoc(doc(db, "usuarios", user.uid), {
         nombre: formData.nombre,
         email: formData.email,
-        fechaRegistro: new Date()
+        fechaRegistro: new Date(),
       });
+      */
 
-      
-      onRegister({ 
-        uid: user.uid, 
-        nombre: formData.nombre, 
-        email: formData.email 
+      // Se llama a onRegister directamente después de la autenticación.
+      onRegister({
+        uid: user.uid,
+        nombre: formData.nombre,
+        email: user.email,
       });
-      
-      
     } catch (error) {
       console.error("Error en registro:", error);
-      
       switch (error.code) {
         case "auth/email-already-in-use":
           setError("Este correo electrónico ya está en uso");
@@ -93,14 +96,15 @@ export default function Register({ onRegister, onSwitchToLogin, onClose }) {
           setError("La contraseña es demasiado débil");
           break;
         default:
-          setError("Ocurrió un error durante el registro. Por favor intenta nuevamente.");
+          setError(
+            "Ocurrió un error durante el registro. Por favor intenta nuevamente.",
+          );
       }
-    } finally {
       setLoading(false);
     }
   };
 
-  // Estilos
+  // ... (todo el código de estilos y JSX permanece igual)
   const overlayStyle = {
     position: "fixed",
     top: 0,
@@ -113,7 +117,6 @@ export default function Register({ onRegister, onSwitchToLogin, onClose }) {
     alignItems: "center",
     zIndex: 2000,
   };
-
   const cardStyle = {
     background: "#ffffff",
     color: "#333333",
@@ -125,22 +128,19 @@ export default function Register({ onRegister, onSwitchToLogin, onClose }) {
     boxShadow: "0 8px 28px rgba(0,0,0,0.25)",
     position: "relative",
   };
-
   const titleStyle = {
     margin: 0,
     fontSize: "24px",
     fontWeight: "700",
     color: "#222222",
-    marginBottom: "20px"
+    marginBottom: "20px",
   };
-
   const formStyle = {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    width: "100%"
+    width: "100%",
   };
-
   const inputStyle = {
     width: "100%",
     padding: "14px",
@@ -153,9 +153,8 @@ export default function Register({ onRegister, onSwitchToLogin, onClose }) {
     textAlign: "center",
     outline: "none",
     transition: "border 0.3s ease",
-    boxSizing: "border-box"
+    boxSizing: "border-box",
   };
-
   const buttonStyle = {
     background: "linear-gradient(135deg, #0072ff, #00c6ff)",
     color: "white",
@@ -169,14 +168,12 @@ export default function Register({ onRegister, onSwitchToLogin, onClose }) {
     marginTop: "18px",
     transition: "all 0.3s ease",
   };
-
   const footerText = {
     marginTop: "25px",
     fontSize: "14px",
     color: "#666666",
     textAlign: "center",
   };
-
   const linkBtn = {
     background: "none",
     border: "none",
@@ -186,9 +183,8 @@ export default function Register({ onRegister, onSwitchToLogin, onClose }) {
     fontSize: "14px",
     transition: "color 0.3s ease",
     padding: "0",
-    margin: "0 0 0 5px"
+    margin: "0 0 0 5px",
   };
-
   const closeBtn = {
     position: "absolute",
     top: "12px",
@@ -206,31 +202,27 @@ export default function Register({ onRegister, onSwitchToLogin, onClose }) {
     alignItems: "center",
     justifyContent: "center",
   };
-
   const errorStyle = {
     color: "#e74c3c",
     fontSize: "14px",
     margin: "10px 0",
-    textAlign: "center"
+    textAlign: "center",
   };
 
   return (
     <div style={overlayStyle}>
       <div style={cardStyle}>
-        <button 
-          style={closeBtn} 
+        <button
+          style={closeBtn}
           onClick={onClose}
-          onMouseEnter={(e) => e.target.style.background = "#f0f0f0"}
-          onMouseLeave={(e) => e.target.style.background = "none"}
+          onMouseEnter={(e) => (e.target.style.background = "#f0f0f0")}
+          onMouseLeave={(e) => (e.target.style.background = "none")}
           disabled={loading}
         >
           ×
         </button>
-        
         <h2 style={titleStyle}>Registro de Usuario</h2>
-        
         {error && <div style={errorStyle}>{error}</div>}
-        
         <form onSubmit={handleSubmit} style={formStyle}>
           <input
             type="text"
@@ -268,24 +260,23 @@ export default function Register({ onRegister, onSwitchToLogin, onClose }) {
             style={inputStyle}
             disabled={loading}
           />
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             style={buttonStyle}
             disabled={loading}
             onMouseEnter={(e) => !loading && (e.target.style.opacity = "0.8")}
             onMouseLeave={(e) => !loading && (e.target.style.opacity = "1")}
           >
-            Registrar
+            {loading ? "Registrando..." : "Registrar"}
           </button>
         </form>
-        
         <div style={footerText}>
           ¿Ya tienes una cuenta?
-          <button 
-            style={linkBtn} 
+          <button
+            style={linkBtn}
             onClick={onSwitchToLogin}
-            onMouseEnter={(e) => e.target.style.color = "#0056b3"}
-            onMouseLeave={(e) => e.target.style.color = "#0072ff"}
+            onMouseEnter={(e) => (e.target.style.color = "#0056b3")}
+            onMouseLeave={(e) => (e.target.style.color = "#0072ff")}
             disabled={loading}
           >
             Inicia sesión aquí
@@ -294,4 +285,4 @@ export default function Register({ onRegister, onSwitchToLogin, onClose }) {
       </div>
     </div>
   );
-} 
+}
