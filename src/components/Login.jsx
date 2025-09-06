@@ -124,7 +124,7 @@ const footerText = {
 const linkBtn = {
   background: "none",
   border: "none",
-  color: "#0072ff", // azul llamativo
+  color: "#0072ff", 
   cursor: "pointer",
   fontWeight: "600",
   fontSize: "14px",

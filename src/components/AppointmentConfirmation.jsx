@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import AppointmentScheduler from "./AppointmentScheduler";
 import AppointmentConfirmation from "./AppointmentConfirmation";
 
+
+
 function Appointments({ user, onBackToHome }) {
   const [view, setView] = useState("list"); // 'list', 'scheduler', 'confirmation'
   const [appointments, setAppointments] = useState([]);
