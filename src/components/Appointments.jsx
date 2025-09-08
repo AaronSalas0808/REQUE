@@ -273,10 +273,6 @@ const handleConfirmAppointment = async () => {
           <button style={headerStyles.backButton} onClick={onBackToHome}>
             ← Volver al Inicio
           </button>
-          <div style={headerStyles.logo}>
-            <span style={headerStyles.logoIcon}>✂️</span>
-            <span style={headerStyles.logoText}>Apolo Citas</span>
-          </div>
         </div>
 
         <div style={headerStyles.centerSection}>
