@@ -16,8 +16,12 @@ import {
   subMonths,
 } from "date-fns";
 import { es } from "date-fns/locale";
+import { ref, push, serverTimestamp } from "firebase/database";
+import { database } from "../firebase";
 
+//const storage = getStorage();
 // ... (formatFileSize no cambia)
+
 const formatFileSize = (bytes) => {
   if (bytes === 0) return "0 Bytes";
   const k = 1024;
@@ -192,19 +196,47 @@ function Appointments({ user, onBackToHome, onLogout }) {
     return format(dateObject, "EEEE, d 'de' MMMM 'de' yyyy", { locale: es });
   };
 
-  const handleConfirmAppointment = () => {
+const handleConfirmAppointment = async () => {
+  try {
+    // Validar que todos los campos necesarios estén seleccionados
+    if (!selectedCenter || !selectedService || !selectedEmployee || !selectedDate || !selectedTime) {
+      alert("Por favor, completa todos los campos obligatorios antes de confirmar.");
+      return;
+    }
+
+    // Crear el objeto de la cita
     const newAppointment = {
-      id: Date.now(),
       center: selectedCenter,
       service: selectedService,
-      date: selectedDate,
+      employee: selectedEmployee,
+      date: selectedDate.toISOString(), // Guardar como string
       time: selectedTime,
       notes: notes,
-      status: "confirmed"
+      imageUrl: imagePreviewUrl,
+      status: "confirmed",
+      userId: user?.uid || "anonymous",
+      userEmail: user?.email || "unknown@email.com",
+      createdAt: serverTimestamp()
     };
-    setAppointments([...appointments, newAppointment]);
+    
+    // Guardar en Realtime Database
+    const appointmentsRef = ref(database, 'appointments');
+    const newAppointmentRef = push(appointmentsRef, newAppointment);
+    
+    console.log("Cita guardada con ID: ", newAppointmentRef.key);
+    
+    // Actualizar el estado local
+    setAppointments([...appointments, { 
+      ...newAppointment, 
+      id: newAppointmentRef.key,
+      date: selectedDate
+    }]);
     nextStep();
-  };
+  } catch (error) {
+    console.error("Error al guardar la cita: ", error);
+    alert("Hubo un error al guardar la cita. Por favor, intenta nuevamente.");
+  }
+};
 
   // MODIFICADO: Resetear el estado del empleado
   const handleNewAppointment = () => {
