@@ -1,16 +1,84 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+// ... (imports de date-fns no cambian)
+import {
+  format,
+  startOfWeek,
+  endOfWeek,
+  addDays,
+  subDays,
+  isSameDay,
+  isToday,
+  startOfMonth,
+  endOfMonth,
+  eachDayOfInterval,
+  isSameMonth,
+  addMonths,
+  subMonths,
+} from "date-fns";
+import { es } from "date-fns/locale";
+
+// ... (formatFileSize no cambia)
+const formatFileSize = (bytes) => {
+  if (bytes === 0) return "0 Bytes";
+  const k = 1024;
+  const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+};
+
+// --- NUEVO: Datos de los empleados ---
+const employees = [
+  // Centro A (ID 1)
+  { id: 1, name: "Carlos R.", photo: "👨🏻", centerId: 1, category: "Popular" },
+  { id: 2, name: "Javier M.", photo: "👨🏼", centerId: 1, category: "Popular" },
+  { id: 3, name: "Luis G.", photo: "👨🏽", centerId: 1, category: "Popular" },
+  { id: 4, name: "Ana P.", photo: "👩🏻", centerId: 1, category: "Uñas" },
+  { id: 5, name: "Sofía L.", photo: "👩🏼", centerId: 1, category: "Uñas" },
+  { id: 6, name: "María C.", photo: "👩🏽", centerId: 1, category: "Uñas" },
+  { id: 7, name: "Elena V.", photo: "👩🏻‍🦰", centerId: 1, category: "Spa" },
+  { id: 8, name: "Isabel S.", photo: "👩🏼‍🦰", centerId: 1, category: "Spa" },
+  { id: 9, name: "Laura T.", photo: "👩🏽‍🦰", centerId: 1, category: "Spa" },
+  // Centro B (ID 2)
+  { id: 10, name: "Miguel A.", photo: "👨🏻", centerId: 2, category: "Popular" },
+  { id: 11, name: "David F.", photo: "👨🏼", centerId: 2, category: "Popular" },
+  { id: 12, name: "Pedro S.", photo: "👨🏽", centerId: 2, category: "Popular" },
+  { id: 13, name: "Lucía H.", photo: "👩🏻", centerId: 2, category: "Uñas" },
+  { id: 14, name: "Carmen R.", photo: "👩🏼", centerId: 2, category: "Uñas" },
+  { id: 15, name: "Paula D.", photo: "👩🏽", centerId: 2, category: "Uñas" },
+  { id: 16, name: "Verónica N.", photo: "👩🏻‍🦰", centerId: 2, category: "Spa" },
+  { id: 17, name: "Raquel B.", photo: "👩🏼‍🦰", centerId: 2, category: "Spa" },
+  { id: 18, name: "Marta G.", photo: "👩🏽‍🦰", centerId: 2, category: "Spa" },
+  // Centro C (ID 3)
+  { id: 19, name: "Andrés V.", photo: "👨🏻", centerId: 3, category: "Popular" },
+  { id: 20, name: "Sergio P.", photo: "👨🏼", centerId: 3, category: "Popular" },
+  { id: 21, name: "Jorge L.", photo: "👨🏽", centerId: 3, category: "Popular" },
+  { id: 22, name: "Cristina M.", photo: "👩🏻", centerId: 3, category: "Uñas" },
+  { id: 23, name: "Beatriz F.", photo: "👩🏼", centerId: 3, category: "Uñas" },
+  { id: 24, name: "Nerea J.", photo: "👩🏽", centerId: 3, category: "Uñas" },
+  { id: 25, name: "Silvia Q.", photo: "👩🏻‍🦰", centerId: 3, category: "Spa" },
+  { id: 26, name: "Lorena A.", photo: "👩🏼‍🦰", centerId: 3, category: "Spa" },
+  { id: 27, name: "Eva Z.", photo: "👩🏽‍🦰", centerId: 3, category: "Spa" },
+];
 
 function Appointments({ user, onBackToHome, onLogout }) {
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedCenter, setSelectedCenter] = useState(null);
   const [selectedService, setSelectedService] = useState(null);
-  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState("");
   const [notes, setNotes] = useState("");
   const [appointments, setAppointments] = useState([]);
-  const [sidebarOpen, setSidebarOpen] = useState(false); // Estado para controlar la visibilidad del sidebar
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState("");
+  const fileInputRef = useRef(null);
+  const [isDraggingOver, setIsDraggingOver] = useState(false);
+  const [currentDate, setCurrentDate] = useState(new Date());
 
-  // Datos de ejemplo
+  // NUEVO: Estado para el profesional seleccionado
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
+
+  // ... (Datos de ejemplo no cambian)
   const centers = [
     { id: 1, name: "Centro A", address: "Av. Siempre Viva 123 - 1.2 km", rating: "4.8 (230)", image: "🏢" },
     { id: 2, name: "Centro B", address: "Calle Luna 45 - 3.4 km", rating: "4.6 (180)", image: "🏢" },
@@ -34,13 +102,15 @@ function Appointments({ user, onBackToHome, onLogout }) {
 
   const categories = ["Popular", "Cabello", "Uñas", "Spa"];
 
+  // MODIFICADO: Añadir nuevo paso y re-numerar
   const steps = [
     { number: 1, title: "Establecimiento" },
     { number: 2, title: "Servicio" },
-    { number: 3, title: "Imagen y notas" },
-    { number: 4, title: "Fecha y hora" },
-    { number: 5, title: "Resumen" },
-    { number: 6, title: "Confirmación" }
+    { number: 3, title: "Profesional" },
+    { number: 4, title: "Imagen y notas" },
+    { number: 5, title: "Fecha y hora" },
+    { number: 6, title: "Resumen" },
+    { number: 7, title: "Confirmación" },
   ];
 
   const menuItems = [
@@ -56,6 +126,72 @@ function Appointments({ user, onBackToHome, onLogout }) {
   const nextStep = () => setCurrentStep(currentStep + 1);
   const prevStep = () => setCurrentStep(currentStep - 1);
 
+  // ... (funciones de carga de imagen no cambian)
+  const processFile = (file) => {
+    if (file && file.type.startsWith("image/")) {
+      setImageFile(file);
+      setImagePreviewUrl(URL.createObjectURL(file));
+    } else {
+      alert("Por favor, selecciona un archivo de imagen válido.");
+    }
+  };
+
+  const handleFileChange = (e) => {
+    processFile(e.target.files[0]);
+  };
+
+  const handleUploadClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleDragEnter = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDraggingOver(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDraggingOver(false);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDraggingOver(false);
+    processFile(e.dataTransfer.files[0]);
+  };
+
+  const handleRemoveImage = () => {
+    setImageFile(null);
+    setImagePreviewUrl("");
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handlePrevMonth = () => {
+    setCurrentDate(subMonths(currentDate, 1));
+  };
+
+  const handleNextMonth = () => {
+    setCurrentDate(addMonths(currentDate, 1));
+  };
+
+  const handleDateClick = (day) => {
+    setSelectedDate(day);
+  };
+
+  const formatDate = (dateObject) => {
+    if (!dateObject) return "Fecha no seleccionada";
+    return format(dateObject, "EEEE, d 'de' MMMM 'de' yyyy", { locale: es });
+  };
+
   const handleConfirmAppointment = () => {
     const newAppointment = {
       id: Date.now(),
@@ -70,11 +206,13 @@ function Appointments({ user, onBackToHome, onLogout }) {
     nextStep();
   };
 
+  // MODIFICADO: Resetear el estado del empleado
   const handleNewAppointment = () => {
     setCurrentStep(1);
     setSelectedCenter(null);
     setSelectedService(null);
-    setSelectedDate("");
+    setSelectedEmployee(null); // Resetear empleado
+    setSelectedDate(null);
     setSelectedTime("");
     setNotes("");
   };
@@ -85,20 +223,14 @@ function Appointments({ user, onBackToHome, onLogout }) {
     } else {
       console.log("Navegar a:", section);
     }
-    setSidebarOpen(false); // Cerrar sidebar después de navegar
+    setSidebarOpen(false);
   };
 
   const handleStepClick = (stepNumber) => {
     setCurrentStep(stepNumber);
   };
 
-  const formatDate = (dateString) => {
-    if (!dateString) return "";
-    const options = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' };
-    return new Date(dateString).toLocaleDateString('es-ES', options);
-  };
-
-  // Renderizar el Header
+  // ... (renderHeader y renderSidebar no cambian)
   const renderHeader = () => {
     return (
       <div style={headerStyles.container}>
@@ -173,7 +305,6 @@ function Appointments({ user, onBackToHome, onLogout }) {
     );
   };
 
-  // Renderizar el Sidebar
   const renderSidebar = () => {
     if (!sidebarOpen) return null;
     
@@ -267,9 +398,9 @@ function Appointments({ user, onBackToHome, onLogout }) {
     );
   };
 
-  // Renderizar el contenido según el paso actual
   const renderStepContent = () => {
     switch (currentStep) {
+      // ... (case 1 y 2 no cambian)
       case 1:
         return (
           <div style={styles.stepContent}>
@@ -372,7 +503,61 @@ function Appointments({ user, onBackToHome, onLogout }) {
           </div>
         );
 
-      case 3:
+      // --- NUEVO: Paso 3 para seleccionar profesional ---
+      case 3: {
+        const availableEmployees = employees.filter(
+          (emp) =>
+            emp.centerId === selectedCenter?.id &&
+            emp.category === selectedService?.category,
+        );
+
+        return (
+          <div style={styles.stepContent}>
+            <div style={styles.stepHeader}>
+              <h2 style={styles.stepTitle}>Selecciona un profesional</h2>
+              <p style={styles.stepSubtitle}>
+                Elige con quién quieres ser atendido
+              </p>
+            </div>
+            <div style={styles.employeeGrid}>
+              {availableEmployees.map((employee) => (
+                <div
+                  key={employee.id}
+                  style={{
+                    ...styles.employeeCard,
+                    borderColor:
+                      selectedEmployee?.id === employee.id
+                        ? "#ff6b95"
+                        : "#e0e0e0",
+                  }}
+                  onClick={() => setSelectedEmployee(employee)}
+                >
+                  <div style={styles.employeePhoto}>{employee.photo}</div>
+                  <h3 style={styles.employeeName}>{employee.name}</h3>
+                  {selectedEmployee?.id === employee.id && (
+                    <div style={styles.selectedIndicator}>✓</div>
+                  )}
+                </div>
+              ))}
+            </div>
+            <div style={styles.navigationButtons}>
+              <button style={styles.secondaryButton} onClick={prevStep}>
+                Atrás
+              </button>
+              <button
+                style={styles.primaryButton}
+                onClick={nextStep}
+                disabled={!selectedEmployee}
+              >
+                Siguiente
+              </button>
+            </div>
+          </div>
+        );
+      }
+
+      // MODIFICADO: El antiguo paso 3 ahora es el 4
+      case 4:
         return (
           <div style={styles.stepContent}>
             <div style={styles.stepHeader}>
@@ -381,13 +566,73 @@ function Appointments({ user, onBackToHome, onLogout }) {
             </div>
             <div style={styles.imageNotesContainer}>
               <div style={styles.uploadSection}>
-                <div style={styles.uploadArea}>
-                  <p style={styles.uploadText}>Arrastra y suelta una imagen</p>
-                  <p style={styles.uploadSubtext}>o</p>
-                  <button style={styles.uploadButton}>Explorar archivos</button>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                  style={{ display: "none" }}
+                  accept="image/*"
+                />
+                <div
+                  style={{
+                    ...styles.uploadArea,
+                    borderColor: isDraggingOver ? "#ff6b95" : "#ddd",
+                  }}
+                  onClick={handleUploadClick}
+                  onDragEnter={handleDragEnter}
+                  onDragLeave={handleDragLeave}
+                  onDragOver={handleDragOver}
+                  onDrop={handleDrop}
+                >
+                  {!imageFile && !isDraggingOver && (
+                    <>
+                      <p style={styles.uploadText}>
+                        Arrastra y suelta una imagen
+                      </p>
+                      <p style={styles.uploadSubtext}>o</p>
+                      <button
+                        style={styles.uploadButton}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleUploadClick();
+                        }}
+                      >
+                        Explorar archivos
+                      </button>
+                    </>
+                  )}
+                  {isDraggingOver && (
+                    <p style={styles.uploadText}>¡Suelta la imagen aquí!</p>
+                  )}
+                  {imageFile && (
+                    <div>
+                      <p style={styles.fileNameText}>{imageFile.name}</p>
+                      <p style={styles.fileSizeText}>
+                        {formatFileSize(imageFile.size)}
+                      </p>
+                    </div>
+                  )}
                 </div>
                 <div style={styles.imagePreview}>
-                  <span style={styles.previewPlaceholder}>Vista previa de imagen</span>
+                  {imagePreviewUrl ? (
+                    <>
+                      <img
+                        src={imagePreviewUrl}
+                        alt="Vista previa"
+                        style={styles.previewImage}
+                      />
+                      <button
+                        onClick={handleRemoveImage}
+                        style={styles.removeImageButton}
+                      >
+                        ×
+                      </button>
+                    </>
+                  ) : (
+                    <span style={styles.previewPlaceholder}>
+                      Vista previa de imagen
+                    </span>
+                  )}
                 </div>
               </div>
               <div style={styles.notesSection}>
@@ -412,63 +657,128 @@ function Appointments({ user, onBackToHome, onLogout }) {
           </div>
         );
 
-      case 4:
+      // MODIFICADO: El antiguo paso 4 ahora es el 5
+      case 5: {
+        const weekStartsOn = 1;
+        const firstDayOfMonth = startOfMonth(currentDate);
+        const lastDayOfMonth = endOfMonth(currentDate);
+        const startDate = startOfWeek(firstDayOfMonth, { weekStartsOn });
+        const endDate = endOfWeek(lastDayOfMonth, { weekStartsOn });
+
+        const daysInMonthGrid = eachDayOfInterval({
+          start: startDate,
+          end: endDate,
+        });
+
         return (
           <div style={styles.stepContent}>
             <div style={styles.stepHeader}>
               <h2 style={styles.stepTitle}>Selecciona fecha y hora</h2>
             </div>
-            <div style={styles.calendarContainer}>
-              <div style={styles.calendarHeader}>
-                <button style={styles.calendarNavButton}>‹ Semana anterior</button>
-                <h3 style={styles.calendarMonth}>Octubre 2025</h3>
-                <button style={styles.calendarNavButton}>Siguiente semana ›</button>
-              </div>
-              <div style={styles.calendarGrid}>
-                {['L', 'M', 'X', 'J', 'V', 'S', 'D'].map(day => (
-                  <div key={day} style={styles.calendarDayHeader}>{day}</div>
-                ))}
-                {[6, 7, 8, 9, 10, 11, 12].map(day => (
-                  <button key={day} style={styles.calendarDay}>
-                    {day}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div style={styles.timeContainer}>
-              <h3 style={styles.timeTitle}>Horarios disponibles</h3>
-              <div style={styles.timeGrid}>
-                {timeSlots.map(time => (
+            <div style={styles.dateAndTimeContainer}>
+              <div style={styles.calendarWrapper}>
+                <div style={styles.calendarHeader}>
                   <button
-                    key={time}
-                    style={{
-                      ...styles.timeSlot,
-                      backgroundColor: selectedTime === time ? "#ff6b95" : "#f8f9fa",
-                      color: selectedTime === time ? "white" : "#2c3e50"
-                    }}
-                    onClick={() => setSelectedTime(time)}
+                    style={styles.calendarNavButton}
+                    onClick={handlePrevMonth}
                   >
-                    {time}
+                    ‹
                   </button>
-                ))}
+                  <h3 style={styles.calendarMonth}>
+                    {format(currentDate, "MMMM yyyy", { locale: es })}
+                  </h3>
+                  <button
+                    style={styles.calendarNavButton}
+                    onClick={handleNextMonth}
+                  >
+                    ›
+                  </button>
+                </div>
+                <div style={styles.calendarGrid}>
+                  {["L", "M", "X", "J", "V", "S", "D"].map((day) => (
+                    <div key={day} style={styles.calendarDayHeader}>
+                      {day}
+                    </div>
+                  ))}
+                  {daysInMonthGrid.map((day) => {
+                    const isCurrentMonth = isSameMonth(day, currentDate);
+                    const isSelected =
+                      selectedDate && isSameDay(day, selectedDate);
+                    const isCurrentToday = isToday(day);
+
+                    return (
+                      <button
+                        key={day.toString()}
+                        disabled={!isCurrentMonth}
+                        style={{
+                          ...styles.calendarDay,
+                          ...(isCurrentMonth
+                            ? {}
+                            : styles.calendarDayNotInMonth),
+                          backgroundColor: isSelected ? "#ff6b95" : "white",
+                          color: isSelected ? "white" : isCurrentMonth ? "#333" : "#ccc",
+                          borderColor: isCurrentToday && isCurrentMonth ? "#ff6b95" : "transparent",
+                          fontWeight: isSelected || isCurrentToday ? "600" : "500",
+                        }}
+                        onClick={() => handleDateClick(day)}
+                      >
+                        {format(day, "d")}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div style={styles.timeSlotsWrapper}>
+                {selectedDate ? (
+                  <div style={styles.timeContainer}>
+                    <h3 style={styles.timeTitle}>
+                      Horarios para el {format(selectedDate, "d 'de' MMMM", { locale: es })}
+                    </h3>
+                    <div style={styles.timeGrid}>
+                      {timeSlots.map((time) => (
+                        <button
+                          key={time}
+                          style={{
+                            ...styles.timeSlot,
+                            backgroundColor:
+                              selectedTime === time ? "#ff6b95" : "#f8f9fa",
+                            color:
+                              selectedTime === time ? "white" : "#2c3e50",
+                          }}
+                          onClick={() => setSelectedTime(time)}
+                        >
+                          {time}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div style={styles.timePrompt}>
+                    <p>Selecciona un día en el calendario para ver los horarios disponibles.</p>
+                  </div>
+                )}
               </div>
             </div>
+
             <div style={styles.navigationButtons}>
               <button style={styles.secondaryButton} onClick={prevStep}>
                 Atrás
               </button>
-              <button 
-                style={styles.primaryButton} 
+              <button
+                style={styles.primaryButton}
                 onClick={nextStep}
-                disabled={!selectedTime}
+                disabled={!selectedDate || !selectedTime}
               >
                 Siguiente
               </button>
             </div>
           </div>
         );
+      }
 
-      case 5:
+      // MODIFICADO: El antiguo paso 5 ahora es el 6
+      case 6:
         return (
           <div style={styles.stepContent}>
             <div style={styles.stepHeader}>
@@ -478,29 +788,86 @@ function Appointments({ user, onBackToHome, onLogout }) {
               <div style={styles.summaryItem}>
                 <span style={styles.summaryLabel}>Establecimiento:</span>
                 <span style={styles.summaryValue}>{selectedCenter?.name}</span>
-                <button style={styles.editButton} onClick={() => setCurrentStep(1)}>Editar</button>
+                <button
+                  style={styles.editButton}
+                  onClick={() => setCurrentStep(1)}
+                >
+                  Editar
+                </button>
               </div>
               <div style={styles.summaryItem}>
                 <span style={styles.summaryLabel}>Servicio:</span>
-                <span style={styles.summaryValue}>{selectedService?.name} ({selectedService?.duration})</span>
-                <button style={styles.editButton} onClick={() => setCurrentStep(2)}>Editar</button>
+                <span style={styles.summaryValue}>
+                  {selectedService?.name} ({selectedService?.duration})
+                </span>
+                <button
+                  style={styles.editButton}
+                  onClick={() => setCurrentStep(2)}
+                >
+                  Editar
+                </button>
+              </div>
+              {/* NUEVO: Resumen del profesional */}
+              <div style={styles.summaryItem}>
+                <span style={styles.summaryLabel}>Profesional:</span>
+                <span style={styles.summaryValue}>
+                  {selectedEmployee?.name}
+                </span>
+                <button
+                  style={styles.editButton}
+                  onClick={() => setCurrentStep(3)}
+                >
+                  Editar
+                </button>
               </div>
               <div style={styles.summaryItem}>
-                <span style={styles.summaryLabel}>Fecha:</span>
-                <span style={styles.summaryValue}>{formatDate(selectedDate)}</span>
-              </div>
-              <div style={styles.summaryItem}>
-                <span style={styles.summaryLabel}>Hora:</span>
-                <span style={styles.summaryValue}>{selectedTime}</span>
+                <span style={styles.summaryLabel}>Fecha y Hora:</span>
+                <span style={styles.summaryValue}>
+                  {formatDate(selectedDate)} - {selectedTime || "Hora no seleccionada"}
+                </span>
+                <button
+                  style={styles.editButton}
+                  onClick={() => setCurrentStep(5)}
+                >
+                  Editar
+                </button>
               </div>
               <div style={styles.summaryItem}>
                 <span style={styles.summaryLabel}>Precio:</span>
-                <span style={styles.summaryValue}>{selectedService?.price}</span>
+                <span style={styles.summaryValue}>
+                  {selectedService?.price}
+                </span>
               </div>
               <div style={styles.notesSummary}>
-                <span style={styles.summaryLabel}>Notas e imágenes:</span>
-                <p style={styles.notesText}>{notes || "No se han agregado notas."}</p>
-                <div style={styles.imageThumbnail}></div>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <span style={styles.summaryLabel}>Notas e imágenes:</span>
+                  <button
+                    style={styles.editButton}
+                    onClick={() => setCurrentStep(4)}
+                  >
+                    Editar
+                  </button>
+                </div>
+                <p style={styles.notesText}>
+                  {notes || "No se han agregado notas."}
+                </p>
+                {imagePreviewUrl ? (
+                  <img
+                    src={imagePreviewUrl}
+                    alt="Imagen de referencia"
+                    style={styles.imageThumbnail}
+                  />
+                ) : (
+                  <p style={styles.noImageText}>
+                    No se agregó imagen de referencia.
+                  </p>
+                )}
               </div>
             </div>
             <p style={styles.securityText}>*Tus datos están seguros</p>
@@ -508,14 +875,18 @@ function Appointments({ user, onBackToHome, onLogout }) {
               <button style={styles.secondaryButton} onClick={prevStep}>
                 Volver
               </button>
-              <button style={styles.primaryButton} onClick={handleConfirmAppointment}>
+              <button
+                style={styles.primaryButton}
+                onClick={handleConfirmAppointment}
+              >
                 Confirmar cita
               </button>
             </div>
           </div>
         );
 
-      case 6:
+      // MODIFICADO: El antiguo paso 6 ahora es el 7
+      case 7:
         const appointment = appointments[appointments.length - 1];
         return (
           <div style={styles.stepContent}>
@@ -550,28 +921,19 @@ function Appointments({ user, onBackToHome, onLogout }) {
 
   return (
     <div style={styles.container}>
-      {/* Header */}
       {renderHeader()}
-
-      {/* Overlay para cerrar el sidebar al hacer clic fuera */}
       {sidebarOpen && (
-        <div 
-          style={overlayStyle}
-          onClick={() => setSidebarOpen(false)}
-        />
+        <div style={overlayStyle} onClick={() => setSidebarOpen(false)} />
       )}
-
-      {/* Contenido principal con Sidebar */}
       <div style={styles.contentWrapper}>
-        {/* Sidebar */}
         {renderSidebar()}
-        
-        {/* Contenido principal */}
-        <div style={{
-          ...styles.mainContent,
-          marginLeft: sidebarOpen ? "300px" : "0",
-          transition: "margin-left 0.3s ease"
-        }}>
+        <div
+          style={{
+            ...styles.mainContent,
+            marginLeft: sidebarOpen ? "300px" : "0",
+            transition: "margin-left 0.3s ease",
+          }}
+        >
           {renderStepContent()}
         </div>
       </div>
@@ -579,7 +941,7 @@ function Appointments({ user, onBackToHome, onLogout }) {
   );
 }
 
-// Estilos del overlay
+// ... (overlayStyle, headerStyles, sidebarStyles no cambian)
 const overlayStyle = {
   position: "fixed",
   top: 0,
@@ -591,7 +953,6 @@ const overlayStyle = {
   display: "block"
 };
 
-// Estilos del Header
 const headerStyles = {
   container: {
     display: "flex",
@@ -765,7 +1126,6 @@ const headerStyles = {
   }
 };
 
-// Estilos del Sidebar
 const sidebarStyles = {
   container: {
     width: "300px",
@@ -983,7 +1343,6 @@ const sidebarStyles = {
   }
 };
 
-// Estilos principales
 const styles = {
   container: {
     minHeight: "100vh",
@@ -1004,7 +1363,7 @@ const styles = {
     transition: "margin-left 0.3s ease"
   },
   stepContent: {
-    maxWidth: "800px",
+    maxWidth: "900px",
     margin: "0 auto"
   },
   stepHeader: {
@@ -1163,6 +1522,45 @@ const styles = {
       borderColor: "#ff6b95"
     }
   },
+  // --- NUEVOS ESTILOS PARA EL PASO 3 ---
+  employeeGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(3, 1fr)",
+    gap: "20px",
+    marginBottom: "30px",
+  },
+  employeeCard: {
+    backgroundColor: "white",
+    padding: "20px",
+    borderRadius: "12px",
+    border: "2px solid #e0e0e0",
+    cursor: "pointer",
+    transition: "all 0.3s ease",
+    textAlign: "center",
+    position: "relative",
+    ":hover": {
+      transform: "translateY(-2px)",
+      boxShadow: "0 5px 15px rgba(0,0,0,0.1)",
+    },
+  },
+  employeePhoto: {
+    width: "80px",
+    height: "80px",
+    borderRadius: "50%",
+    backgroundColor: "#f0f0f0",
+    margin: "0 auto 15px auto",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "40px",
+  },
+  employeeName: {
+    fontSize: "16px",
+    fontWeight: "600",
+    margin: "0",
+    color: "#333",
+  },
+  // ------------------------------------
   imageNotesContainer: {
     display: "grid",
     gridTemplateColumns: "1fr 1fr",
@@ -1181,20 +1579,25 @@ const styles = {
     textAlign: "center",
     cursor: "pointer",
     transition: "all 0.3s ease",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: "150px",
     ":hover": {
-      borderColor: "#ff6b95"
-    }
+      borderColor: "#ff6b95",
+    },
   },
   uploadText: {
     fontSize: "16px",
     fontWeight: "500",
     color: "#666",
-    margin: "0 0 8px 0"
+    margin: "0 0 8px 0",
   },
   uploadSubtext: {
     fontSize: "14px",
     color: "#999",
-    margin: "0 0 15px 0"
+    margin: "0 0 15px 0",
   },
   uploadButton: {
     padding: "10px 20px",
@@ -1209,8 +1612,8 @@ const styles = {
     ":hover": {
       backgroundColor: "#ff6b95",
       color: "white",
-      borderColor: "#ff6b95"
-    }
+      borderColor: "#ff6b95",
+    },
   },
   imagePreview: {
     height: "150px",
@@ -1219,11 +1622,52 @@ const styles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#f8f9fa"
+    backgroundColor: "#f8f9fa",
+    position: "relative",
   },
   previewPlaceholder: {
     fontSize: "14px",
-    color: "#999"
+    color: "#999",
+  },
+  previewImage: {
+    width: "100%",
+    height: "100%",
+    objectFit: "contain",
+    borderRadius: "8px",
+  },
+  removeImageButton: {
+    position: "absolute",
+    top: "5px",
+    right: "5px",
+    width: "24px",
+    height: "24px",
+    borderRadius: "50%",
+    border: "none",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    color: "white",
+    fontSize: "14px",
+    fontWeight: "bold",
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    lineHeight: "1",
+    transition: "background-color 0.2s ease",
+    ":hover": {
+      backgroundColor: "rgba(0, 0, 0, 0.8)",
+    },
+  },
+  fileNameText: {
+    fontSize: "14px",
+    fontWeight: "600",
+    color: "#333",
+    margin: "0 0 5px 0",
+    wordBreak: "break-all",
+  },
+  fileSizeText: {
+    fontSize: "12px",
+    color: "#666",
+    margin: 0,
   },
   notesSection: {},
   label: {
@@ -1231,7 +1675,7 @@ const styles = {
     fontSize: "14px",
     fontWeight: "500",
     color: "#333",
-    marginBottom: "8px"
+    marginBottom: "8px",
   },
   notesTextarea: {
     width: "100%",
@@ -1244,88 +1688,98 @@ const styles = {
     ":focus": {
       outline: "none",
       borderColor: "#ff6b95",
-      boxShadow: "0 0 0 2px rgba(255, 107, 149, 0.2)"
-    }
+      boxShadow: "0 0 0 2px rgba(255, 107, 149, 0.2)",
+    },
   },
-  calendarContainer: {
+  dateAndTimeContainer: {
+    display: "flex",
+    gap: "30px",
     backgroundColor: "white",
     padding: "20px",
     borderRadius: "12px",
-    marginBottom: "30px"
+  },
+  calendarWrapper: {
+    flex: "1.5",
+  },
+  timeSlotsWrapper: {
+    flex: "1",
+    borderLeft: "1px solid #eee",
+    paddingLeft: "30px",
+    maxHeight: "400px",
+    overflowY: "auto",
   },
   calendarHeader: {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: "20px"
+    marginBottom: "20px",
   },
   calendarNavButton: {
     padding: "8px 12px",
-    backgroundColor: "#f8f9fa",
-    border: "1px solid #ddd",
-    borderRadius: "6px",
-    fontSize: "13px",
-    fontWeight: "500",
+    backgroundColor: "transparent",
+    border: "none",
+    fontSize: "20px",
+    fontWeight: "bold",
     color: "#666",
     cursor: "pointer",
-    transition: "all 0.3s ease",
-    ":hover": {
-      backgroundColor: "#ff6b95",
-      color: "white",
-      borderColor: "#ff6b95"
-    }
   },
   calendarMonth: {
     fontSize: "16px",
     fontWeight: "600",
     color: "#333",
-    margin: 0
+    margin: 0,
+    textTransform: "capitalize",
   },
   calendarGrid: {
     display: "grid",
     gridTemplateColumns: "repeat(7, 1fr)",
-    gap: "8px"
+    gap: "5px",
   },
   calendarDayHeader: {
     textAlign: "center",
-    fontSize: "14px",
+    fontSize: "12px",
     fontWeight: "600",
-    color: "#666",
-    padding: "10px"
+    color: "#999",
+    paddingBottom: "10px",
   },
   calendarDay: {
-    padding: "10px",
-    border: "1px solid #ddd",
-    borderRadius: "6px",
+    padding: "8px",
+    border: "1px solid transparent",
+    borderRadius: "50%",
+    width: "36px",
+    height: "36px",
+    margin: "0 auto",
     backgroundColor: "white",
     fontSize: "14px",
-    fontWeight: "500",
-    color: "#333",
     cursor: "pointer",
-    transition: "all 0.3s ease",
-    textAlign: "center",
+    transition: "all 0.2s ease",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
     ":hover": {
-      backgroundColor: "#ff6b95",
-      color: "white",
-      borderColor: "#ff6b95"
-    }
+      backgroundColor: "#f8f9fa",
+      borderColor: "#ff6b95",
+    },
   },
-  timeContainer: {
-    backgroundColor: "white",
-    padding: "20px",
-    borderRadius: "12px",
-    marginBottom: "30px"
+  calendarDayNotInMonth: {
+    color: "#ccc",
+    cursor: "not-allowed",
+    ":hover": {
+      backgroundColor: "white",
+      borderColor: "transparent",
+    },
   },
+  timeContainer: {},
   timeTitle: {
     fontSize: "16px",
     fontWeight: "600",
     color: "#333",
-    margin: "0 0 15px 0"
+    margin: "0 0 15px 0",
   },
   timeGrid: {
     display: "grid",
     gridTemplateColumns: "repeat(auto-fill, minmax(80px, 1fr))",
-    gap: "10px"
+    gap: "10px",
   },
   timeSlot: {
     padding: "10px",
@@ -1339,32 +1793,41 @@ const styles = {
     ":hover": {
       backgroundColor: "#ff6b95",
       color: "white",
-      borderColor: "#ff6b95"
-    }
+      borderColor: "#ff6b95",
+    },
+  },
+  timePrompt: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    height: "100%",
+    textAlign: "center",
+    color: "#999",
+    fontSize: "14px",
   },
   summaryCard: {
     backgroundColor: "white",
     padding: "25px",
     borderRadius: "12px",
-    marginBottom: "20px"
+    marginBottom: "20px",
   },
   summaryItem: {
     display: "flex",
     alignItems: "center",
     padding: "15px 0",
-    borderBottom: "1px solid #f0f0f0"
+    borderBottom: "1px solid #f0f0f0",
   },
   summaryLabel: {
     fontSize: "14px",
     fontWeight: "500",
     color: "#666",
     width: "150px",
-    flexShrink: 0
+    flexShrink: 0,
   },
   summaryValue: {
     fontSize: "14px",
     color: "#333",
-    flex: 1
+    flex: 1,
   },
   editButton: {
     padding: "6px 12px",
@@ -1379,17 +1842,17 @@ const styles = {
     ":hover": {
       backgroundColor: "#ff6b95",
       color: "white",
-      borderColor: "#ff6b95"
-    }
+      borderColor: "#ff6b95",
+    },
   },
   notesSummary: {
-    padding: "15px 0"
+    padding: "15px 0",
   },
   notesText: {
     fontSize: "14px",
     color: "#666",
     margin: "8px 0",
-    lineHeight: "1.5"
+    lineHeight: "1.5",
   },
   imageThumbnail: {
     width: "80px",
@@ -1397,13 +1860,20 @@ const styles = {
     border: "1px solid #ddd",
     borderRadius: "6px",
     backgroundColor: "#f8f9fa",
-    marginTop: "10px"
+    marginTop: "10px",
+    objectFit: "cover",
+  },
+  noImageText: {
+    fontSize: "14px",
+    color: "#999",
+    fontStyle: "italic",
+    margin: "10px 0 0 0",
   },
   securityText: {
     fontSize: "12px",
     color: "#999",
     textAlign: "center",
-    margin: "0 0 20px 0"
+    margin: "0 0 20px 0",
   },
   confirmationContainer: {
     backgroundColor: "white",

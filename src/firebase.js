@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getDatabase } from "firebase/database";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAjrH_ngd6liz-SdzAeZyB2g5ashHOldMI",
@@ -8,10 +9,11 @@ const firebaseConfig = {
   projectId: "requeproj",
   storageBucket: "requeproj.firebasestorage.app",
   messagingSenderId: "1052277166968",
-  appId: "1:1052277166968:web:c12661c490d4ef3a186e8d"
+  appId: "1:1052277166968:web:c12661c490d4ef3a186e8d",
+  databaseURL: "https://requeproj-default-rtdb.firebaseio.com"
 };  
 
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
-export const db = getFirestore(app);
+export const db = getDatabase(app);
 export default app;
