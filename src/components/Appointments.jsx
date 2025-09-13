@@ -70,6 +70,8 @@ function Appointments({ user, onBackToHome, onLogout }) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [sidebarCurrentTime, setSidebarCurrentTime] = useState(new Date());
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("Todas");
 
   const centers = [
     { id: 1, name: "Centro A", address: "Av. Siempre Viva 123 - 1.2 km", rating: "4.8 (230)", image: "🏢" },
@@ -77,13 +79,53 @@ function Appointments({ user, onBackToHome, onLogout }) {
     { id: 3, name: "Centro C", address: "Paseo del Sol 88 - 5.0 km", rating: "4.9 (320)", image: "🏢" }
   ];
 
+  // 2. Actualizar los servicios
   const services = [
-    { id: 1, name: "Corte de Cabello", duration: "45 min", price: "$25", category: "Popular", image: "✂️" },
-    { id: 2, name: "Barba y Alineación", duration: "30 min", price: "$15", category: "Popular", image: "🧔" },
-    { id: 3, name: "Manicure Spa", duration: "60 min", price: "$30", category: "Uñas", image: "💅" },
-    { id: 4, name: "Pedicure", duration: "45 min", price: "$28", category: "Uñas", image: "👣" },
-    { id: 5, name: "Masaje Relajante", duration: "50 min", price: "$40", category: "Spa", image: "💆" },
-    { id: 6, name: "Tratamiento Facial", duration: "40 min", price: "$35", category: "Spa", image: "✨" }
+    // 💇 Servicios de Barbería
+    { id: 1, name: "Corte de cabello clásico", duration: "30 min", price: "$15-25", category: "Barbería", image: "💇" },
+    { id: 2, name: "Corte de cabello moderno/estilo", duration: "45 min", price: "$20-30", category: "Barbería", image: "💇" },
+    { id: 3, name: "Afeitado tradicional con navaja", duration: "30 min", price: "$15-20", category: "Barbería", image: "✂️" },
+    { id: 4, name: "Arreglo de barba y bigote", duration: "25 min", price: "$12-18", category: "Barbería", image: "🧔" },
+    { id: 5, name: "Corte + Barba (Combo)", duration: "60 min", price: "$30-40", category: "Barbería", image: "👨" },
+    { id: 6, name: "Tinte para cabello/barba", duration: "45 min", price: "$20-30", category: "Barbería", image: "🎨" },
+    { id: 7, name: "Mascarilla facial/tratamientos", duration: "30 min", price: "$15-25", category: "Barbería", image: "🧴" },
+    { id: 8, name: "Depilación de cejas", duration: "15 min", price: "$8-12", category: "Barbería", image: "👁️" },
+    { id: 9, name: "Limpieza facial masculina", duration: "45 min", price: "$25-35", category: "Barbería", image: "✨" },
+
+    // 💆 Servicios de Belleza
+    { id: 10, name: "Corte de dama", duration: "45 min", price: "$20-30", category: "Belleza", image: "💇‍♀️" },
+    { id: 11, name: "Peinado para eventos", duration: "60 min", price: "$35-60", category: "Belleza", image: "👰" },
+    { id: 12, name: "Tinte/coloración", duration: "90 min", price: "$40-70", category: "Belleza", image: "🌈" },
+    { id: 13, name: "Mechas/balayage", duration: "120 min", price: "$60-100", category: "Belleza", image: "🎨" },
+    { id: 14, name: "Tratamientos capilares", duration: "45 min", price: "$25-45", category: "Belleza", image: "💆‍♀️" },
+    { id: 15, name: "Alisado/keratina", duration: "120 min", price: "$80-150", category: "Belleza", image: "🔀" },
+    { id: 16, name: "Extensiones de cabello", duration: "120 min", price: "$100-250", category: "Belleza", image: "👑" },
+
+    // 💅 Servicios de Manos y Pies
+    { id: 17, name: "Manicure básica", duration: "30 min", price: "$15-20", category: "Manos y Pies", image: "💅" },
+    { id: 18, name: "Manicure spa/lujo", duration: "45 min", price: "$25-35", category: "Manos y Pies", image: "💅" },
+    { id: 19, name: "Pedicure básica", duration: "45 min", price: "$20-25", category: "Manos y Pies", image: "👣" },
+    { id: 20, name: "Pedicure spa/lujo", duration: "60 min", price: "$30-40", category: "Manos y Pies", image: "👣" },
+    { id: 21, name: "Uñas acrílicas", duration: "90 min", price: "$40-60", category: "Manos y Pies", image: "💅" },
+    { id: 22, name: "Uñas de gel", duration: "75 min", price: "$35-50", category: "Manos y Pies", image: "💅" },
+    { id: 23, name: "Decoración de uñas", duration: "30 min", price: "$10-25", category: "Manos y Pies", image: "✨" },
+
+    // ✨ Servicios de Spa y Bienestar
+    { id: 24, name: "Masaje relajante (30 min)", duration: "30 min", price: "$40", category: "Spa y Bienestar", image: "💆" },
+    { id: 25, name: "Masaje relajante (50 min)", duration: "50 min", price: "$65", category: "Spa y Bienestar", image: "💆" },
+    { id: 26, name: "Masaje relajante (80 min)", duration: "80 min", price: "$90", category: "Spa y Bienestar", image: "💆" },
+    { id: 27, name: "Masaje descontracturante", duration: "60 min", price: "$50-80", category: "Spa y Bienestar", image: "💆‍♂️" },
+    { id: 28, name: "Tratamiento facial completo", duration: "60 min", price: "$45-70", category: "Spa y Bienestar", image: "✨" },
+    { id: 29, name: "Depilación facial", duration: "25 min", price: "$15-25", category: "Spa y Bienestar", image: "👁️" },
+    { id: 30, name: "Depilación corporal (por zona)", duration: "30 min", price: "$20-40", category: "Spa y Bienestar", image: "✨" },
+    { id: 31, name: "Maquillaje profesional", duration: "60 min", price: "$35-60", category: "Spa y Bienestar", image: "💄" },
+    { id: 32, name: "Ceja y pestañas (tinte/laminado)", duration: "45 min", price: "$20-35", category: "Spa y Bienestar", image: "👁️" },
+
+    // 🧔 Servicios Especializados
+    { id: 33, name: "Corte infantil", duration: "30 min", price: "$12-18", category: "Especializados", image: "👦" },
+    { id: 34, name: "Servicios para novios (paquete)", duration: "120 min", price: "$100-200", category: "Especializados", image: "💑" },
+    { id: 35, name: "Consultoría de imagen", duration: "60 min", price: "$50-100", category: "Especializados", image: "👔" },
+    { id: 36, name: "Servicios a domicilio", duration: "Varía", price: "+$20-40 al precio base", category: "Especializados", image: "🏠" }
   ];
 
   const timeSlots = [
@@ -92,7 +134,25 @@ function Appointments({ user, onBackToHome, onLogout }) {
     "15:00", "15:30", "16:00", "16:30", "17:00", "17:30"
   ];
 
-  const categories = ["Popular", "Cabello", "Uñas", "Spa"];
+  const categories = ["Todas", "Barbería", "Belleza", "Manos y Pies", "Spa y Bienestar", "Especializados"];
+
+  // Función para filtrar servicios según búsqueda y categoría
+  const filteredServices = services.filter(service => {
+    const matchesSearch = service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         service.category.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === "Todas" || service.category === selectedCategory;
+    
+    return matchesSearch && matchesCategory;
+  });
+
+  // Agrupar servicios por categoría
+  const servicesByCategory = filteredServices.reduce((acc, service) => {
+    if (!acc[service.category]) {
+      acc[service.category] = [];
+    }
+    acc[service.category].push(service);
+    return acc;
+  }, {});
 
   const steps = [
     { number: 1, title: "Establecimiento" },
@@ -257,6 +317,8 @@ function Appointments({ user, onBackToHome, onLogout }) {
     setSelectedDate(null);
     setSelectedTime("");
     setNotes("");
+    setSearchTerm("");
+    setSelectedCategory("Todas");
   };
 
   const handleNavigation = (section) => {
@@ -762,41 +824,68 @@ function Appointments({ user, onBackToHome, onLogout }) {
               <div style={styles.searchContainer}>
                 <input
                   type="text"
-                  placeholder="Buscar servicios"
+                  placeholder="Buscar servicios o categorías"
                   style={styles.searchInput}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
               <div style={styles.categories}>
                 {categories.map(category => (
                   <button
                     key={category}
-                    style={styles.categoryButton}
+                    style={{
+                      ...styles.categoryButton,
+                      backgroundColor: selectedCategory === category ? "#3498db" : "#f8f9fa",
+                      color: selectedCategory === category ? "white" : "#666",
+                      borderColor: selectedCategory === category ? "#3498db" : "#ddd"
+                    }}
+                    onClick={() => setSelectedCategory(category)}
                   >
                     {category}
                   </button>
                 ))}
               </div>
             </div>
-            <div style={styles.servicesGrid}>
-              {services.map(service => (
-                <div 
-                  key={service.id} 
-                  style={{
-                    ...styles.serviceCard,
-                    borderColor: selectedService?.id === service.id ? "#3498db" : "#e0e0e0"
-                  }}
-                  onClick={() => setSelectedService(service)}
-                >
-                  <div style={styles.serviceImage}>{service.image}</div>
-                  <h3 style={styles.serviceName}>{service.name}</h3>
-                  <p style={styles.serviceDuration}>{service.duration}</p>
-                  <p style={styles.servicePrice}>{service.price}</p>
-                  <button style={styles.selectButton}>
-                    {selectedService?.id === service.id ? "Seleccionado" : "Seleccionar"}
-                  </button>
-                </div>
-              ))}
-            </div>
+            
+            {Object.keys(servicesByCategory).length === 0 ? (
+              <div style={styles.noResults}>
+                <p>No se encontraron servicios que coincidan con tu búsqueda.</p>
+              </div>
+            ) : (
+              <>
+                {Object.entries(servicesByCategory).map(([category, categoryServices]) => (
+                  <div key={category} style={styles.categorySection}>
+                    <h3 style={styles.categoryTitle}>{category}</h3>
+                    <div style={styles.servicesGrid}>
+                      {categoryServices.map(service => (
+                        <div 
+                          key={service.id} 
+                          style={{
+                            ...styles.serviceCard,
+                            borderColor: selectedService?.id === service.id ? "#3498db" : "#e0e0e0"
+                          }}
+                          onClick={() => setSelectedService(service)}
+                        >
+                          <div style={styles.serviceImage}>{service.image}</div>
+                          <h3 style={styles.serviceName}>{service.name}</h3>
+                          <p style={styles.serviceDuration}>{service.duration}</p>
+                          <p style={styles.servicePrice}>{service.price}</p>
+                          <button style={{
+                            ...styles.selectButton,
+                            backgroundColor: selectedService?.id === service.id ? "#3498db" : "#f8f9fa",
+                            color: selectedService?.id === service.id ? "white" : "#666"
+                          }}>
+                            {selectedService?.id === service.id ? "Seleccionado" : "Seleccionar"}
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </>
+            )}
+            
             <div style={styles.navigationButtons}>
               <button style={styles.secondaryButton} onClick={prevStep}>
                 Atrás
@@ -1152,11 +1241,11 @@ function Appointments({ user, onBackToHome, onLogout }) {
                 >
                   <span style={styles.summaryLabel}>Notas e imágenes:</span>
                   <button
-                    style={styles.editButton}
-                    onClick={() => setCurrentStep(4)}
-                  >
-                    Editar
-                  </button>
+                  style={styles.editButton}
+                  onClick={() => setCurrentStep(4)}
+                >
+                  Editar
+                </button>
                 </div>
                 <p style={styles.notesText}>
                   {notes || "No se han agregado notas."}
@@ -1528,6 +1617,17 @@ const styles = {
       borderColor: "#3498db"
     }
   },
+  categorySection: {
+    marginBottom: "30px"
+  },
+  categoryTitle: {
+    fontSize: "18px",
+    fontWeight: "600",
+    color: "#2c3e50",
+    margin: "0 0 15px 0",
+    paddingBottom: "10px",
+    borderBottom: "2px solid #f0f0f0"
+  },
   servicesGrid: {
     display: "grid",
     gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
@@ -1584,6 +1684,13 @@ const styles = {
       color: "white",
       borderColor: "#3498db"
     }
+  },
+  noResults: {
+    textAlign: "center",
+    padding: "40px",
+    backgroundColor: "white",
+    borderRadius: "12px",
+    color: "#7f8c8d"
   },
   employeeGrid: {
     display: "grid",
@@ -1731,301 +1838,301 @@ const styles = {
     margin: 0,
   },
   notesSection: {},
-  label: {
-    display: "block",
-    fontSize: "14px",
-    fontWeight: "500",
-    color: "#333",
-    marginBottom: "8px",
-  },
-  notesTextarea: {
-    width: "100%",
-    padding: "12px 15px",
-    border: "1px solid #ddd",
-    borderRadius: "8px",
-    fontSize: "14px",
-    resize: "vertical",
-    fontFamily: "inherit",
-    ":focus": {
-      outline: "none",
-      borderColor: "#3498db",
-      boxShadow: "0 0 0 2px rgba(52, 152, 219, 0.2)",
-    },
-  },
-  dateAndTimeContainer: {
-    display: "flex",
-    gap: "30px",
-    backgroundColor: "white",
-    padding: "20px",
-    borderRadius: "12px",
-  },
-  calendarWrapper: {
-    flex: "1.5",
-  },
-  timeSlotsWrapper: {
-    flex: "1",
-    borderLeft: "1px solid #eee",
-    paddingLeft: "30px",
-    maxHeight: "400px",
-    overflowY: "auto",
-  },
-  calendarHeader: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: "20px",
-  },
-  calendarNavButton: {
-    padding: "8px 12px",
-    backgroundColor: "transparent",
-    border: "none",
-    fontSize: "20px",
-    fontWeight: "bold",
-    color: "#666",
-    cursor: "pointer",
-  },
-  calendarMonth: {
-    fontSize: "16px",
-    fontWeight: "600",
-    color: "#333",
-    margin: 0,
-    textTransform: "capitalize",
-  },
-  calendarGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(7, 1fr)",
-    gap: "5px",
-  },
-    calendarDayHeader: {
-    textAlign: "center",
-    fontSize: "12px",
-    fontWeight: "600",
-    color: "#999",
-    paddingBottom: "10px",
-  },
-  calendarDay: {
-    padding: "8px",
-    border: "1px solid transparent",
-    borderRadius: "50%",
-    width: "36px",
-    height: "36px",
-    margin: "0 auto",
-    backgroundColor: "white",
-    fontSize: "14px",
-    cursor: "pointer",
-    transition: "all 0.2s ease",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    ":hover": {
-      backgroundColor: "#f8f9fa",
-      borderColor: "#3498db",
-    },
-  },
-  calendarDayNotInMonth: {
-    color: "#ccc",
-    cursor: "not-allowed",
-    ":hover": {
-      backgroundColor: "white",
-      borderColor: "transparent",
-    },
-  },
-  timeContainer: {},
-  timeTitle: {
-    fontSize: "16px",
-    fontWeight: "600",
-    color: "#333",
-    margin: "0 0 15px 0",
-  },
-  timeGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, minmax(80px, 1fr))",
-    gap: "10px",
-  },
-  timeSlot: {
-    padding: "10px",
-    border: "1px solid #ddd",
-    borderRadius: "6px",
-    fontSize: "14px",
-    fontWeight: "500",
-    cursor: "pointer",
-    transition: "all 0.3s ease",
-    textAlign: "center",
-    ":hover": {
-      backgroundColor: "#3498db",
-      color: "white",
-      borderColor: "#3498db",
-    },
-  },
-  timePrompt: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    height: "100%",
-    textAlign: "center",
-    color: "#999",
-    fontSize: "14px",
-  },
-  summaryCard: {
-    backgroundColor: "white",
-    padding: "25px",
-    borderRadius: "12px",
-    marginBottom: "20px",
-  },
-  summaryItem: {
-    display: "flex",
-    alignItems: "center",
-    padding: "15px 0",
-    borderBottom: "1px solid #f0f0f0",
-  },
-  summaryLabel: {
-    fontSize: "14px",
-    fontWeight: "500",
-    color: "#666",
-    width: "150px",
-    flexShrink: 0,
-  },
-  summaryValue: {
-    fontSize: "14px",
-    color: "#333",
-    flex: 1,
-  },
-  editButton: {
-    padding: "6px 12px",
-    backgroundColor: "transparent",
-    border: "1px solid #ddd",
-    borderRadius: "4px",
-    fontSize: "12px",
-    fontWeight: "500",
-    color: "#666",
-    cursor: "pointer",
-    transition: "all 0.3s ease",
-    ":hover": {
-      backgroundColor: "#3498db",
-      color: "white",
-      borderColor: "#3498db",
-    },
-  },
-  notesSummary: {
-    padding: "15px 0",
-  },
-  notesText: {
-    fontSize: "14px",
-    color: "#666",
-    margin: "8px 0",
-    lineHeight: "1.5",
-  },
-  imageThumbnail: {
-    width: "80px",
-    height: "80px",
-    border: "1px solid #ddd",
-    borderRadius: "6px",
-    backgroundColor: "#f8f9fa",
-    marginTop: "10px",
-    objectFit: "cover",
-  },
-  noImageText: {
-    fontSize: "14px",
-    color: "#999",
-    fontStyle: "italic",
-    margin: "10px 0 0 0",
-  },
-  securityText: {
-    fontSize: "12px",
-    color: "#999",
-    textAlign: "center",
-    margin: "0 0 20px 0",
-  },
-  confirmationContainer: {
-    backgroundColor: "white",
-    padding: "40px",
-    borderRadius: "12px",
-    textAlign: "center"
-  },
-  confirmationIcon: {
-    fontSize: "60px",
-    color: "#27ae60",
-    marginBottom: "20px"
-  },
-  confirmationTitle: {
-    fontSize: "24px",
-    fontWeight: "600",
-    color: "#333",
-    margin: "0 0 15px 0"
-  },
-  confirmationDetails: {
-    fontSize: "16px",
-    color: "#666",
-    margin: "0 0 30px 0",
-    lineHeight: "1.5"
-  },
-  confirmationActions: {
-    display: "flex",
-    justifyContent: "center",
-    gap: "15px",
-    marginBottom: "30px",
-    flexWrap: "wrap"
-  },
-  confirmationActionButton: {
-    padding: "10px 20px",
-    backgroundColor: "#f8f9fa",
-    border: "1px solid #ddd",
-    borderRadius: "6px",
-    fontSize: "14px",
-    fontWeight: "500",
-    color: "#666",
-    cursor: "pointer",
-    transition: "all 0.3s ease",
-    ":hover": {
-      backgroundColor: "#3498db",
-      color: "white",
-      borderColor: "#3498db"
-    }
-  },
-  navigationButtons: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginTop: "30px"
-  },
-  primaryButton: {
-    padding: "12px 25px",
-    backgroundColor: "#3498db",
-    color: "white",
-    border: "none",
-    borderRadius: "8px",
-    fontSize: "16px",
-    fontWeight: "600",
-    cursor: "pointer",
-    transition: "all 0.3s ease",
-    ":hover": {
-      backgroundColor: "#2980b9",
-      transform: "translateY(-2px)",
-      boxShadow: "0 5px 15px rgba(52, 152, 219, 0.3)"
-    },
-    ":disabled": {
-      backgroundColor: "#ccc",
-      cursor: "not-allowed",
-      transform: "none",
-      boxShadow: "none"
-    }
-  },
-  secondaryButton: {
-    padding: "12px 25px",
-    backgroundColor: "transparent",
-    color: "#666",
-    border: "1px solid #ddd",
-    borderRadius: "8px",
-    fontSize: "16px",
-    fontWeight: "600",
-    cursor: "pointer",
-    transition: "all 0.3s ease",
-    ":hover": {
-      backgroundColor: "#f8f9fa",
-      borderColor: "#3498db",
-      color: "#3498db"
-    }
-  }
+label: {
+display: "block",
+fontSize: "14px",
+fontWeight: "500",
+color: "#333",
+marginBottom: "8px",
+},
+notesTextarea: {
+width: "100%",
+padding: "12px 15px",
+border: "1px solid #ddd",
+borderRadius: "8px",
+fontSize: "14px",
+resize: "vertical",
+fontFamily: "inherit",
+":focus": {
+outline: "none",
+borderColor: "#3498db",
+boxShadow: "0 0 0 2px rgba(52, 152, 219, 0.2)",
+},
+},
+dateAndTimeContainer: {
+display: "flex",
+gap: "30px",
+backgroundColor: "white",
+padding: "20px",
+borderRadius: "12px",
+},
+calendarWrapper: {
+flex: "1.5",
+},
+timeSlotsWrapper: {
+flex: "1",
+borderLeft: "1px solid #eee",
+paddingLeft: "30px",
+maxHeight: "400px",
+overflowY: "auto",
+},
+calendarHeader: {
+display: "flex",
+alignItems: "center",
+justifyContent: "space-between",
+marginBottom: "20px",
+},
+calendarNavButton: {
+padding: "8px 12px",
+backgroundColor: "transparent",
+border: "none",
+fontSize: "20px",
+fontWeight: "bold",
+color: "#666",
+cursor: "pointer",
+},
+calendarMonth: {
+fontSize: "16px",
+fontWeight: "600",
+color: "#333",
+margin: 0,
+textTransform: "capitalize",
+},
+calendarGrid: {
+display: "grid",
+gridTemplateColumns: "repeat(7, 1fr)",
+gap: "5px",
+},
+calendarDayHeader: {
+textAlign: "center",
+fontSize: "12px",
+fontWeight: "600",
+color: "#999",
+paddingBottom: "10px",
+},
+calendarDay: {
+padding: "8px",
+border: "1px solid transparent",
+borderRadius: "50%",
+width: "36px",
+height: "36px",
+margin: "0 auto",
+backgroundColor: "white",
+fontSize: "14px",
+cursor: "pointer",
+transition: "all 0.2s ease",
+display: "flex",
+alignItems: "center",
+justifyContent: "center",
+":hover": {
+backgroundColor: "#f8f9fa",
+borderColor: "#3498db",
+},
+},
+calendarDayNotInMonth: {
+color: "#ccc",
+cursor: "not-allowed",
+":hover": {
+backgroundColor: "white",
+borderColor: "transparent",
+},
+},
+timeContainer: {},
+timeTitle: {
+fontSize: "16px",
+fontWeight: "600",
+color: "#333",
+margin: "0 0 15px 0",
+},
+timeGrid: {
+display: "grid",
+gridTemplateColumns: "repeat(auto-fill, minmax(80px, 1fr))",
+gap: "10px",
+},
+timeSlot: {
+padding: "10px",
+border: "1px solid #ddd",
+borderRadius: "6px",
+fontSize: "14px",
+fontWeight: "500",
+cursor: "pointer",
+transition: "all 0.3s ease",
+textAlign: "center",
+":hover": {
+backgroundColor: "#3498db",
+color: "white",
+borderColor: "#3498db",
+},
+},
+timePrompt: {
+display: "flex",
+alignItems: "center",
+justifyContent: "center",
+height: "100%",
+textAlign: "center",
+color: "#999",
+fontSize: "14px",
+},
+summaryCard: {
+backgroundColor: "white",
+padding: "25px",
+borderRadius: "12px",
+marginBottom: "20px",
+},
+summaryItem: {
+display: "flex",
+alignItems: "center",
+padding: "15px 0",
+borderBottom: "1px solid #f0f0f0",
+},
+summaryLabel: {
+fontSize: "14px",
+fontWeight: "500",
+color: "#666",
+width: "150px",
+flexShrink: 0,
+},
+summaryValue: {
+fontSize: "14px",
+color: "#333",
+flex: 1,
+},
+editButton: {
+padding: "6px 12px",
+backgroundColor: "transparent",
+border: "1px solid #ddd",
+borderRadius: "4px",
+fontSize: "12px",
+fontWeight: "500",
+color: "#666",
+cursor: "pointer",
+transition: "all 0.3s ease",
+":hover": {
+backgroundColor: "#3498db",
+color: "white",
+borderColor: "#3498db",
+},
+},
+notesSummary: {
+padding: "15px 0",
+},
+notesText: {
+fontSize: "14px",
+color: "#666",
+margin: "8px 0",
+lineHeight: "1.5",
+},
+imageThumbnail: {
+width: "80px",
+height: "80px",
+border: "1px solid #ddd",
+borderRadius: "6px",
+backgroundColor: "#f8f9fa",
+marginTop: "10px",
+objectFit: "cover",
+},
+noImageText: {
+fontSize: "14px",
+color: "#999",
+fontStyle: "italic",
+margin: "10px 0 0 0",
+},
+securityText: {
+fontSize: "12px",
+color: "#999",
+textAlign: "center",
+margin: "0 0 20px 0",
+},
+confirmationContainer: {
+backgroundColor: "white",
+padding: "40px",
+borderRadius: "12px",
+textAlign: "center"
+},
+confirmationIcon: {
+fontSize: "60px",
+color: "#27ae60",
+marginBottom: "20px"
+},
+confirmationTitle: {
+fontSize: "24px",
+fontWeight: "600",
+color: "#333",
+margin: "0 0 15px 0"
+},
+confirmationDetails: {
+fontSize: "16px",
+color: "#666",
+margin: "0 0 30px 0",
+lineHeight: "1.5"
+},
+confirmationActions: {
+display: "flex",
+justifyContent: "center",
+gap: "15px",
+marginBottom: "30px",
+flexWrap: "wrap"
+},
+confirmationActionButton: {
+padding: "10px 20px",
+backgroundColor: "f8f9fa",
+border: "1px solid #ddd",
+borderRadius: "6px",
+fontSize: "14px",
+fontWeight: "500",
+color: "#666",
+cursor: "pointer",
+transition: "all 0.3s ease",
+":hover": {
+backgroundColor: "#3498db",
+color: "white",
+borderColor: "#3498db"
+}
+},
+navigationButtons: {
+display: "flex",
+justifyContent: "space-between",
+alignItems: "center",
+marginTop: "30px"
+},
+primaryButton: {
+padding: "12px 25px",
+backgroundColor: "#3498db",
+color: "white",
+border: "none",
+borderRadius: "8px",
+fontSize: "16px",
+fontWeight: "600",
+cursor: "pointer",
+transition: "all 0.3s ease",
+":hover": {
+backgroundColor: "#2980b9",
+transform: "translateY(-2px)",
+boxShadow: "0 5px 15px rgba(52, 152, 219, 0.3)"
+},
+":disabled": {
+backgroundColor: "#ccc",
+cursor: "not-allowed",
+transform: "none",
+boxShadow: "none"
+}
+},
+secondaryButton: {
+padding: "12px 25px",
+backgroundColor: "transparent",
+color: "#666",
+border: "1px solid #ddd",
+borderRadius: "8px",
+fontSize: "16px",
+fontWeight: "600",
+cursor: "pointer",
+transition: "all 0.3s ease",
+":hover": {
+backgroundColor: "#f8f9fa",
+borderColor: "#3498db",
+color: "#3498db"
+}
+}
 };
 
 export default Appointments;
