@@ -27,7 +27,7 @@ function AppointmentHeader({ user, onBackToHome, onLogout, currentStep, onNewApp
               <div
                 style={{
                   ...headerStyles.progressStep,
-                  backgroundColor: currentStep >= step.number ? "#ff6b95" : "#e0e0e0",
+                  backgroundColor: currentStep >= step.number ? "#3498db" : "#e0e0e0",
                   color: currentStep >= step.number ? "white" : "#666"
                 }}
                 title={step.title}
@@ -38,7 +38,7 @@ function AppointmentHeader({ user, onBackToHome, onLogout, currentStep, onNewApp
                 <div
                   style={{
                     ...headerStyles.progressLine,
-                    backgroundColor: currentStep > step.number ? "#ff6b95" : "#e0e0e0"
+                    backgroundColor: currentStep > step.number ? "#3498db" : "#e0e0e0"
                   }}
                 />
               )}
@@ -132,21 +132,8 @@ const headerStyles = {
     transition: "all 0.3s ease",
     ":hover": {
       backgroundColor: "#f8f9fa",
-      borderColor: "#ff6b95"
+      borderColor: "#3498db"
     }
-  },
-  logo: {
-    display: "flex",
-    alignItems: "center",
-    gap: "10px"
-  },
-  logoIcon: {
-    fontSize: "24px"
-  },
-  logoText: {
-    fontSize: "18px",
-    fontWeight: "600",
-    color: "#2c3e50"
   },
   centerSection: {
     display: "flex",
@@ -199,7 +186,7 @@ const headerStyles = {
     transition: "all 0.3s ease",
     ":hover": {
       backgroundColor: "#f8f9fa",
-      borderColor: "#ff6b95"
+      borderColor: "#3498db"
     }
   },
   userMenu: {
@@ -234,7 +221,7 @@ const headerStyles = {
     width: "36px",
     height: "36px",
     borderRadius: "50%",
-    backgroundColor: "#ff6b95",
+    backgroundColor: "#3498db",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -276,7 +263,7 @@ const headerStyles = {
     margin: "8px 0"
   },
   newAppointmentButton: {
-    backgroundColor: "#ff6b95",
+    backgroundColor: "#3498db",
     color: "white",
     border: "none",
     padding: "10px 20px",
@@ -286,7 +273,7 @@ const headerStyles = {
     fontSize: "14px",
     transition: "all 0.3s ease",
     ":hover": {
-      backgroundColor: "#ff5a8c",
+      backgroundColor: "#2980b9",
       transform: "translateY(-1px)"
     }
   }

@@ -13,10 +13,6 @@ function Header({ user, onLoginClick, onRegisterClick, onLogout, onMenuClick }) 
           >
             ☰
           </button>
-          <div style={logoStyle}>
-            <span style={logoIconStyle}>✂️</span>
-            <h1 style={logoTextStyle}>Apolo Barber & Spa</h1>
-          </div>
         </div>
 
         {/* Botones de usuario */}
@@ -100,24 +96,6 @@ const menuButtonStyle = {
   }
 };
 
-const logoStyle = {
-  display: "flex",
-  alignItems: "center",
-  gap: "10px"
-};
-
-const logoIconStyle = {
-  fontSize: "28px"
-};
-
-const logoTextStyle = {
-  fontSize: "20px",
-  fontWeight: "600",
-  color: "white",
-  margin: 0,
-  display: { xs: "none", md: "block" } // Oculta en móviles, muestra en desktop
-};
-
 const rightSectionStyle = {
   display: "flex",
   alignItems: "center"
@@ -189,7 +167,6 @@ const registerButtonStyle = {
 };
 
 // Aplicar estilos responsive
-logoTextStyle.display = window.innerWidth < 768 ? "none" : "block";
 userWelcomeStyle.display = window.innerWidth < 768 ? "none" : "block";
 
 export default Header;

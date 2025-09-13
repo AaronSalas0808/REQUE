@@ -1,5 +1,4 @@
 import React, { useState, useRef } from "react";
-// ... (imports de date-fns no cambian)
 import {
   format,
   startOfWeek,
@@ -19,9 +18,6 @@ import { es } from "date-fns/locale";
 import { ref, push, serverTimestamp } from "firebase/database";
 import { database } from "../firebase";
 
-//const storage = getStorage();
-// ... (formatFileSize no cambia)
-
 const formatFileSize = (bytes) => {
   if (bytes === 0) return "0 Bytes";
   const k = 1024;
@@ -30,9 +26,7 @@ const formatFileSize = (bytes) => {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
 };
 
-// --- NUEVO: Datos de los empleados ---
 const employees = [
-  // Centro A (ID 1)
   { id: 1, name: "Carlos R.", photo: "👨🏻", centerId: 1, category: "Popular" },
   { id: 2, name: "Javier M.", photo: "👨🏼", centerId: 1, category: "Popular" },
   { id: 3, name: "Luis G.", photo: "👨🏽", centerId: 1, category: "Popular" },
@@ -42,7 +36,6 @@ const employees = [
   { id: 7, name: "Elena V.", photo: "👩🏻‍🦰", centerId: 1, category: "Spa" },
   { id: 8, name: "Isabel S.", photo: "👩🏼‍🦰", centerId: 1, category: "Spa" },
   { id: 9, name: "Laura T.", photo: "👩🏽‍🦰", centerId: 1, category: "Spa" },
-  // Centro B (ID 2)
   { id: 10, name: "Miguel A.", photo: "👨🏻", centerId: 2, category: "Popular" },
   { id: 11, name: "David F.", photo: "👨🏼", centerId: 2, category: "Popular" },
   { id: 12, name: "Pedro S.", photo: "👨🏽", centerId: 2, category: "Popular" },
@@ -52,7 +45,6 @@ const employees = [
   { id: 16, name: "Verónica N.", photo: "👩🏻‍🦰", centerId: 2, category: "Spa" },
   { id: 17, name: "Raquel B.", photo: "👩🏼‍🦰", centerId: 2, category: "Spa" },
   { id: 18, name: "Marta G.", photo: "👩🏽‍🦰", centerId: 2, category: "Spa" },
-  // Centro C (ID 3)
   { id: 19, name: "Andrés V.", photo: "👨🏻", centerId: 3, category: "Popular" },
   { id: 20, name: "Sergio P.", photo: "👨🏼", centerId: 3, category: "Popular" },
   { id: 21, name: "Jorge L.", photo: "👨🏽", centerId: 3, category: "Popular" },
@@ -69,7 +61,7 @@ function Appointments({ user, onBackToHome, onLogout }) {
   const [selectedCenter, setSelectedCenter] = useState(null);
   const [selectedService, setSelectedService] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
-  const [selectedTime, setSelectedTime] = useState("");
+  const [selectedTime, setSelectedTime] = useState(null);
   const [notes, setNotes] = useState("");
   const [appointments, setAppointments] = useState([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -78,11 +70,8 @@ function Appointments({ user, onBackToHome, onLogout }) {
   const fileInputRef = useRef(null);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
-
-  // NUEVO: Estado para el profesional seleccionado
   const [selectedEmployee, setSelectedEmployee] = useState(null);
 
-  // ... (Datos de ejemplo no cambian)
   const centers = [
     { id: 1, name: "Centro A", address: "Av. Siempre Viva 123 - 1.2 km", rating: "4.8 (230)", image: "🏢" },
     { id: 2, name: "Centro B", address: "Calle Luna 45 - 3.4 km", rating: "4.6 (180)", image: "🏢" },
@@ -106,7 +95,6 @@ function Appointments({ user, onBackToHome, onLogout }) {
 
   const categories = ["Popular", "Cabello", "Uñas", "Spa"];
 
-  // MODIFICADO: Añadir nuevo paso y re-numerar
   const steps = [
     { number: 1, title: "Establecimiento" },
     { number: 2, title: "Servicio" },
@@ -130,7 +118,6 @@ function Appointments({ user, onBackToHome, onLogout }) {
   const nextStep = () => setCurrentStep(currentStep + 1);
   const prevStep = () => setCurrentStep(currentStep - 1);
 
-  // ... (funciones de carga de imagen no cambian)
   const processFile = (file) => {
     if (file && file.type.startsWith("image/")) {
       setImageFile(file);
@@ -196,54 +183,49 @@ function Appointments({ user, onBackToHome, onLogout }) {
     return format(dateObject, "EEEE, d 'de' MMMM 'de' yyyy", { locale: es });
   };
 
-const handleConfirmAppointment = async () => {
-  try {
-    // Validar que todos los campos necesarios estén seleccionados
-    if (!selectedCenter || !selectedService || !selectedEmployee || !selectedDate || !selectedTime) {
-      alert("Por favor, completa todos los campos obligatorios antes de confirmar.");
-      return;
+  const handleConfirmAppointment = async () => {
+    try {
+      if (!selectedCenter || !selectedService || !selectedEmployee || !selectedDate || !selectedTime) {
+        alert("Por favor, completa todos los campos obligatorios antes de confirmar.");
+        return;
+      }
+
+      const newAppointment = {
+        center: selectedCenter,
+        service: selectedService,
+        employee: selectedEmployee,
+        date: selectedDate.toISOString(),
+        time: selectedTime,
+        notes: notes,
+        imageUrl: imagePreviewUrl,
+        status: "confirmed",
+        userId: user?.uid || "anonymous",
+        userEmail: user?.email || "unknown@email.com",
+        createdAt: serverTimestamp()
+      };
+      
+      const appointmentsRef = ref(database, 'appointments');
+      const newAppointmentRef = push(appointmentsRef, newAppointment);
+      
+      console.log("Cita guardada con ID: ", newAppointmentRef.key);
+      
+      setAppointments([...appointments, { 
+        ...newAppointment, 
+        id: newAppointmentRef.key,
+        date: selectedDate
+      }]);
+      nextStep();
+    } catch (error) {
+      console.error("Error al guardar la cita: ", error);
+      alert("Hubo un error al guardar la cita. Por favor, intenta nuevamente.");
     }
+  };
 
-    // Crear el objeto de la cita
-    const newAppointment = {
-      center: selectedCenter,
-      service: selectedService,
-      employee: selectedEmployee,
-      date: selectedDate.toISOString(), // Guardar como string
-      time: selectedTime,
-      notes: notes,
-      imageUrl: imagePreviewUrl,
-      status: "confirmed",
-      userId: user?.uid || "anonymous",
-      userEmail: user?.email || "unknown@email.com",
-      createdAt: serverTimestamp()
-    };
-    
-    // Guardar en Realtime Database
-    const appointmentsRef = ref(database, 'appointments');
-    const newAppointmentRef = push(appointmentsRef, newAppointment);
-    
-    console.log("Cita guardada con ID: ", newAppointmentRef.key);
-    
-    // Actualizar el estado local
-    setAppointments([...appointments, { 
-      ...newAppointment, 
-      id: newAppointmentRef.key,
-      date: selectedDate
-    }]);
-    nextStep();
-  } catch (error) {
-    console.error("Error al guardar la cita: ", error);
-    alert("Hubo un error al guardar la cita. Por favor, intenta nuevamente.");
-  }
-};
-
-  // MODIFICADO: Resetear el estado del empleado
   const handleNewAppointment = () => {
     setCurrentStep(1);
     setSelectedCenter(null);
     setSelectedService(null);
-    setSelectedEmployee(null); // Resetear empleado
+    setSelectedEmployee(null);
     setSelectedDate(null);
     setSelectedTime("");
     setNotes("");
@@ -262,7 +244,6 @@ const handleConfirmAppointment = async () => {
     setCurrentStep(stepNumber);
   };
 
-  // ... (renderHeader y renderSidebar no cambian)
   const renderHeader = () => {
     return (
       <div style={headerStyles.container}>
@@ -282,7 +263,7 @@ const handleConfirmAppointment = async () => {
                 <div
                   style={{
                     ...headerStyles.progressStep,
-                    backgroundColor: currentStep >= step.number ? "#ff6b95" : "#e0e0e0",
+                    backgroundColor: currentStep >= step.number ? "#3498db" : "#e0e0e0",
                     color: currentStep >= step.number ? "white" : "#666"
                   }}
                   title={step.title}
@@ -293,7 +274,7 @@ const handleConfirmAppointment = async () => {
                   <div
                     style={{
                       ...headerStyles.progressLine,
-                      backgroundColor: currentStep > step.number ? "#ff6b95" : "#e0e0e0"
+                      backgroundColor: currentStep > step.number ? "#3498db" : "#e0e0e0"
                     }}
                   />
                 )}
@@ -366,7 +347,7 @@ const handleConfirmAppointment = async () => {
                 key={step.number}
                 style={{
                   ...sidebarStyles.stepItem,
-                  backgroundColor: currentStep === step.number ? "#ff6b95" : "transparent",
+                  backgroundColor: currentStep === step.number ? "#3498db" : "transparent",
                   color: currentStep === step.number ? "white" : "#666"
                 }}
                 onClick={() => {
@@ -428,7 +409,6 @@ const handleConfirmAppointment = async () => {
 
   const renderStepContent = () => {
     switch (currentStep) {
-      // ... (case 1 y 2 no cambian)
       case 1:
         return (
           <div style={styles.stepContent}>
@@ -442,7 +422,7 @@ const handleConfirmAppointment = async () => {
                   key={center.id} 
                   style={{
                     ...styles.centerCard,
-                    borderColor: selectedCenter?.id === center.id ? "#ff6b95" : "#e0e0e0"
+                    borderColor: selectedCenter?.id === center.id ? "#3498db" : "#e0e0e0"
                   }}
                   onClick={() => setSelectedCenter(center)}
                 >
@@ -502,7 +482,7 @@ const handleConfirmAppointment = async () => {
                   key={service.id} 
                   style={{
                     ...styles.serviceCard,
-                    borderColor: selectedService?.id === service.id ? "#ff6b95" : "#e0e0e0"
+                    borderColor: selectedService?.id === service.id ? "#3498db" : "#e0e0e0"
                   }}
                   onClick={() => setSelectedService(service)}
                 >
@@ -531,7 +511,6 @@ const handleConfirmAppointment = async () => {
           </div>
         );
 
-      // --- NUEVO: Paso 3 para seleccionar profesional ---
       case 3: {
         const availableEmployees = employees.filter(
           (emp) =>
@@ -555,7 +534,7 @@ const handleConfirmAppointment = async () => {
                     ...styles.employeeCard,
                     borderColor:
                       selectedEmployee?.id === employee.id
-                        ? "#ff6b95"
+                        ? "#3498db"
                         : "#e0e0e0",
                   }}
                   onClick={() => setSelectedEmployee(employee)}
@@ -584,7 +563,6 @@ const handleConfirmAppointment = async () => {
         );
       }
 
-      // MODIFICADO: El antiguo paso 3 ahora es el 4
       case 4:
         return (
           <div style={styles.stepContent}>
@@ -604,7 +582,7 @@ const handleConfirmAppointment = async () => {
                 <div
                   style={{
                     ...styles.uploadArea,
-                    borderColor: isDraggingOver ? "#ff6b95" : "#ddd",
+                    borderColor: isDraggingOver ? "#3498db" : "#ddd",
                   }}
                   onClick={handleUploadClick}
                   onDragEnter={handleDragEnter}
@@ -685,7 +663,6 @@ const handleConfirmAppointment = async () => {
           </div>
         );
 
-      // MODIFICADO: El antiguo paso 4 ahora es el 5
       case 5: {
         const weekStartsOn = 1;
         const firstDayOfMonth = startOfMonth(currentDate);
@@ -743,9 +720,9 @@ const handleConfirmAppointment = async () => {
                           ...(isCurrentMonth
                             ? {}
                             : styles.calendarDayNotInMonth),
-                          backgroundColor: isSelected ? "#ff6b95" : "white",
+                          backgroundColor: isSelected ? "#3498db" : "white",
                           color: isSelected ? "white" : isCurrentMonth ? "#333" : "#ccc",
-                          borderColor: isCurrentToday && isCurrentMonth ? "#ff6b95" : "transparent",
+                          borderColor: isCurrentToday && isCurrentMonth ? "#3498db" : "transparent",
                           fontWeight: isSelected || isCurrentToday ? "600" : "500",
                         }}
                         onClick={() => handleDateClick(day)}
@@ -770,7 +747,7 @@ const handleConfirmAppointment = async () => {
                           style={{
                             ...styles.timeSlot,
                             backgroundColor:
-                              selectedTime === time ? "#ff6b95" : "#f8f9fa",
+                              selectedTime === time ? "#3498db" : "#f8f9fa",
                             color:
                               selectedTime === time ? "white" : "#2c3e50",
                           }}
@@ -805,7 +782,6 @@ const handleConfirmAppointment = async () => {
         );
       }
 
-      // MODIFICADO: El antiguo paso 5 ahora es el 6
       case 6:
         return (
           <div style={styles.stepContent}>
@@ -835,7 +811,6 @@ const handleConfirmAppointment = async () => {
                   Editar
                 </button>
               </div>
-              {/* NUEVO: Resumen del profesional */}
               <div style={styles.summaryItem}>
                 <span style={styles.summaryLabel}>Profesional:</span>
                 <span style={styles.summaryValue}>
@@ -913,7 +888,6 @@ const handleConfirmAppointment = async () => {
           </div>
         );
 
-      // MODIFICADO: El antiguo paso 6 ahora es el 7
       case 7:
         const appointment = appointments[appointments.length - 1];
         return (
@@ -969,7 +943,7 @@ const handleConfirmAppointment = async () => {
   );
 }
 
-// ... (overlayStyle, headerStyles, sidebarStyles no cambian)
+// Estilos
 const overlayStyle = {
   position: "fixed",
   top: 0,
@@ -1011,9 +985,13 @@ const headerStyles = {
     color: "#666",
     fontWeight: "500",
     transition: "all 0.3s ease",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "40px",
+    height: "40px",
     ":hover": {
-      backgroundColor: "#f8f9fa",
-      borderColor: "#ff6b95"
+      backgroundColor: "#f8f9fa"
     }
   },
   backButton: {
@@ -1028,21 +1006,8 @@ const headerStyles = {
     transition: "all 0.3s ease",
     ":hover": {
       backgroundColor: "#f8f9fa",
-      borderColor: "#ff6b95"
+      borderColor: "#3498db"
     }
-  },
-  logo: {
-    display: "flex",
-    alignItems: "center",
-    gap: "10px"
-  },
-  logoIcon: {
-    fontSize: "24px"
-  },
-  logoText: {
-    fontSize: "18px",
-    fontWeight: "600",
-    color: "#2c3e50"
   },
   centerSection: {
     display: "flex",
@@ -1095,7 +1060,7 @@ const headerStyles = {
     transition: "all 0.3s ease",
     ":hover": {
       backgroundColor: "#f8f9fa",
-      borderColor: "#ff6b95"
+      borderColor: "#3498db"
     }
   },
   userMenu: {
@@ -1129,7 +1094,7 @@ const headerStyles = {
     width: "36px",
     height: "36px",
     borderRadius: "50%",
-    backgroundColor: "#ff6b95",
+    backgroundColor: "#3498db",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -1138,7 +1103,7 @@ const headerStyles = {
     fontSize: "14px"
   },
   newAppointmentButton: {
-    backgroundColor: "#ff6b95",
+    backgroundColor: "#3498db",
     color: "white",
     border: "none",
     padding: "10px 20px",
@@ -1148,7 +1113,7 @@ const headerStyles = {
     fontSize: "14px",
     transition: "all 0.3s ease",
     ":hover": {
-      backgroundColor: "#ff5a8c",
+      backgroundColor: "#2980b9",
       transform: "translateY(-1px)"
     }
   }
@@ -1199,7 +1164,7 @@ const sidebarStyles = {
     width: "60px",
     height: "60px",
     borderRadius: "50%",
-    backgroundColor: "#ff6b95",
+    backgroundColor: "#3498db",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -1385,7 +1350,7 @@ const styles = {
   mainContent: {
     flex: 1,
     padding: "30px",
-    backgroundColor: "#fafafa",
+    backgroundColor: "#f8f9fa",
     minHeight: "calc(100vh - 70px)",
     overflowY: "auto",
     transition: "margin-left 0.3s ease"
@@ -1400,12 +1365,12 @@ const styles = {
   stepTitle: {
     fontSize: "24px",
     fontWeight: "600",
-    color: "#333",
+    color: "#2c3e50",
     margin: "0 0 8px 0"
   },
   stepSubtitle: {
     fontSize: "14px",
-    color: "#666",
+    color: "#7f8c8d",
     margin: 0
   },
   centersGrid: {
@@ -1435,11 +1400,11 @@ const styles = {
     fontSize: "18px",
     fontWeight: "600",
     margin: "0 0 8px 0",
-    color: "#333"
+    color: "#2c3e50"
   },
   centerAddress: {
     fontSize: "14px",
-    color: "#666",
+    color: "#7f8c8d",
     margin: "0 0 12px 0"
   },
   rating: {
@@ -1467,8 +1432,8 @@ const styles = {
     fontSize: "14px",
     ":focus": {
       outline: "none",
-      borderColor: "#ff6b95",
-      boxShadow: "0 0 0 2px rgba(255, 107, 149, 0.2)"
+      borderColor: "#3498db",
+      boxShadow: "0 0 0 2px rgba(52, 152, 219, 0.2)"
     }
   },
   categories: {
@@ -1488,9 +1453,9 @@ const styles = {
     cursor: "pointer",
     transition: "all 0.3s ease",
     ":hover": {
-      backgroundColor: "#ff6b95",
+      backgroundColor: "#3498db",
       color: "white",
-      borderColor: "#ff6b95"
+      borderColor: "#3498db"
     }
   },
   servicesGrid: {
@@ -1520,7 +1485,7 @@ const styles = {
     fontSize: "16px",
     fontWeight: "600",
     margin: "0 0 8px 0",
-    color: "#333"
+    color: "#2c3e50"
   },
   serviceDuration: {
     fontSize: "14px",
@@ -1530,7 +1495,7 @@ const styles = {
   servicePrice: {
     fontSize: "16px",
     fontWeight: "600",
-    color: "#ff6b95",
+    color: "#3498db",
     margin: "0 0 15px 0"
   },
   selectButton: {
@@ -1545,12 +1510,11 @@ const styles = {
     transition: "all 0.3s ease",
     width: "100%",
     ":hover": {
-      backgroundColor: "#ff6b95",
+      backgroundColor: "#3498db",
       color: "white",
-      borderColor: "#ff6b95"
+      borderColor: "#3498db"
     }
   },
-  // --- NUEVOS ESTILOS PARA EL PASO 3 ---
   employeeGrid: {
     display: "grid",
     gridTemplateColumns: "repeat(3, 1fr)",
@@ -1588,7 +1552,6 @@ const styles = {
     margin: "0",
     color: "#333",
   },
-  // ------------------------------------
   imageNotesContainer: {
     display: "grid",
     gridTemplateColumns: "1fr 1fr",
@@ -1613,7 +1576,7 @@ const styles = {
     justifyContent: "center",
     minHeight: "150px",
     ":hover": {
-      borderColor: "#ff6b95",
+      borderColor: "#3498db",
     },
   },
   uploadText: {
@@ -1638,9 +1601,9 @@ const styles = {
     cursor: "pointer",
     transition: "all 0.3s ease",
     ":hover": {
-      backgroundColor: "#ff6b95",
+      backgroundColor: "#3498db",
       color: "white",
-      borderColor: "#ff6b95",
+      borderColor: "#3498db",
     },
   },
   imagePreview: {
@@ -1715,8 +1678,8 @@ const styles = {
     fontFamily: "inherit",
     ":focus": {
       outline: "none",
-      borderColor: "#ff6b95",
-      boxShadow: "0 0 0 2px rgba(255, 107, 149, 0.2)",
+      borderColor: "#3498db",
+      boxShadow: "0 0 0 2px rgba(52, 152, 219, 0.2)",
     },
   },
   dateAndTimeContainer: {
@@ -1786,7 +1749,7 @@ const styles = {
     justifyContent: "center",
     ":hover": {
       backgroundColor: "#f8f9fa",
-      borderColor: "#ff6b95",
+      borderColor: "#3498db",
     },
   },
   calendarDayNotInMonth: {
@@ -1819,9 +1782,9 @@ const styles = {
     transition: "all 0.3s ease",
     textAlign: "center",
     ":hover": {
-      backgroundColor: "#ff6b95",
+      backgroundColor: "#3498db",
       color: "white",
-      borderColor: "#ff6b95",
+      borderColor: "#3498db",
     },
   },
   timePrompt: {
@@ -1868,9 +1831,9 @@ const styles = {
     cursor: "pointer",
     transition: "all 0.3s ease",
     ":hover": {
-      backgroundColor: "#ff6b95",
+      backgroundColor: "#3498db",
       color: "white",
-      borderColor: "#ff6b95",
+      borderColor: "#3498db",
     },
   },
   notesSummary: {
@@ -1944,9 +1907,9 @@ const styles = {
     cursor: "pointer",
     transition: "all 0.3s ease",
     ":hover": {
-      backgroundColor: "#ff6b95",
+      backgroundColor: "#3498db",
       color: "white",
-      borderColor: "#ff6b95"
+      borderColor: "#3498db"
     }
   },
   navigationButtons: {
@@ -1957,7 +1920,7 @@ const styles = {
   },
   primaryButton: {
     padding: "12px 25px",
-    backgroundColor: "#ff6b95",
+    backgroundColor: "#3498db",
     color: "white",
     border: "none",
     borderRadius: "8px",
@@ -1966,9 +1929,9 @@ const styles = {
     cursor: "pointer",
     transition: "all 0.3s ease",
     ":hover": {
-      backgroundColor: "#ff5a8c",
+      backgroundColor: "#2980b9",
       transform: "translateY(-2px)",
-      boxShadow: "0 5px 15px rgba(255, 107, 149, 0.3)"
+      boxShadow: "0 5px 15px rgba(52, 152, 219, 0.3)"
     },
     ":disabled": {
       backgroundColor: "#ccc",
@@ -1989,8 +1952,8 @@ const styles = {
     transition: "all 0.3s ease",
     ":hover": {
       backgroundColor: "#f8f9fa",
-      borderColor: "#ff6b95",
-      color: "#ff6b95"
+      borderColor: "#3498db",
+      color: "#3498db"
     }
   }
 };

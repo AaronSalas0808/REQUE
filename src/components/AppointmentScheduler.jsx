@@ -74,7 +74,7 @@ function AppointmentScheduler({ user, onBack, onConfirm }) {
             <div style={centersGridStyle}>
               {centers.map(center => (
                 <div 
-                  key={center.id} 
+                  key={center.id}
                   style={{
                     ...centerCardStyle,
                     borderColor: selectedCenter?.id === center.id ? "#3498db" : "#e0e0e0"
@@ -112,7 +112,7 @@ function AppointmentScheduler({ user, onBack, onConfirm }) {
             <div style={servicesGridStyle}>
               {services.map(service => (
                 <div 
-                  key={service.id} 
+                  key={service.id}
                   style={{
                     ...serviceCardStyle,
                     borderColor: selectedService?.id === service.id ? "#3498db" : "#e0e0e0"
@@ -343,7 +343,7 @@ const stepStyle = {
 const stepTitleStyle = {
   fontSize: "20px",
   fontWeight: "600",
-  color: "#2c3e50",
+  color: "2c3e50",
   marginBottom: "20px",
   paddingBottom: "10px",
   borderBottom: "2px solid #3498db"
@@ -563,7 +563,11 @@ const primaryButtonStyle = {
   cursor: "pointer",
   fontWeight: "600",
   fontSize: "16px",
-  flex: 1
+  flex: 1,
+  transition: "all 0.3s ease",
+  ":hover": {
+    backgroundColor: "#2980b9"
+  }
 };
 
 const secondaryButtonStyle = {
@@ -575,7 +579,11 @@ const secondaryButtonStyle = {
   cursor: "pointer",
   fontWeight: "500",
   fontSize: "16px",
-  flex: 1
+  flex: 1,
+  transition: "all 0.3s ease",
+  ":hover": {
+    backgroundColor: "#f8f9fa"
+  }
 };
 
 export default AppointmentScheduler;

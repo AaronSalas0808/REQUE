@@ -91,16 +91,17 @@ function Sidebar({ open, onClose, onNavigate }) {
         <div 
           style={{
             padding: "25px 20px",
-            background: "#ffffff",
-            borderBottom: "1px solid #f1f2f6",
+            background: "linear-gradient(135deg, #3498db 0%, #2c3e50 100%)",
+            borderBottom: "1px solid #e0e0e0",
             textAlign: "center",
-            cursor: "pointer"
+            cursor: "pointer",
+            color: "white"
           }}
           onClick={open ? onClose : () => {}}
         >
           <div style={{ 
             fontSize: "36px", 
-            color: "#2c3e50",
+            color: "white",
             fontWeight: "400",
             marginBottom: "6px",
             letterSpacing: "-1px"
@@ -109,14 +110,13 @@ function Sidebar({ open, onClose, onNavigate }) {
           </div>
           <div style={{ 
             fontSize: "14px", 
-            color: "#6c757d",
+            color: "rgba(255,255,255,0.9)",
             fontWeight: "400",
             letterSpacing: "0.3px"
           }}>
             {formatDate(currentTime)}
           </div>
         </div>
-
 
         {/* Logo y nombre */}
         <div style={{ 
@@ -155,7 +155,7 @@ function Sidebar({ open, onClose, onNavigate }) {
           <p style={{ 
             margin: 0, 
             fontSize: "12px", 
-            color: "#6c757d" 
+            color: "#7f8c8d" 
           }}>
             Juventud, fuerza y estilo
           </p>
@@ -168,7 +168,7 @@ function Sidebar({ open, onClose, onNavigate }) {
         }}>
           <div style={{ 
             fontSize: "11px", 
-            color: "#6c757d",
+            color: "#7f8c8d",
             fontWeight: "600",
             textTransform: "uppercase",
             letterSpacing: "0.5px",
@@ -227,7 +227,7 @@ function Sidebar({ open, onClose, onNavigate }) {
         }}>
           <div style={{ 
             fontSize: "11px", 
-            color: "#6c757d",
+            color: "#7f8c8d",
             fontWeight: "600",
             textTransform: "uppercase",
             letterSpacing: "0.5px",
@@ -285,7 +285,7 @@ function Sidebar({ open, onClose, onNavigate }) {
             right: "15px",
             background: "rgba(255,255,255,0.9)",
             border: "none",
-            color: "#6c757d",
+            color: "#3498db",
             fontSize: "20px",
             cursor: "pointer",
             padding: "5px",
@@ -304,7 +304,7 @@ function Sidebar({ open, onClose, onNavigate }) {
           }}
           onMouseLeave={(e) => {
             e.target.style.background = "rgba(255,255,255,0.9)";
-            e.target.style.color = "#6c757d";
+            e.target.style.color = "#3498db";
           }}
         >
           ×

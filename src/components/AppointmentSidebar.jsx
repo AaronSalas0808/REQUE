@@ -24,7 +24,6 @@ function AppointmentSidebar({ user, onNavigate, onLogout, currentStep, onStepCli
     if (itemId === "logout") {
       onLogout();
     } else if (itemId === "contact") {
-      // Aquí puedes implementar la lógica de contacto
       alert("Sistema de contacto pronto disponible");
     } else {
       onNavigate(itemId);
@@ -54,7 +53,7 @@ function AppointmentSidebar({ user, onNavigate, onLogout, currentStep, onStepCli
               key={step.number}
               style={{
                 ...sidebarStyles.stepItem,
-                backgroundColor: currentStep === step.number ? "#ff6b95" : "transparent",
+                backgroundColor: currentStep === step.number ? "#3498db" : "transparent",
                 color: currentStep === step.number ? "white" : "#666"
               }}
               onClick={() => onStepClick(step.number)}
@@ -96,7 +95,7 @@ function AppointmentSidebar({ user, onNavigate, onLogout, currentStep, onStepCli
           </div>
           <div style={sidebarStyles.contactItem}>
             <span style={sidebarStyles.contactIcon}>✉️</span>
-            <span style={sidebarStyles.contactText}>soporte@apolo.com</span>
+            <span style={sidebarStyles.contactText}>info@apolobarber.com</span>
           </div>
           <div style={sidebarStyles.contactItem}>
             <span style={sidebarStyles.contactIcon}>🕒</span>
@@ -140,7 +139,7 @@ const sidebarStyles = {
     width: "60px",
     height: "60px",
     borderRadius: "50%",
-    backgroundColor: "#ff6b95",
+    backgroundColor: "#3498db",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
