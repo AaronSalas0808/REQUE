@@ -3,8 +3,6 @@ import {
   format,
   startOfWeek,
   endOfWeek,
-  addDays,
-  subDays,
   isSameDay,
   isToday,
   startOfMonth,
@@ -240,10 +238,6 @@ function Appointments({ user, onBackToHome, onLogout }) {
     setSidebarOpen(false);
   };
 
-  const handleStepClick = (stepNumber) => {
-    setCurrentStep(stepNumber);
-  };
-
   const renderHeader = () => {
     return (
       <div style={headerStyles.container}>
@@ -339,28 +333,7 @@ function Appointments({ user, onBackToHome, onLogout }) {
           </div>
         </div>
 
-        <div style={sidebarStyles.progressSection}>
-          <h4 style={sidebarStyles.sectionTitle}>Tu Cita Actual</h4>
-          <div style={sidebarStyles.stepsContainer}>
-            {steps.map(step => (
-              <div
-                key={step.number}
-                style={{
-                  ...sidebarStyles.stepItem,
-                  backgroundColor: currentStep === step.number ? "#3498db" : "transparent",
-                  color: currentStep === step.number ? "white" : "#666"
-                }}
-                onClick={() => {
-                  handleStepClick(step.number);
-                  setSidebarOpen(false);
-                }}
-              >
-                <div style={sidebarStyles.stepNumber}>{step.number}</div>
-                <span style={sidebarStyles.stepText}>{step.title}</span>
-              </div>
-            ))}
-          </div>
-        </div>
+        {/* Sección eliminada: Tu Cita Actual */}
 
         <div style={sidebarStyles.menuSection}>
           <h4 style={sidebarStyles.sectionTitle}>Mi Cuenta</h4>
@@ -1195,10 +1168,9 @@ const sidebarStyles = {
     color: "#f39c12",
     fontWeight: "500"
   },
-  progressSection: {
-    marginBottom: "30px",
-    paddingBottom: "20px",
-    borderBottom: "1px solid rgba(255,255,255,0.1)"
+  menuSection: {
+    flex: 1,
+    marginBottom: "30px"
   },
   sectionTitle: {
     fontSize: "14px",
@@ -1207,44 +1179,6 @@ const sidebarStyles = {
     margin: "0 0 15px 0",
     textTransform: "uppercase",
     letterSpacing: "0.5px"
-  },
-  stepsContainer: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px"
-  },
-  stepItem: {
-    display: "flex",
-    alignItems: "center",
-    padding: "10px 12px",
-    borderRadius: "6px",
-    cursor: "pointer",
-    transition: "all 0.3s ease",
-    opacity: 0.8,
-    ":hover": {
-      backgroundColor: "rgba(255,255,255,0.1)",
-      opacity: 1
-    }
-  },
-  stepNumber: {
-    width: "24px",
-    height: "24px",
-    borderRadius: "50%",
-    backgroundColor: "rgba(255,255,255,0.2)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: "12px",
-    fontWeight: "600",
-    marginRight: "10px"
-  },
-  stepText: {
-    fontSize: "13px",
-    fontWeight: "500"
-  },
-  menuSection: {
-    flex: 1,
-    marginBottom: "30px"
   },
   menu: {
     display: "flex",
@@ -1726,7 +1660,7 @@ const styles = {
     gridTemplateColumns: "repeat(7, 1fr)",
     gap: "5px",
   },
-  calendarDayHeader: {
+    calendarDayHeader: {
     textAlign: "center",
     fontSize: "12px",
     fontWeight: "600",
