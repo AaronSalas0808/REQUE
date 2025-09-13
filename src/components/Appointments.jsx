@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   format,
   startOfWeek,
@@ -69,6 +69,7 @@ function Appointments({ user, onBackToHome, onLogout }) {
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [sidebarCurrentTime, setSidebarCurrentTime] = useState(new Date());
 
   const centers = [
     { id: 1, name: "Centro A", address: "Av. Siempre Viva 123 - 1.2 km", rating: "4.8 (230)", image: "🏢" },
@@ -112,6 +113,15 @@ function Appointments({ user, onBackToHome, onLogout }) {
     { id: "contact", label: "Contacto", icon: "📞" },
     { id: "logout", label: "Cerrar Sesión", icon: "🚪" }
   ];
+
+  // Actualizar la hora cada minuto para el sidebar
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setSidebarCurrentTime(new Date());
+    }, 60000);
+    
+    return () => clearInterval(timer);
+  }, []);
 
   const nextStep = () => setCurrentStep(currentStep + 1);
   const prevStep = () => setCurrentStep(currentStep - 1);
@@ -179,6 +189,26 @@ function Appointments({ user, onBackToHome, onLogout }) {
   const formatDate = (dateObject) => {
     if (!dateObject) return "Fecha no seleccionada";
     return format(dateObject, "EEEE, d 'de' MMMM 'de' yyyy", { locale: es });
+  };
+
+  // Formatear fecha de manera elegante para el sidebar
+  const formatSidebarDate = (date) => {
+    const options = { 
+      weekday: 'long', 
+      day: 'numeric', 
+      month: 'long', 
+      year: 'numeric' 
+    };
+    return date.toLocaleDateString('es-ES', options);
+  };
+
+  // Formatear hora de manera elegante para el sidebar
+  const formatSidebarTime = (date) => {
+    return date.toLocaleTimeString('es-ES', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
   };
 
   const handleConfirmAppointment = async () => {
@@ -312,71 +342,369 @@ function Appointments({ user, onBackToHome, onLogout }) {
     if (!sidebarOpen) return null;
     
     return (
-      <div style={sidebarStyles.container}>
-        <div style={sidebarStyles.header}>
-          <button 
-            style={sidebarStyles.closeButton}
+      <>
+        {/* Overlay que cubre toda la pantalla - permite abrir/cerrar desde cualquier lugar */}
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            background: "rgba(0,0,0,0.4)",
+            backdropFilter: "blur(2px)",
+            WebkitBackdropFilter: "blur(2px)",
+            zIndex: 998,
+            transition: "all 0.3s ease",
+          }}
+          onClick={() => setSidebarOpen(false)}
+        />
+        
+        {/* Sidebar minimalista */}
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "280px",
+            height: "100%",
+            background: "#ffffff",
+            color: "#2c3e50",
+            padding: "0",
+            zIndex: 999,
+            boxShadow: "2px 0 15px rgba(0,0,0,0.1)",
+            display: "flex",
+            flexDirection: "column",
+            fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+          }}
+        >
+          {/* Encabezado con fecha y hora */}
+          <div 
+            style={{
+              padding: "25px 20px",
+              background: "linear-gradient(135deg, #3498db 0%, #2c3e50 100%)",
+              borderBottom: "1px solid #e0e0e0",
+              textAlign: "center",
+              color: "white"
+            }}
+          >
+            <div style={{ 
+              fontSize: "36px", 
+              color: "white",
+              fontWeight: "400",
+              marginBottom: "6px",
+              letterSpacing: "-1px"
+            }}>
+              {formatSidebarTime(sidebarCurrentTime)}
+            </div>
+            <div style={{ 
+              fontSize: "14px", 
+              color: "rgba(255,255,255,0.9)",
+              fontWeight: "400",
+              letterSpacing: "0.3px"
+            }}>
+              {formatSidebarDate(sidebarCurrentTime)}
+            </div>
+          </div>
+
+          {/* Logo y nombre */}
+          <div style={{ 
+            padding: "20px", 
+            paddingBottom: "10px",
+            textAlign: "center",
+            borderBottom: "1px solid #f1f2f6"
+          }}>
+            <div style={{
+              width: "60px",
+              height: "60px",
+              borderRadius: "12px",
+              background: "linear-gradient(135deg, #3498db 0%, #2c3e50 100%)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              margin: "0 auto 15px auto",
+              boxShadow: "0 4px 12px rgba(52, 152, 219, 0.3)"
+            }}>
+              <span style={{ 
+                fontSize: "24px", 
+                fontWeight: "bold", 
+                color: "white" 
+              }}>
+                A
+              </span>
+            </div>
+            <h2 style={{ 
+              margin: "0 0 5px 0", 
+              color: "#2c3e50",
+              fontSize: "18px",
+              fontWeight: "600"
+            }}>
+              Apolo Barber & Spa
+            </h2>
+            <p style={{ 
+              margin: 0, 
+              fontSize: "12px", 
+              color: "#7f8c8d" 
+            }}>
+              Juventud, fuerza y estilo
+            </p>
+          </div>
+          
+          {/* Información del usuario */}
+          <div style={{ 
+            padding: "20px",
+            borderBottom: "1px solid #f1f2f6",
+            textAlign: "center"
+          }}>
+            <div style={{
+              width: "70px",
+              height: "70px",
+              borderRadius: "50%",
+              background: "linear-gradient(135deg, #3498db 0%, #2c3e50 100%)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              margin: "0 auto 15px auto",
+              fontSize: "28px",
+              color: "white",
+              fontWeight: "bold"
+            }}>
+              {user?.email?.charAt(0).toUpperCase() || 'U'}
+            </div>
+            <h3 style={{ 
+              margin: "0 0 5px 0", 
+              color: "#2c3e50",
+              fontSize: "16px",
+              fontWeight: "600"
+            }}>
+              {user?.email?.split('@')[0] || 'Usuario'}
+            </h3>
+            <p style={{ 
+              margin: 0, 
+              fontSize: "12px", 
+              color: "#27ae60",
+              fontWeight: "500"
+            }}>
+              ⭐ Cliente Premium
+            </p>
+          </div>
+
+          {/* Menú de navegación minimalista */}
+          <div style={{ 
+            padding: "15px 0",
+            flex: 1
+          }}>
+            <div style={{ 
+              fontSize: "11px", 
+              color: "#7f8c8d",
+              fontWeight: "600",
+              textTransform: "uppercase",
+              letterSpacing: "0.5px",
+              padding: "0 20px 10px 20px",
+              marginBottom: "10px"
+            }}>
+              Mi Cuenta
+            </div>
+            
+            <ul style={{ 
+              listStyle: "none", 
+              padding: 0, 
+              margin: 0
+            }}>
+              {menuItems.map((item) => (
+                <li key={item.id}>
+                  <button
+                    onClick={() => handleNavigation(item.id)}
+                    style={{ 
+                      color: "#2c3e50", 
+                      fontWeight: "500", 
+                      display: "flex", 
+                      alignItems: "center",
+                      padding: "12px 20px",
+                      width: "100%",
+                      textAlign: "left",
+                      cursor: "pointer",
+                      fontSize: "15px",
+                      background: "transparent",
+                      border: "none",
+                      transition: "all 0.2s ease",
+                      borderLeft: "3px solid transparent"
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.background = "#f8f9fa";
+                      e.target.style.borderLeftColor = "#3498db";
+                      e.target.style.paddingLeft = "25px";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.background = "transparent";
+                      e.target.style.borderLeftColor = "transparent";
+                      e.target.style.paddingLeft = "20px";
+                    }}
+                  >
+                    <span style={{ 
+                      marginRight: "12px", 
+                      fontSize: "16px",
+                      width: "20px"
+                    }}>
+                      {item.icon}
+                    </span>
+                    {item.label}
+                    {item.id === "notifications" && (
+                      <span style={{
+                        marginLeft: "auto",
+                        backgroundColor: "#e74c3c",
+                        color: "white",
+                        fontSize: "11px",
+                        fontWeight: "600",
+                        padding: "2px 6px",
+                        borderRadius: "10px",
+                        minWidth: "18px"
+                      }}>
+                        3
+                      </span>
+                    )}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Información de contacto minimalista */}
+          <div style={{ 
+            padding: "20px",
+            background: "#f8f9fa",
+            borderTop: "1px solid #f1f2f6"
+          }}>
+            <div style={{ 
+              fontSize: "11px", 
+              color: "#7f8c8d",
+              fontWeight: "600",
+              textTransform: "uppercase",
+              letterSpacing: "0.5px",
+              marginBottom: "12px"
+            }}>
+              Contacto Rápido
+            </div>
+            
+            <div style={{ marginBottom: "10px" }}>
+              <div style={{ 
+                fontSize: "13px", 
+                color: "#2c3e50",
+                display: "flex",
+                alignItems: "center",
+                marginBottom: "5px"
+              }}>
+                <span style={{ 
+                  width: "20px", 
+                  color: "#3498db",
+                  fontWeight: "bold",
+                  marginRight: "10px"
+                }}>
+                  📞
+                </span>
+                +34 123 456 789
+              </div>
+            </div>
+            
+            <div style={{ marginBottom: "10px" }}>
+              <div style={{ 
+                fontSize: "13px", 
+                color: "#2c3e50",
+                display: "flex",
+                alignItems: "center",
+                marginBottom: "5px"
+              }}>
+                <span style={{ 
+                  width: "20px", 
+                  color: "#3498db",
+                  fontWeight: "bold",
+                  marginRight: "10px"
+                }}>
+                  ✉️
+                </span>
+                soporte@apolo.com
+              </div>
+            </div>
+            
+            <div>
+              <div style={{ 
+                fontSize: "13px", 
+                color: "#2c3e50",
+                display: "flex",
+                alignItems: "center"
+              }}>
+                <span style={{ 
+                  width: "20px", 
+                  color: "#3498db",
+                  fontWeight: "bold",
+                  marginRight: "10px"
+                }}>
+                  🕒
+                </span>
+                Lun-Vie: 9:00-20:00
+              </div>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div style={{ 
+            padding: "15px 20px",
+            textAlign: "center",
+            borderTop: "1px solid #f1f2f6"
+          }}>
+            <p style={{ 
+              margin: "0 0 5px 0", 
+              fontSize: "14px", 
+              fontWeight: "600",
+              color: "#2c3e50"
+            }}>
+              Apolo Barber & Spa
+            </p>
+            <p style={{ 
+              margin: 0, 
+              fontSize: "12px", 
+              color: "#7f8c8d",
+              fontStyle: "italic"
+            }}>
+              Juventud, Fuerza y Estilo
+            </p>
+          </div>
+
+          {/* Botón de cerrar */}
+          <button
             onClick={() => setSidebarOpen(false)}
+            style={{
+              position: "absolute",
+              top: "15px",
+              right: "15px",
+              background: "rgba(255,255,255,0.9)",
+              border: "none",
+              color: "#3498db",
+              fontSize: "20px",
+              cursor: "pointer",
+              padding: "5px",
+              borderRadius: "50%",
+              width: "30px",
+              height: "30px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              transition: "all 0.2s ease",
+              boxShadow: "0 2px 6px rgba(0,0,0,0.1)"
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.background = "#3498db";
+              e.target.style.color = "white";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.background = "rgba(255,255,255,0.9)";
+              e.target.style.color = "#3498db";
+            }}
           >
             ×
           </button>
         </div>
-        
-        <div style={sidebarStyles.profileSection}>
-          <div style={sidebarStyles.avatar}>
-            {user?.email?.charAt(0).toUpperCase() || "U"}
-          </div>
-          <div style={sidebarStyles.userInfo}>
-            <h3 style={sidebarStyles.welcome}>¡Hola!</h3>
-            <p style={sidebarStyles.userName}>{user?.email || "Usuario"}</p>
-            <p style={sidebarStyles.userStatus}>⭐ Cliente Premium</p>
-          </div>
-        </div>
-
-        {/* Sección eliminada: Tu Cita Actual */}
-
-        <div style={sidebarStyles.menuSection}>
-          <h4 style={sidebarStyles.sectionTitle}>Mi Cuenta</h4>
-          <nav style={sidebarStyles.menu}>
-            {menuItems.map(item => (
-              <button
-                key={item.id}
-                style={sidebarStyles.menuItem}
-                onClick={() => handleNavigation(item.id)}
-              >
-                <span style={sidebarStyles.menuIcon}>{item.icon}</span>
-                <span style={sidebarStyles.menuLabel}>{item.label}</span>
-                {item.id === "notifications" && (
-                  <span style={sidebarStyles.notificationBadge}>3</span>
-                )}
-              </button>
-            ))}
-          </nav>
-        </div>
-
-        <div style={sidebarStyles.contactSection}>
-          <h4 style={sidebarStyles.sectionTitle}>Contacto Rápido</h4>
-          <div style={sidebarStyles.contactInfo}>
-            <div style={sidebarStyles.contactItem}>
-              <span style={sidebarStyles.contactIcon}>📞</span>
-              <span style={sidebarStyles.contactText}>+34 123 456 789</span>
-            </div>
-            <div style={sidebarStyles.contactItem}>
-              <span style={sidebarStyles.contactIcon}>✉️</span>
-              <span style={sidebarStyles.contactText}>soporte@apolo.com</span>
-            </div>
-            <div style={sidebarStyles.contactItem}>
-              <span style={sidebarStyles.contactIcon}>🕒</span>
-              <span style={sidebarStyles.contactText}>Lun-Vie: 9:00-20:00</span>
-            </div>
-          </div>
-        </div>
-
-        <div style={sidebarStyles.footer}>
-          <p style={sidebarStyles.footerText}>Apolo Barber & Spa</p>
-          <p style={sidebarStyles.footerSubtext}>Juventud, Fuerza y Estilo</p>
-        </div>
-      </div>
+      </>
     );
   };
 
@@ -897,15 +1225,12 @@ function Appointments({ user, onBackToHome, onLogout }) {
   return (
     <div style={styles.container}>
       {renderHeader()}
-      {sidebarOpen && (
-        <div style={overlayStyle} onClick={() => setSidebarOpen(false)} />
-      )}
       <div style={styles.contentWrapper}>
         {renderSidebar()}
         <div
           style={{
             ...styles.mainContent,
-            marginLeft: sidebarOpen ? "300px" : "0",
+            marginLeft: sidebarOpen ? "280px" : "0",
             transition: "margin-left 0.3s ease",
           }}
         >
@@ -917,17 +1242,6 @@ function Appointments({ user, onBackToHome, onLogout }) {
 }
 
 // Estilos
-const overlayStyle = {
-  position: "fixed",
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  backgroundColor: "rgba(0, 0, 0, 0.5)",
-  zIndex: 999,
-  display: "block"
-};
-
 const headerStyles = {
   container: {
     display: "flex",
@@ -1089,184 +1403,6 @@ const headerStyles = {
       backgroundColor: "#2980b9",
       transform: "translateY(-1px)"
     }
-  }
-};
-
-const sidebarStyles = {
-  container: {
-    width: "300px",
-    height: "calc(100vh - 70px)",
-    backgroundColor: "#2c3e50",
-    color: "white",
-    padding: "20px",
-    display: "flex",
-    flexDirection: "column",
-    position: "fixed",
-    left: 0,
-    top: "70px",
-    overflowY: "auto",
-    zIndex: 1000,
-    transition: "transform 0.3s ease",
-    transform: "translateX(0)"
-  },
-  header: {
-    display: "flex",
-    justifyContent: "flex-end",
-    marginBottom: "10px"
-  },
-  closeButton: {
-    backgroundColor: "transparent",
-    border: "none",
-    color: "white",
-    fontSize: "24px",
-    cursor: "pointer",
-    padding: "5px 10px",
-    borderRadius: "4px",
-    ":hover": {
-      backgroundColor: "rgba(255,255,255,0.1)"
-    }
-  },
-  profileSection: {
-    display: "flex",
-    alignItems: "center",
-    marginBottom: "30px",
-    paddingBottom: "20px",
-    borderBottom: "1px solid rgba(255,255,255,0.1)"
-  },
-  avatar: {
-    width: "60px",
-    height: "60px",
-    borderRadius: "50%",
-    backgroundColor: "#3498db",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: "24px",
-    fontWeight: "bold",
-    marginRight: "15px"
-  },
-  userInfo: {
-    flex: 1
-  },
-  welcome: {
-    fontSize: "16px",
-    fontWeight: "500",
-    margin: "0 0 4px 0",
-    color: "#ecf0f1"
-  },
-  userName: {
-    fontSize: "14px",
-    margin: "0 0 4px 0",
-    color: "#bdc3c7",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap"
-  },
-  userStatus: {
-    fontSize: "12px",
-    margin: 0,
-    color: "#f39c12",
-    fontWeight: "500"
-  },
-  menuSection: {
-    flex: 1,
-    marginBottom: "30px"
-  },
-  sectionTitle: {
-    fontSize: "14px",
-    fontWeight: "600",
-    color: "#ecf0f1",
-    margin: "0 0 15px 0",
-    textTransform: "uppercase",
-    letterSpacing: "0.5px"
-  },
-  menu: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "5px"
-  },
-  menuItem: {
-    display: "flex",
-    alignItems: "center",
-    padding: "12px 15px",
-    backgroundColor: "transparent",
-    border: "none",
-    color: "white",
-    borderRadius: "6px",
-    cursor: "pointer",
-    transition: "all 0.3s ease",
-    textAlign: "left",
-    opacity: 0.8,
-    position: "relative",
-    ":hover": {
-      backgroundColor: "rgba(255,255,255,0.1)",
-      opacity: 1
-    }
-  },
-  menuIcon: {
-    fontSize: "18px",
-    marginRight: "12px",
-    width: "20px",
-    textAlign: "center"
-  },
-  menuLabel: {
-    fontSize: "14px",
-    fontWeight: "500",
-    flex: 1
-  },
-  notificationBadge: {
-    backgroundColor: "#e74c3c",
-    color: "white",
-    fontSize: "11px",
-    fontWeight: "600",
-    padding: "2px 6px",
-    borderRadius: "10px",
-    minWidth: "18px",
-    textAlign: "center"
-  },
-  contactSection: {
-    marginBottom: "20px",
-    paddingBottom: "20px",
-    borderBottom: "1px solid rgba(255,255,255,0.1)"
-  },
-  contactInfo: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "10px"
-  },
-  contactItem: {
-    display: "flex",
-    alignItems: "center",
-    padding: "8px 0"
-  },
-  contactIcon: {
-    fontSize: "14px",
-    marginRight: "10px",
-    width: "20px",
-    textAlign: "center",
-    opacity: 0.7
-  },
-  contactText: {
-    fontSize: "13px",
-    color: "#bdc3c7",
-    fontWeight: "400"
-  },
-  footer: {
-    textAlign: "center",
-    paddingTop: "20px",
-    borderTop: "1px solid rgba(255,255,255,0.1)"
-  },
-  footerText: {
-    fontSize: "14px",
-    fontWeight: "600",
-    margin: "0 0 5px 0",
-    color: "#ecf0f1"
-  },
-  footerSubtext: {
-    fontSize: "12px",
-    margin: 0,
-    color: "#7f8c8d",
-    fontStyle: "italic"
   }
 };
 
