@@ -25,33 +25,49 @@ const formatFileSize = (bytes) => {
 };
 
 const employees = [
-  { id: 1, name: "Carlos R.", photo: "👨🏻", centerId: 1, category: "Popular" },
-  { id: 2, name: "Javier M.", photo: "👨🏼", centerId: 1, category: "Popular" },
-  { id: 3, name: "Luis G.", photo: "👨🏽", centerId: 1, category: "Popular" },
-  { id: 4, name: "Ana P.", photo: "👩🏻", centerId: 1, category: "Uñas" },
-  { id: 5, name: "Sofía L.", photo: "👩🏼", centerId: 1, category: "Uñas" },
-  { id: 6, name: "María C.", photo: "👩🏽", centerId: 1, category: "Uñas" },
-  { id: 7, name: "Elena V.", photo: "👩🏻‍🦰", centerId: 1, category: "Spa" },
-  { id: 8, name: "Isabel S.", photo: "👩🏼‍🦰", centerId: 1, category: "Spa" },
-  { id: 9, name: "Laura T.", photo: "👩🏽‍🦰", centerId: 1, category: "Spa" },
-  { id: 10, name: "Miguel A.", photo: "👨🏻", centerId: 2, category: "Popular" },
-  { id: 11, name: "David F.", photo: "👨🏼", centerId: 2, category: "Popular" },
-  { id: 12, name: "Pedro S.", photo: "👨🏽", centerId: 2, category: "Popular" },
-  { id: 13, name: "Lucía H.", photo: "👩🏻", centerId: 2, category: "Uñas" },
-  { id: 14, name: "Carmen R.", photo: "👩🏼", centerId: 2, category: "Uñas" },
-  { id: 15, name: "Paula D.", photo: "👩🏽", centerId: 2, category: "Uñas" },
-  { id: 16, name: "Verónica N.", photo: "👩🏻‍🦰", centerId: 2, category: "Spa" },
-  { id: 17, name: "Raquel B.", photo: "👩🏼‍🦰", centerId: 2, category: "Spa" },
-  { id: 18, name: "Marta G.", photo: "👩🏽‍🦰", centerId: 2, category: "Spa" },
-  { id: 19, name: "Andrés V.", photo: "👨🏻", centerId: 3, category: "Popular" },
-  { id: 20, name: "Sergio P.", photo: "👨🏼", centerId: 3, category: "Popular" },
-  { id: 21, name: "Jorge L.", photo: "👨🏽", centerId: 3, category: "Popular" },
-  { id: 22, name: "Cristina M.", photo: "👩🏻", centerId: 3, category: "Uñas" },
-  { id: 23, name: "Beatriz F.", photo: "👩🏼", centerId: 3, category: "Uñas" },
-  { id: 24, name: "Nerea J.", photo: "👩🏽", centerId: 3, category: "Uñas" },
-  { id: 25, name: "Silvia Q.", photo: "👩🏻‍🦰", centerId: 3, category: "Spa" },
-  { id: 26, name: "Lorena A.", photo: "👩🏼‍🦰", centerId: 3, category: "Spa" },
-  { id: 27, name: "Eva Z.", photo: "👩🏽‍🦰", centerId: 3, category: "Spa" },
+  // Barbería - Especialistas en diferentes áreas
+  { id: 1, name: "Carlos R.", photo: "💇", centerId: 1, category: "Barbería", specialties: ["Cortes clásicos", "Afeitado tradicional", "Arreglo de barba"], isGeneralist: true },
+  { id: 2, name: "Javier M.", photo: "✂️", centerId: 1, category: "Barbería", specialties: ["Cortes modernos", "Estilos de moda", "Tintes"], isGeneralist: false },
+  { id: 3, name: "Luis G.", photo: "🧔", centerId: 1, category: "Barbería", specialties: ["Barba y bigote", "Tratamientos faciales", "Depilación"], isGeneralist: false },
+  { id: 4, name: "Miguel A.", photo: "👨", centerId: 2, category: "Barbería", specialties: ["Cortes clásicos", "Combo corte+barba", "Limpieza facial"], isGeneralist: true },
+  { id: 5, name: "David F.", photo: "🎨", centerId: 2, category: "Barbería", specialties: ["Tintes", "Mechas", "Estilos creativos"], isGeneralist: false },
+  { id: 6, name: "Pedro S.", photo: "✨", centerId: 2, category: "Barbería", specialties: ["Afeitado premium", "Tratamientos VIP", "Servicios a domicilio"], isGeneralist: false },
+  { id: 7, name: "Andrés V.", photo: "💆‍♂️", centerId: 3, category: "Barbería", specialties: ["Cortes tradicionales", "Masajes capilares", "Relajación"], isGeneralist: true },
+  { id: 8, name: "Sergio P.", photo: "👁️", centerId: 3, category: "Barbería", specialties: ["Depilación de cejas", "Diseño facial", "Maquillaje masculino"], isGeneralist: false },
+  { id: 9, name: "Jorge L.", photo: "🧴", centerId: 3, category: "Barbería", specialties: ["Tratamientos capilares", "Mascarillas", "Cuidado premium"], isGeneralist: false },
+
+  // Belleza - Especialistas en diferentes áreas
+  { id: 10, name: "Ana P.", photo: "💇‍♀️", centerId: 1, category: "Belleza", specialties: ["Cortes de dama", "Peinados", "Asesoría de imagen"], isGeneralist: true },
+  { id: 11, name: "Sofía L.", photo: "🌈", centerId: 1, category: "Belleza", specialties: ["Coloración", "Tintes", "Mechas"], isGeneralist: false },
+  { id: 12, name: "María C.", photo: "🔀", centerId: 1, category: "Belleza", specialties: ["Alisados", "Keratina", "Tratamientos"], isGeneralist: false },
+  { id: 13, name: "Lucía H.", photo: "👰", centerId: 2, category: "Belleza", specialties: ["Peinados para eventos", "Bodas", "Ceremonias"], isGeneralist: true },
+  { id: 14, name: "Carmen R.", photo: "👑", centerId: 2, category: "Belleza", specialties: ["Extensiones", "Recogidos", "Estilos elaborados"], isGeneralist: false },
+  { id: 15, name: "Paula D.", photo: "💆‍♀️", centerId: 2, category: "Belleza", specialties: ["Tratamientos", "Hidratación", "Terapias capilares"], isGeneralist: false },
+  { id: 16, name: "Cristina M.", photo: "💄", centerId: 3, category: "Belleza", specialties: ["Maquillaje", "Colorimetría", "Asesoría de color"], isGeneralist: true },
+  { id: 17, name: "Beatriz F.", photo: "✨", centerId: 3, category: "Belleza", specialties: ["Estilos de pasarela", "Tendencias", "Looks modernos"], isGeneralist: false },
+  { id: 18, name: "Nerea J.", photo: "🌟", centerId: 3, category: "Belleza", specialties: ["Alisados brasileños", "Tratamientos especializados", "Cuidado intensivo"], isGeneralist: false },
+
+  // Manos y Pies - Especialistas en diferentes áreas
+  { id: 19, name: "Elena V.", photo: "💅", centerId: 1, category: "Manos y Pies", specialties: ["Manicure básica", "Pedicure", "Esmaltado"], isGeneralist: true },
+  { id: 20, name: "Isabel S.", photo: "👣", centerId: 1, category: "Manos y Pies", specialties: ["Pedicure spa", "Tratamientos", "Relajación"], isGeneralist: false },
+  { id: 21, name: "Laura T.", photo: "🎨", centerId: 1, category: "Manos y Pies", specialties: ["Uñas acrílicas", "Decoración", "Diseños artísticos"], isGeneralist: false },
+  { id: 22, name: "Verónica N.", photo: "💅", centerId: 2, category: "Manos y Pies", specialties: ["Manicure spa", "Uñas de gel", "Lujo"], isGeneralist: true },
+  { id: 23, name: "Raquel B.", photo: "✨", centerId: 2, category: "Manos y Pies", specialties: ["Decoración premium", "Cristales", "Diseños exclusivos"], isGeneralist: false },
+  { id: 24, name: "Marta G.", photo: "🧴", centerId: 2, category: "Manos y Pies", specialties: ["Tratamientos", "Hidratación", "Cuidado profesional"], isGeneralist: false },
+  { id: 25, name: "Silvia Q.", photo: "💅", centerId: 3, category: "Manos y Pies", specialties: ["Manicure tradicional", "Pedicure básica", "Esmaltado semi"], isGeneralist: true },
+  { id: 26, name: "Lorena A.", photo: "🌟", centerId: 3, category: "Manos y Pies", specialties: ["Uñas esculpidas", "Alargamientos", "Técnicas avanzadas"], isGeneralist: false },
+  { id: 27, name: "Eva Z.", photo: "👑", centerId: 3, category: "Manos y Pies", specialties: ["Diseño de lujo", "Aplicaciones premium", "Servicios VIP"], isGeneralist: false },
+
+  // Spa y Bienestar - Especialistas en diferentes áreas
+  { id: 28, name: "Juan M.", photo: "💆", centerId: 1, category: "Spa y Bienestar", specialties: ["Masajes relajantes", "Terapias", "Bienestar general"], isGeneralist: true },
+  { id: 29, name: "Alejandro P.", photo: "💆‍♂️", centerId: 1, category: "Spa y Bienestar", specialties: ["Masajes descontracturantes", "Deportivos", "Rehabilitación"], isGeneralist: false },
+  { id: 30, name: "Ricardo L.", photo: "✨", centerId: 1, category: "Spa y Bienestar", specialties: ["Tratamientos faciales", "Limpieza", "Hidratación"], isGeneralist: false },
+  { id: 31, name: "Gabriela R.", photo: "💆", centerId: 2, category: "Spa y Bienestar", specialties: ["Masajes terapéuticos", "Aromaterapia", "Relajación"], isGeneralist: true },
+  { id: 32, name: "Daniela S.", photo: "👁️", centerId: 2, category: "Spa y Bienestar", specialties: ["Depilación", "Diseño de cejas", "Cejas y pestañas"], isGeneralist: false },
+  { id: 33, name: "Patricia M.", photo: "💄", centerId: 2, category: "Spa y Bienestar", specialties: ["Maquillaje profesional", "Eventos", "Asesoría de imagen"], isGeneralist: false },
+  { id: 34, name: "Roberto C.", photo: "💆", centerId: 3, category: "Spa y Bienestar", specialties: ["Masajes tradicionales", "Terapias orientales", "Bienestar integral"], isGeneralist: true },
+  { id: 35, name: "Fernando G.", photo: "✨", centerId: 3, category: "Spa y Bienestar", specialties: ["Tratamientos corporales", "Reducción", "Moldeamiento"], isGeneralist: false },
+  { id: 36, name: "Martina V.", photo: "🌿", centerId: 3, category: "Spa y Bienestar", specialties: ["Terapias naturales", "Productos orgánicos", "Wellness"], isGeneralist: false },
 ];
 
 function Appointments({ user, onBackToHome, onLogout }) {
@@ -121,17 +137,12 @@ function Appointments({ user, onBackToHome, onLogout }) {
     { id: 31, name: "Maquillaje profesional", duration: "60 min", price: "$35-60", category: "Spa y Bienestar", image: "💄" },
     { id: 32, name: "Ceja y pestañas (tinte/laminado)", duration: "45 min", price: "$20-35", category: "Spa y Bienestar", image: "👁️" },
 
-    // 🧔 Servicios Especializados
-    { id: 33, name: "Corte infantil", duration: "30 min", price: "$12-18", category: "Especializados", image: "👦" },
-    { id: 34, name: "Servicios para novios (paquete)", duration: "120 min", price: "$100-200", category: "Especializados", image: "💑" },
-    { id: 35, name: "Consultoría de imagen", duration: "60 min", price: "$50-100", category: "Especializados", image: "👔" },
-    { id: 36, name: "Servicios a domicilio", duration: "Varía", price: "+$20-40 al precio base", category: "Especializados", image: "🏠" }
   ];
 
   const timeSlots = [
-    "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
-    "12:00", "12:30", "13:00", "13:30", "14:00", "14:30",
-    "15:00", "15:30", "16:00", "16:30", "17:00", "17:30"
+    "8:00","09:00", "10:00", "11:00", "12:00", "13:00",
+    "14:00","15:00", "16:00", "17:00", "18:00",
+    "19:00",
   ];
 
   const categories = ["Todas", "Barbería", "Belleza", "Manos y Pies", "Spa y Bienestar", "Especializados"];
@@ -169,8 +180,6 @@ function Appointments({ user, onBackToHome, onLogout }) {
     { id: "appointments", label: "Mis Citas", icon: "📅" },
     { id: "history", label: "Historial", icon: "📋" },
     { id: "notifications", label: "Notificaciones", icon: "🔔" },
-    { id: "help", label: "Ayuda", icon: "❓" },
-    { id: "contact", label: "Contacto", icon: "📞" },
     { id: "logout", label: "Cerrar Sesión", icon: "🚪" }
   ];
 
@@ -902,56 +911,124 @@ function Appointments({ user, onBackToHome, onLogout }) {
         );
 
       case 3: {
-        const availableEmployees = employees.filter(
-          (emp) =>
-            emp.centerId === selectedCenter?.id &&
-            emp.category === selectedService?.category,
-        );
+  // Filtrar empleados por centro y categoría del servicio seleccionado
+  const availableEmployees = employees.filter(
+    (emp) =>
+      emp.centerId === selectedCenter?.id &&
+      emp.category === selectedService?.category
+  );
 
-        return (
-          <div style={styles.stepContent}>
-            <div style={styles.stepHeader}>
-              <h2 style={styles.stepTitle}>Selecciona un profesional</h2>
-              <p style={styles.stepSubtitle}>
-                Elige con quién quieres ser atendido
-              </p>
-            </div>
-            <div style={styles.employeeGrid}>
-              {availableEmployees.map((employee) => (
-                <div
-                  key={employee.id}
-                  style={{
-                    ...styles.employeeCard,
-                    borderColor:
-                      selectedEmployee?.id === employee.id
-                        ? "#3498db"
-                        : "#e0e0e0",
-                  }}
-                  onClick={() => setSelectedEmployee(employee)}
-                >
-                  <div style={styles.employeePhoto}>{employee.photo}</div>
-                  <h3 style={styles.employeeName}>{employee.name}</h3>
-                  {selectedEmployee?.id === employee.id && (
-                    <div style={styles.selectedIndicator}>✓</div>
+  // Separar generalistas de especialistas
+  const generalistEmployees = availableEmployees.filter(emp => emp.isGeneralist);
+  const specialistEmployees = availableEmployees.filter(emp => !emp.isGeneralist);
+
+  return (
+    <div style={styles.stepContent}>
+      <div style={styles.stepHeader}>
+        <h2 style={styles.stepTitle}>Selecciona un profesional</h2>
+        <p style={styles.stepSubtitle}>
+          Elige con quién quieres ser atendido para {selectedService?.name}
+        </p>
+      </div>
+
+      {/* Sección de Generalistas */}
+      {generalistEmployees.length > 0 && (
+        <div style={styles.employeeSection}>
+          <h3 style={styles.sectionTitle}>Profesionales Generalistas</h3>
+          <p style={styles.sectionSubtitle}>Expertos en múltiples técnicas</p>
+          <div style={styles.employeeGrid}>
+            {generalistEmployees.map((employee) => (
+              <div
+                key={employee.id}
+                style={{
+                  ...styles.employeeCard,
+                  borderColor:
+                    selectedEmployee?.id === employee.id
+                      ? "#3498db"
+                      : "#e0e0e0",
+                }}
+                onClick={() => setSelectedEmployee(employee)}
+              >
+                <div style={styles.employeePhoto}>{employee.photo}</div>
+                <h3 style={styles.employeeName}>{employee.name}</h3>
+                <div style={styles.specialties}>
+                  {employee.specialties.slice(0, 2).map((spec, index) => (
+                    <span key={index} style={styles.specialtyTag}>
+                      {spec}
+                    </span>
+                  ))}
+                  {employee.specialties.length > 2 && (
+                    <span style={styles.moreSpecialties}>
+                      +{employee.specialties.length - 2} más
+                    </span>
                   )}
                 </div>
-              ))}
-            </div>
-            <div style={styles.navigationButtons}>
-              <button style={styles.secondaryButton} onClick={prevStep}>
-                Atrás
-              </button>
-              <button
-                style={styles.primaryButton}
-                onClick={nextStep}
-                disabled={!selectedEmployee}
-              >
-                Siguiente
-              </button>
-            </div>
+                {selectedEmployee?.id === employee.id && (
+                  <div style={styles.selectedIndicator}>✓ Seleccionado</div>
+                )}
+              </div>
+            ))}
           </div>
-        );
-      }
+        </div>
+      )}
+
+      {/* Sección de Especialistas */}
+      {specialistEmployees.length > 0 && (
+        <div style={styles.employeeSection}>
+          <h3 style={styles.sectionTitle}>Especialistas</h3>
+          <p style={styles.sectionSubtitle}>Expertos en áreas específicas</p>
+          <div style={styles.employeeGrid}>
+            {specialistEmployees.map((employee) => (
+              <div
+                key={employee.id}
+                style={{
+                  ...styles.employeeCard,
+                  borderColor:
+                    selectedEmployee?.id === employee.id
+                      ? "#3498db"
+                      : "#e0e0e0",
+                }}
+                onClick={() => setSelectedEmployee(employee)}
+              >
+                <div style={styles.employeePhoto}>{employee.photo}</div>
+                <h3 style={styles.employeeName}>{employee.name}</h3>
+                <div style={styles.specialties}>
+                  {employee.specialties.slice(0, 2).map((spec, index) => (
+                    <span key={index} style={styles.specialtyTag}>
+                      {spec}
+                    </span>
+                  ))}
+                  {employee.specialties.length > 2 && (
+                    <span style={styles.moreSpecialties}>
+                      +{employee.specialties.length - 2} más
+                    </span>
+                  )}
+                </div>
+                {selectedEmployee?.id === employee.id && (
+                  <div style={styles.selectedIndicator}>✓ Seleccionado</div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div style={styles.navigationButtons}>
+        <button style={styles.secondaryButton} onClick={prevStep}>
+          Atrás
+        </button>
+        <button
+          style={styles.primaryButton}
+          onClick={nextStep}
+          disabled={!selectedEmployee}
+        >
+          Siguiente
+        </button>
+      </div>
+    </div>
+  );
+}
+
 
       case 4:
         return (
@@ -1331,6 +1408,7 @@ function Appointments({ user, onBackToHome, onLogout }) {
 }
 
 // Estilos
+// Estilos
 const headerStyles = {
   container: {
     display: "flex",
@@ -1692,9 +1770,23 @@ const styles = {
     borderRadius: "12px",
     color: "#7f8c8d"
   },
+  employeeSection: {
+    marginBottom: "40px",
+  },
+  sectionTitle: {
+    fontSize: "20px",
+    fontWeight: "600",
+    color: "#2c3e50",
+    margin: "0 0 8px 0",
+  },
+  sectionSubtitle: {
+    fontSize: "14px",
+    color: "#7f8c8d",
+    margin: "0 0 20px 0",
+  },
   employeeGrid: {
     display: "grid",
-    gridTemplateColumns: "repeat(3, 1fr)",
+    gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
     gap: "20px",
     marginBottom: "30px",
   },
@@ -1726,8 +1818,31 @@ const styles = {
   employeeName: {
     fontSize: "16px",
     fontWeight: "600",
-    margin: "0",
+    margin: "0 0 12px 0",
     color: "#333",
+  },
+  specialties: {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: "6px",
+    justifyContent: "center",
+    marginBottom: "15px",
+  },
+  specialtyTag: {
+    padding: "4px 8px",
+    backgroundColor: "#f0f8ff",
+    color: "#3498db",
+    borderRadius: "12px",
+    fontSize: "11px",
+    fontWeight: "500",
+  },
+  moreSpecialties: {
+    padding: "4px 8px",
+    backgroundColor: "#f8f9fa",
+    color: "#666",
+    borderRadius: "12px",
+    fontSize: "11px",
+    fontWeight: "500",
   },
   imageNotesContainer: {
     display: "grid",
@@ -1838,301 +1953,301 @@ const styles = {
     margin: 0,
   },
   notesSection: {},
-label: {
-display: "block",
-fontSize: "14px",
-fontWeight: "500",
-color: "#333",
-marginBottom: "8px",
-},
-notesTextarea: {
-width: "100%",
-padding: "12px 15px",
-border: "1px solid #ddd",
-borderRadius: "8px",
-fontSize: "14px",
-resize: "vertical",
-fontFamily: "inherit",
-":focus": {
-outline: "none",
-borderColor: "#3498db",
-boxShadow: "0 0 0 2px rgba(52, 152, 219, 0.2)",
-},
-},
-dateAndTimeContainer: {
-display: "flex",
-gap: "30px",
-backgroundColor: "white",
-padding: "20px",
-borderRadius: "12px",
-},
-calendarWrapper: {
-flex: "1.5",
-},
-timeSlotsWrapper: {
-flex: "1",
-borderLeft: "1px solid #eee",
-paddingLeft: "30px",
-maxHeight: "400px",
-overflowY: "auto",
-},
-calendarHeader: {
-display: "flex",
-alignItems: "center",
-justifyContent: "space-between",
-marginBottom: "20px",
-},
-calendarNavButton: {
-padding: "8px 12px",
-backgroundColor: "transparent",
-border: "none",
-fontSize: "20px",
-fontWeight: "bold",
-color: "#666",
-cursor: "pointer",
-},
-calendarMonth: {
-fontSize: "16px",
-fontWeight: "600",
-color: "#333",
-margin: 0,
-textTransform: "capitalize",
-},
-calendarGrid: {
-display: "grid",
-gridTemplateColumns: "repeat(7, 1fr)",
-gap: "5px",
-},
-calendarDayHeader: {
-textAlign: "center",
-fontSize: "12px",
-fontWeight: "600",
-color: "#999",
-paddingBottom: "10px",
-},
-calendarDay: {
-padding: "8px",
-border: "1px solid transparent",
-borderRadius: "50%",
-width: "36px",
-height: "36px",
-margin: "0 auto",
-backgroundColor: "white",
-fontSize: "14px",
-cursor: "pointer",
-transition: "all 0.2s ease",
-display: "flex",
-alignItems: "center",
-justifyContent: "center",
-":hover": {
-backgroundColor: "#f8f9fa",
-borderColor: "#3498db",
-},
-},
-calendarDayNotInMonth: {
-color: "#ccc",
-cursor: "not-allowed",
-":hover": {
-backgroundColor: "white",
-borderColor: "transparent",
-},
-},
-timeContainer: {},
-timeTitle: {
-fontSize: "16px",
-fontWeight: "600",
-color: "#333",
-margin: "0 0 15px 0",
-},
-timeGrid: {
-display: "grid",
-gridTemplateColumns: "repeat(auto-fill, minmax(80px, 1fr))",
-gap: "10px",
-},
-timeSlot: {
-padding: "10px",
-border: "1px solid #ddd",
-borderRadius: "6px",
-fontSize: "14px",
-fontWeight: "500",
-cursor: "pointer",
-transition: "all 0.3s ease",
-textAlign: "center",
-":hover": {
-backgroundColor: "#3498db",
-color: "white",
-borderColor: "#3498db",
-},
-},
-timePrompt: {
-display: "flex",
-alignItems: "center",
-justifyContent: "center",
-height: "100%",
-textAlign: "center",
-color: "#999",
-fontSize: "14px",
-},
-summaryCard: {
-backgroundColor: "white",
-padding: "25px",
-borderRadius: "12px",
-marginBottom: "20px",
-},
-summaryItem: {
-display: "flex",
-alignItems: "center",
-padding: "15px 0",
-borderBottom: "1px solid #f0f0f0",
-},
-summaryLabel: {
-fontSize: "14px",
-fontWeight: "500",
-color: "#666",
-width: "150px",
-flexShrink: 0,
-},
-summaryValue: {
-fontSize: "14px",
-color: "#333",
-flex: 1,
-},
-editButton: {
-padding: "6px 12px",
-backgroundColor: "transparent",
-border: "1px solid #ddd",
-borderRadius: "4px",
-fontSize: "12px",
-fontWeight: "500",
-color: "#666",
-cursor: "pointer",
-transition: "all 0.3s ease",
-":hover": {
-backgroundColor: "#3498db",
-color: "white",
-borderColor: "#3498db",
-},
-},
-notesSummary: {
-padding: "15px 0",
-},
-notesText: {
-fontSize: "14px",
-color: "#666",
-margin: "8px 0",
-lineHeight: "1.5",
-},
-imageThumbnail: {
-width: "80px",
-height: "80px",
-border: "1px solid #ddd",
-borderRadius: "6px",
-backgroundColor: "#f8f9fa",
-marginTop: "10px",
-objectFit: "cover",
-},
-noImageText: {
-fontSize: "14px",
-color: "#999",
-fontStyle: "italic",
-margin: "10px 0 0 0",
-},
-securityText: {
-fontSize: "12px",
-color: "#999",
-textAlign: "center",
-margin: "0 0 20px 0",
-},
-confirmationContainer: {
-backgroundColor: "white",
-padding: "40px",
-borderRadius: "12px",
-textAlign: "center"
-},
-confirmationIcon: {
-fontSize: "60px",
-color: "#27ae60",
-marginBottom: "20px"
-},
-confirmationTitle: {
-fontSize: "24px",
-fontWeight: "600",
-color: "#333",
-margin: "0 0 15px 0"
-},
-confirmationDetails: {
-fontSize: "16px",
-color: "#666",
-margin: "0 0 30px 0",
-lineHeight: "1.5"
-},
-confirmationActions: {
-display: "flex",
-justifyContent: "center",
-gap: "15px",
-marginBottom: "30px",
-flexWrap: "wrap"
-},
-confirmationActionButton: {
-padding: "10px 20px",
-backgroundColor: "f8f9fa",
-border: "1px solid #ddd",
-borderRadius: "6px",
-fontSize: "14px",
-fontWeight: "500",
-color: "#666",
-cursor: "pointer",
-transition: "all 0.3s ease",
-":hover": {
-backgroundColor: "#3498db",
-color: "white",
-borderColor: "#3498db"
-}
-},
-navigationButtons: {
-display: "flex",
-justifyContent: "space-between",
-alignItems: "center",
-marginTop: "30px"
-},
-primaryButton: {
-padding: "12px 25px",
-backgroundColor: "#3498db",
-color: "white",
-border: "none",
-borderRadius: "8px",
-fontSize: "16px",
-fontWeight: "600",
-cursor: "pointer",
-transition: "all 0.3s ease",
-":hover": {
-backgroundColor: "#2980b9",
-transform: "translateY(-2px)",
-boxShadow: "0 5px 15px rgba(52, 152, 219, 0.3)"
-},
-":disabled": {
-backgroundColor: "#ccc",
-cursor: "not-allowed",
-transform: "none",
-boxShadow: "none"
-}
-},
-secondaryButton: {
-padding: "12px 25px",
-backgroundColor: "transparent",
-color: "#666",
-border: "1px solid #ddd",
-borderRadius: "8px",
-fontSize: "16px",
-fontWeight: "600",
-cursor: "pointer",
-transition: "all 0.3s ease",
-":hover": {
-backgroundColor: "#f8f9fa",
-borderColor: "#3498db",
-color: "#3498db"
-}
-}
+  label: {
+    display: "block",
+    fontSize: "14px",
+    fontWeight: "500",
+    color: "#333",
+    marginBottom: "8px",
+  },
+  notesTextarea: {
+    width: "100%",
+    padding: "12px 15px",
+    border: "1px solid #ddd",
+    borderRadius: "8px",
+    fontSize: "14px",
+    resize: "vertical",
+    fontFamily: "inherit",
+    ":focus": {
+      outline: "none",
+      borderColor: "#3498db",
+      boxShadow: "0 0 0 2px rgba(52, 152, 219, 0.2)",
+    },
+  },
+  dateAndTimeContainer: {
+    display: "flex",
+    gap: "30px",
+    backgroundColor: "white",
+    padding: "20px",
+    borderRadius: "12px",
+  },
+  calendarWrapper: {
+    flex: "1.5",
+  },
+  timeSlotsWrapper: {
+    flex: "1",
+    borderLeft: "1px solid #eee",
+    paddingLeft: "30px",
+    maxHeight: "400px",
+    overflowY: "auto",
+  },
+  calendarHeader: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: "20px",
+  },
+  calendarNavButton: {
+    padding: "8px 12px",
+    backgroundColor: "transparent",
+    border: "none",
+    fontSize: "20px",
+    fontWeight: "bold",
+    color: "#666",
+    cursor: "pointer",
+  },
+  calendarMonth: {
+    fontSize: "16px",
+    fontWeight: "600",
+    color: "#333",
+    margin: 0,
+    textTransform: "capitalize",
+  },
+  calendarGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(7, 1fr)",
+    gap: "5px",
+  },
+  calendarDayHeader: {
+    textAlign: "center",
+    fontSize: "12px",
+    fontWeight: "600",
+    color: "#999",
+    paddingBottom: "10px",
+  },
+  calendarDay: {
+    padding: "8px",
+    border: "1px solid transparent",
+    borderRadius: "50%",
+    width: "36px",
+    height: "36px",
+    margin: "0 auto",
+    backgroundColor: "white",
+    fontSize: "14px",
+    cursor: "pointer",
+    transition: "all 0.2s ease",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    ":hover": {
+      backgroundColor: "#f8f9fa",
+      borderColor: "#3498db",
+    },
+  },
+  calendarDayNotInMonth: {
+    color: "#ccc",
+    cursor: "not-allowed",
+    ":hover": {
+      backgroundColor: "white",
+      borderColor: "transparent",
+    },
+  },
+  timeContainer: {},
+  timeTitle: {
+    fontSize: "16px",
+    fontWeight: "600",
+    color: "#333",
+    margin: "0 0 15px 0",
+  },
+  timeGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(80px, 1fr))",
+    gap: "10px",
+  },
+  timeSlot: {
+    padding: "10px",
+    border: "1px solid #ddd",
+    borderRadius: "6px",
+    fontSize: "14px",
+    fontWeight: "500",
+    cursor: "pointer",
+    transition: "all 0.3s ease",
+    textAlign: "center",
+    ":hover": {
+      backgroundColor: "#3498db",
+      color: "white",
+      borderColor: "#3498db",
+    },
+  },
+  timePrompt: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    height: "100%",
+    textAlign: "center",
+    color: "#999",
+    fontSize: "14px",
+  },
+  summaryCard: {
+    backgroundColor: "white",
+    padding: "25px",
+    borderRadius: "12px",
+    marginBottom: "20px",
+  },
+  summaryItem: {
+    display: "flex",
+    alignItems: "center",
+    padding: "15px 0",
+    borderBottom: "1px solid #f0f0f0",
+  },
+  summaryLabel: {
+    fontSize: "14px",
+    fontWeight: "500",
+    color: "#666",
+    width: "150px",
+    flexShrink: 0,
+  },
+  summaryValue: {
+    fontSize: "14px",
+    color: "#333",
+    flex: 1,
+  },
+  editButton: {
+    padding: "6px 12px",
+    backgroundColor: "transparent",
+    border: "1px solid #ddd",
+    borderRadius: "4px",
+    fontSize: "12px",
+    fontWeight: "500",
+    color: "#666",
+    cursor: "pointer",
+    transition: "all 0.3s ease",
+    ":hover": {
+      backgroundColor: "#3498db",
+      color: "white",
+      borderColor: "#3498db",
+    },
+  },
+  notesSummary: {
+    padding: "15px 0",
+  },
+  notesText: {
+    fontSize: "14px",
+    color: "#666",
+    margin: "8px 0",
+    lineHeight: "1.5",
+  },
+  imageThumbnail: {
+    width: "80px",
+    height: "80px",
+    border: "1px solid #ddd",
+    borderRadius: "6px",
+    backgroundColor: "#f8f9fa",
+    marginTop: "10px",
+    objectFit: "cover",
+  },
+  noImageText: {
+    fontSize: "14px",
+    color: "#999",
+    fontStyle: "italic",
+    margin: "10px 0 0 0",
+  },
+  securityText: {
+    fontSize: "12px",
+    color: "#999",
+    textAlign: "center",
+    margin: "0 0 20px 0",
+  },
+  confirmationContainer: {
+    backgroundColor: "white",
+    padding: "40px",
+    borderRadius: "12px",
+    textAlign: "center"
+  },
+  confirmationIcon: {
+    fontSize: "60px",
+    color: "#27ae60",
+    marginBottom: "20px"
+  },
+  confirmationTitle: {
+    fontSize: "24px",
+    fontWeight: "600",
+    color: "#333",
+    margin: "0 0 15px 0"
+  },
+  confirmationDetails: {
+    fontSize: "16px",
+    color: "#666",
+    margin: "0 0 30px 0",
+    lineHeight: "1.5"
+  },
+  confirmationActions: {
+    display: "flex",
+    justifyContent: "center",
+    gap: "15px",
+    marginBottom: "30px",
+    flexWrap: "wrap"
+  },
+  confirmationActionButton: {
+    padding: "10px 20px",
+    backgroundColor: "#f8f9fa",
+    border: "1px solid #ddd",
+    borderRadius: "6px",
+    fontSize: "14px",
+    fontWeight: "500",
+    color: "#666",
+    cursor: "pointer",
+    transition: "all 0.3s ease",
+    ":hover": {
+      backgroundColor: "#3498db",
+      color: "white",
+      borderColor: "#3498db"
+    }
+  },
+  navigationButtons: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: "30px"
+  },
+  primaryButton: {
+    padding: "12px 25px",
+    backgroundColor: "#3498db",
+    color: "white",
+    border: "none",
+    borderRadius: "8px",
+    fontSize: "16px",
+    fontWeight: "600",
+    cursor: "pointer",
+    transition: "all 0.3s ease",
+    ":hover": {
+      backgroundColor: "#2980b9",
+      transform: "translateY(-2px)",
+      boxShadow: "0 5px 15px rgba(52, 152, 219, 0.3)"
+    },
+    ":disabled": {
+      backgroundColor: "#ccc",
+      cursor: "not-allowed",
+      transform: "none",
+      boxShadow: "none"
+    }
+  },
+  secondaryButton: {
+    padding: "12px 25px",
+    backgroundColor: "transparent",
+    color: "#666",
+    border: "1px solid #ddd",
+    borderRadius: "8px",
+    fontSize: "16px",
+    fontWeight: "600",
+    cursor: "pointer",
+    transition: "all 0.3s ease",
+    ":hover": {
+      backgroundColor: "#f8f9fa",
+      borderColor: "#3498db",
+      color: "#3498db"
+    }
+  }
 };
 
 export default Appointments;
