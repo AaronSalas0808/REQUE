@@ -14,11 +14,10 @@ const Home = forwardRef(({ onExploreServices, onReservaClick }, ref) => {
 
   const handleBackToHome = () => {
     setSelectedCategory(null);
-    // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Datos de servicios
+  // Datos de servicios (se mantienen igual)
   const servicesData = {
     "Barbería": [
       { id: 1, name: "Corte de cabello clásico", duration: "30 min", price: "$15-25", category: "Barbería", image: "💇", description: "Corte tradicional con técnicas probadas que nunca pasan de moda. Incluye lavado y acabado con productos premium.", benefits: "Estilo atemporal, acabado impecable, experiencia relajante" },
@@ -41,7 +40,7 @@ const Home = forwardRef(({ onExploreServices, onReservaClick }, ref) => {
       { id: 16, name: "Extensiones de cabello", duration: "120 min", price: "$100-250", category: "Belleza", image: "👑", description: "Aplicación profesional de extensiones de cabello de alta calidad con métodos seguros y naturales.", benefits: "Volumen instantáneo, longitud adicional, resultado natural" },
     ],
     "Manos y Pies": [
-      { id: 17, name: "Manicure básica", duration: "30 min", price: "$15-20", category: "Manos y Pies", image: "💅", description: "Limpieza, cutículas, forma y esmaltado básico para mantener tus manos impecables.", benefits: "Manos presentables, cutículas cuidadas, esmaltado duradero" },
+      { id: 17, name: "Manicure básica", duration: "30 min", price: "$15-20", category: "Manos y Pies", image: "💅", description: "Limpieza, cutículas, forma esmaltado básico para mantener tus manos impecables.", benefits: "Manos presentables, cutículas cuidadas, esmaltado duradero" },
       { id: 18, name: "Manicure spa/lujo", duration: "45 min", price: "$25-35", category: "Manos y Pies", image: "💅", description: "Experiencia premium que incluye exfoliación, mascarilla nutritiva y masaje relajante para manos.", benefits: "Hidratación profunda, relax, tratamiento completo" },
       { id: 19, name: "Pedicure básica", duration: "45 min", price: "$20-25", category: "Manos y Pies", image: "👣", description: "Limpieza profunda, cuidado de cutículas, callosidades y esmaltado para pies perfectos.", benefits: "Pies cuidados, eliminación de durezas, aspecto saludable" },
       { id: 20, name: "Pedicure spa/lujo", duration: "60 min", price: "$30-40", category: "Manos y Pies", image: "👣", description: "Tratamiento completo con baño relajante, exfoliación, mascarilla y masaje podal rejuvenecedor.", benefits: "Pies suaves, relax profundo, hidratación intensiva" },
@@ -70,33 +69,16 @@ const Home = forwardRef(({ onExploreServices, onReservaClick }, ref) => {
           <button 
             onClick={handleBackToHome}
             style={backButtonStyle}
-            onMouseEnter={(e) => {
-              e.target.style.background = "#3498db";
-              e.target.style.color = "white";
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.background = "transparent";
-              e.target.style.color = "#3498db";
-            }}
           >
             ← Volver al inicio
           </button>
           <h2 style={servicesTitleStyle}>Servicios de {selectedCategory}</h2>
-          <div style={{width: "100px"}}></div> {/* Espaciador para equilibrar el diseño */}
+          <div style={{width: "100px"}}></div>
         </div>
         
         <div style={servicesGridStyle}>
           {servicesData[selectedCategory].map(service => (
-            <div key={service.id} style={serviceCardStyle}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-8px)";
-                e.currentTarget.style.boxShadow = "0 15px 35px rgba(0,0,0,0.15)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 5px 15px rgba(0,0,0,0.08)";
-              }}
-            >
+            <div key={service.id} style={serviceCardStyle}>
               <div style={serviceIconStyle}>{service.image}</div>
               <h3 style={serviceNameStyle}>{service.name}</h3>
               <p style={serviceDescriptionStyle}>{service.description}</p>
@@ -125,14 +107,6 @@ const Home = forwardRef(({ onExploreServices, onReservaClick }, ref) => {
             <button 
               onClick={handleReservaClick} 
               style={reservaButtonStyle}
-              onMouseEnter={(e) => {
-                e.target.style.transform = "translateY(-3px)";
-                e.target.style.boxShadow = "0 10px 25px rgba(0,0,0,0.3)";
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.transform = "translateY(0)";
-                e.target.style.boxShadow = "0 5px 15px rgba(0,0,0,0.2)";
-              }}
             >
               Reserva aquí
             </button>
@@ -144,122 +118,52 @@ const Home = forwardRef(({ onExploreServices, onReservaClick }, ref) => {
       <section ref={ref?.serviciosRef} style={sectionStyle}>
         <h2 style={sectionTitleStyle}>Nuestros Servicios</h2>
         <div style={servicesContainerStyle}>
-          {/* Primera fila con 2 servicios */}
           <div style={servicesRowStyle}>
-            <div style={cardStyle}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-8px)";
-                e.currentTarget.style.boxShadow = "0 15px 35px rgba(0,0,0,0.15)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 5px 15px rgba(0,0,0,0.08)";
-              }}
-            >
+            <div style={cardStyle}>
               <div style={cardIconStyle}>💆‍♂️</div>
               <h3 style={cardTitleStyle}>Servicios de Spa y Bienestar</h3>
               <p style={serviceDescStyle}>Relájate con un masaje terapéutico.</p>
               <button
                 onClick={() => handleExploreServices("Spa y Bienestar")}
                 style={serviceButtonStyle}
-                onMouseEnter={(e) => {
-                  e.target.style.background = "#3498db";
-                  e.target.style.color = "white";
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.background = "transparent";
-                  e.target.style.color = "#3498db";
-                }}
               >
                 Ver opciones
               </button>
             </div>
 
-            <div style={cardStyle}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-8px)";
-                e.currentTarget.style.boxShadow = "0 15px 35px rgba(0,0,0,0.15)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 5px 15px rgba(0,0,0,0.08)";
-              }}
-            >
+            <div style={cardStyle}>
               <div style={cardIconStyle}>💇</div>
               <h3 style={cardTitleStyle}>Servicios de Barbería</h3>
               <p style={serviceDescStyle}>Un look fresco y moderno.</p>
               <button
                 onClick={() => handleExploreServices("Barbería")}
                 style={serviceButtonStyle}
-                onMouseEnter={(e) => {
-                  e.target.style.background = "#3498db";
-                  e.target.style.color = "white";
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.background = "transparent";
-                  e.target.style.color = "#3498db";
-                }}
               >
                 Ver opciones
               </button>
             </div>
           </div>
           
-          {/* Segunda fila con 2 servicios */}
           <div style={servicesRowStyle}>
-            <div style={cardStyle}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-8px)";
-                e.currentTarget.style.boxShadow = "0 15px 35px rgba(0,0,0,0.15)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 5px 15px rgba(0,0,0,0.08)";
-              }}
-            >
+            <div style={cardStyle}>
               <div style={cardIconStyle}>👑</div>
               <h3 style={cardTitleStyle}>Servicios de Belleza</h3>
               <p style={serviceDescStyle}>Dale forma a tu vida.</p>
               <button
                 onClick={() => handleExploreServices("Belleza")}
                 style={serviceButtonStyle}
-                onMouseEnter={(e) => {
-                  e.target.style.background = "#3498db";
-                  e.target.style.color = "white";
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.background = "transparent";
-                  e.target.style.color = "#3498db";
-                }}
               >
                 Ver opciones
               </button>
             </div>
 
-            <div style={cardStyle}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-8px)";
-                e.currentTarget.style.boxShadow = "0 15px 35px rgba(0,0,0,0.15)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 5px 15px rgba(0,0,0,0.08)";
-              }}
-            >
+            <div style={cardStyle}>
               <div style={cardIconStyle}>💅</div>
               <h3 style={cardTitleStyle}>Servicios de Manos y Pies</h3>
               <p style={serviceDescStyle}>Piel suave y libre de imperfecciones.</p>
               <button
                 onClick={() => handleExploreServices("Manos y Pies")}
                 style={serviceButtonStyle}
-                onMouseEnter={(e) => {
-                  e.target.style.background = "#3498db";
-                  e.target.style.color = "white";
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.background = "transparent";
-                  e.target.style.color = "#3498db";
-                }}
               >
                 Ver opciones
               </button>
@@ -269,12 +173,12 @@ const Home = forwardRef(({ onExploreServices, onReservaClick }, ref) => {
       </section>
 
       {/* SOBRE NOSOTROS Section */}
-      <section ref={ref?.sobreNosotrosRef} style={{...sectionStyle, background: "#f8f9fa"}}>
+      <section ref={ref?.sobreNosotrosRef} style={{...sectionStyle, background: "#fafafa"}}>
         <div style={aboutContentStyle}>
           <div style={aboutTextStyle}>
             <h2 style={sectionTitleStyle}>Sobre Nosotros</h2>
             <p style={aboutDescriptionStyle}>
-              En <strong style={{color: "#3498db"}}>Apolo Barber & Spa</strong> reinventamos el concepto de cuidado personal. 
+              En <strong style={{color: "#2c3e50"}}>Apolo Barber & Spa</strong> reinventamos el concepto de cuidado personal. 
               Nuestro espacio ha sido diseñado para ofrecer una experiencia única donde la belleza 
               y el bienestar se fusionan bajo el lema: <em>"Juventud, fuerza y estilo"</em>.
             </p>
@@ -284,7 +188,6 @@ const Home = forwardRef(({ onExploreServices, onReservaClick }, ref) => {
               ambiente relajante y sofisticado.
             </p>
             
-            {/* Cuadrícula de características 2x2 */}
             <div style={featuresGridStyle}>
               <div style={featureItemStyle}>
                 <span style={featureIconStyle}>⭐</span>
@@ -309,10 +212,9 @@ const Home = forwardRef(({ onExploreServices, onReservaClick }, ref) => {
             </div>
           </div>
           
-          {/* Imagen a la derecha */}
           <div style={aboutImageStyle}>
             <div style={placeholderImageStyle}>
-              <span style={{color: "#3498db", fontSize: "48px", marginBottom: "15px"}}>🏛️</span>
+              <span style={{color: "#2c3e50", fontSize: "48px", marginBottom: "15px"}}>🏛️</span>
               <h3 style={{margin: "0 0 10px 0", color: "#2c3e50"}}>Nuestro Espacio</h3>
               <p style={{margin: 0, color: "#7f8c8d", textAlign: "center"}}>
                 Un ambiente moderno y acogedor diseñado para tu máxima comodidad
@@ -358,10 +260,9 @@ const Home = forwardRef(({ onExploreServices, onReservaClick }, ref) => {
           </div>
         </div>
 
-        {/* Mapa de ubicación */}
         <div style={mapContainerStyle}>
           <div style={placeholderMapStyle}>
-            <span style={{color: "#3498db", fontSize: "32px"}}>🗺️</span>
+            <span style={{color: "#2c3e50", fontSize: "32px"}}>🗺️</span>
             <p style={{margin: "15px 0 0 0", color: "#7f8c8d"}}>Mapa de ubicación</p>
             <p style={{margin: "5px 0 0 0", color: "#bdc3c7", fontSize: "12px"}}>
               Estamos ubicados en el corazón de la ciudad
@@ -371,7 +272,7 @@ const Home = forwardRef(({ onExploreServices, onReservaClick }, ref) => {
       </section>
 
       {/* OPINIONES Section */}
-      <section ref={ref?.opinionesRef} style={{...sectionStyle, background: "#f8f9fa"}}>
+      <section ref={ref?.opinionesRef} style={{...sectionStyle, background: "#fafafa"}}>
         <h2 style={sectionTitleStyle}>Opiniones de Clientes</h2>
         <div style={reviewsGridStyle}>
           <div style={reviewCardStyle}>
@@ -409,20 +310,21 @@ const Home = forwardRef(({ onExploreServices, onReservaClick }, ref) => {
   );
 });
 
-// Estilos
+// Estilos minimalistas
 const containerStyle = {
   fontFamily: "'Helvetica Neue', Arial, sans-serif",
   color: "#2c3e50",
+  lineHeight: 1.6,
 };
 
 const heroStyle = {
-  background: "linear-gradient(135deg, #3498db 0%, #2c3e50 100%)",
+  background: "#2c3e50",
   minHeight: "100vh",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
   textAlign: "center",
-  padding: "100px 20px 60px",
+  padding: "80px 20px 60px",
   color: "white",
 };
 
@@ -435,64 +337,58 @@ const heroContentStyle = {
 };
 
 const heroTitleStyle = {
-  fontSize: "3.5rem",
-  fontWeight: 700,
+  fontSize: "3rem",
+  fontWeight: 600,
   margin: "0 0 10px 0",
   color: "white",
-  letterSpacing: "1px"
 };
 
 const heroSloganStyle = {
-  fontSize: "1.4rem",
+  fontSize: "1.2rem",
   fontWeight: 300,
   margin: "0 0 30px 0",
   color: "rgba(255,255,255,0.9)",
-  fontStyle: "italic"
 };
 
 const heroSubtitleStyle = {
-  fontSize: "1.3rem",
+  fontSize: "1.1rem",
   fontWeight: 300,
-  margin: "0 0 50px 0",
+  margin: "0 0 40px 0",
   color: "rgba(255,255,255,0.9)",
-  lineHeight: "1.6"
 };
 
 const buttonContainerStyle = {
   display: "flex",
-  gap: "20px",
   justifyContent: "center",
-  flexWrap: "wrap"
 };
 
 const reservaButtonStyle = {
   background: "white",
-  color: "#3498db",
+  color: "#2c3e50",
   border: "none",
-  padding: "18px 45px",
-  borderRadius: "30px",
+  padding: "15px 35px",
+  borderRadius: "4px",
   cursor: "pointer",
-  fontWeight: 600,
+  fontWeight: 500,
   fontSize: "16px",
-  transition: "all 0.3s ease",
-  boxShadow: "0 5px 15px rgba(0,0,0,0.2)"
+  transition: "all 0.2s ease",
 };
 
 const sectionStyle = {
-  padding: "80px 40px",
+  padding: "80px 20px",
   background: "#ffffff",
 };
 
 const sectionTitleStyle = {
   textAlign: "center",
-  fontSize: "2.8rem",
-  fontWeight: 300,
-  margin: "0 极 60px 0",
+  fontSize: "2.2rem",
+  fontWeight: 400,
+  margin: "0 0 60px 0",
   color: "#2c3e50"
 };
 
 const servicesContainerStyle = {
-  maxWidth: "1200px",
+  maxWidth: "1000px",
   margin: "0 auto"
 };
 
@@ -506,13 +402,11 @@ const servicesRowStyle = {
 
 const cardStyle = {
   background: "#ffffff",
-  borderRadius: "12px",
+  borderRadius: "8px",
   padding: "30px 25px",
-  boxShadow: "0 5px 15px rgba(0,0,0,0.08)",
-  border: "1px solid #ecf0f1",
-  transition: "transform 0.3s ease, box-shadow 0.3s ease",
+  border: "1px solid #eaeaea",
   textAlign: "center",
-  width: "300px",
+  width: "280px",
   minHeight: "280px",
   display: "flex",
   flexDirection: "column",
@@ -525,10 +419,10 @@ const cardIconStyle = {
 };
 
 const cardTitleStyle = {
-  fontSize: "1.5rem",
-  fontWeight: 600,
+  fontSize: "1.3rem",
+  fontWeight: 500,
   margin: "0 0 15px 0",
-  color: "#3498db"
+  color: "#2c3e50"
 };
 
 const serviceDescStyle = {
@@ -541,14 +435,14 @@ const serviceDescStyle = {
 
 const serviceButtonStyle = {
   background: "transparent",
-  color: "#3498db",
-  border: "1px solid #3498db",
+  color: "#2c3e50",
+  border: "1px solid #2c3e50",
   padding: "10px 20px",
-  borderRadius: "20px",
+  borderRadius: "4px",
   cursor: "pointer",
-  fontWeight: "500",
+  fontWeight: "400",
   fontSize: "14px",
-  transition: "all 0.3s ease",
+  transition: "all 0.2s ease",
   marginTop: "15px"
 };
 
@@ -567,8 +461,8 @@ const aboutTextStyle = {
 };
 
 const aboutDescriptionStyle = {
-  fontSize: "1.2rem",
-  lineHeight: "1.8",
+  fontSize: "1.1rem",
+  lineHeight: "1.7",
   color: "#7f8c8d",
   marginBottom: "30px"
 };
@@ -577,16 +471,16 @@ const aboutDescriptionStyle = {
 const featuresGridStyle = {
   display: "grid",
   gridTemplateColumns: "1fr 1fr",
-  gap: "15px",
+  gap: "20px",
   marginTop: "30px"
 };
 
 const featureItemStyle = {
   background: "#ffffff",
-  borderRadius: "10px",
+  borderRadius: "8px",
   padding: "20px",
   textAlign: "center",
-  boxShadow: "0 4px 15px rgba(0,0,0,0.08)",
+  border: "1px solid #eaeaea",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
@@ -595,14 +489,14 @@ const featureItemStyle = {
 };
 
 const featureIconStyle = {
-  fontSize: "32px",
+  fontSize: "28px",
   marginBottom: "15px",
   display: "block"
 };
 
 const featureTitleStyle = {
-  fontSize: "1.1rem",
-  fontWeight: 600,
+  fontSize: "1rem",
+  fontWeight: 500,
   margin: "0 0 10px 0",
   color: "#2c3e50"
 };
@@ -621,14 +515,14 @@ const aboutImageStyle = {
 const placeholderImageStyle = {
   width: "100%",
   height: "400px",
-  background: "linear-gradient(135deg, #eef5ff 0%, #d6e4ff 100%)",
-  borderRadius: "15px",
-  display: "极",
+  background: "#f8f9fa",
+  borderRadius: "8px",
+  display: "flex",
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "center",
-  color: "#3498db",
-  border: "2px dashed #3498db",
+  color: "#2c3e50",
+  border: "1px solid #eaeaea",
   padding: "30px"
 };
 
@@ -647,13 +541,11 @@ const contactRowStyle = {
 const contactCardStyle = {
   background: "#ffffff",
   padding: "25px 20px",
-  borderRadius: "12px",
+  borderRadius: "8px",
   textAlign: "center",
-  border: "1px solid #e9ecef",
-  transition: "transform 0.3s ease",
-  boxShadow: "0 4px 15px rgba(0,0,0,0.05)",
+  border: "1px solid #eaeaea",
   width: "250px",
-  minHeight: "250px",
+  minHeight: "220px",
   display: "flex",
   flexDirection: "column",
   justifyContent: "space-between"
@@ -666,16 +558,16 @@ const contactIconStyle = {
 };
 
 const contactTitleStyle = {
-  fontSize: "1.2rem",
-  fontWeight: 600,
+  fontSize: "1.1rem",
+  fontWeight: 500,
   margin: "0 0 15px 0",
-  color: "#3498db"
+  color: "#2c3e50"
 };
 
 const contactTextStyle = {
   margin: "8px 0",
   color: "#7f8c8d",
-  fontSize: "极px"
+  fontSize: "14px"
 };
 
 const mapContainerStyle = {
@@ -684,32 +576,31 @@ const mapContainerStyle = {
 };
 
 const placeholderMapStyle = {
-  width: "极%",
+  width: "100%",
   height: "300px",
-  background: "#eef5ff",
-  borderRadius: "12px",
+  background: "#f8f9fa",
+  borderRadius: "8px",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "center",
-  color: "#3498db",
-  border: "2px dashed #3498db"
+  color: "#2c3e50",
+  border: "1px solid #eaeaea"
 };
 
 const reviewsGridStyle = {
   display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+  gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
   gap: "30px",
-  maxWidth: "1300px",
+  maxWidth: "1000px",
   margin: "0 auto"
 };
 
 const reviewCardStyle = {
   background: "#ffffff",
   padding: "30px",
-  borderRadius: "15px",
-  boxShadow: "0 8px 25px rgba(0,0,0,0.08)",
-  border: "1px solid #ecf0f1"
+  borderRadius: "8px",
+  border: "1px solid #eaeaea"
 };
 
 const reviewHeaderStyle = {
@@ -720,14 +611,14 @@ const reviewHeaderStyle = {
 };
 
 const reviewNameStyle = {
-  fontWeight: 600,
+  fontWeight: 500,
   color: "#2c3e50",
   fontSize: "16px"
 };
 
 const reviewRatingStyle = {
   color: "#f39c12",
-  fontSize: "1.2rem"
+  fontSize: "1.1rem"
 };
 
 const reviewTextStyle = {
@@ -745,12 +636,12 @@ const servicesHeaderStyle = {
   alignItems: "center",
   padding: "40px 40px 20px",
   background: "white",
-  boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+  borderBottom: "1px solid #eaeaea",
 };
 
 const servicesTitleStyle = {
-  fontSize: "2.5rem",
-  fontWeight: 300,
+  fontSize: "2.2rem",
+  fontWeight: 400,
   margin: 0,
   color: "#2c3e50",
   textAlign: "center",
@@ -759,14 +650,14 @@ const servicesTitleStyle = {
 
 const backButtonStyle = {
   background: "transparent",
-  color: "#3498db",
-  border: "2px solid #3498db",
-  padding: "12px 25px",
-  borderRadius: "30px",
+  color: "#2c3e50",
+  border: "1px solid #2c3e50",
+  padding: "10px 20px",
+  borderRadius: "4px",
   cursor: "pointer",
-  fontWeight: 600,
-  fontSize: "16px",
-  transition: "all 0.3s ease",
+  fontWeight: 400,
+  fontSize: "14px",
+  transition: "all 0.2s ease",
 };
 
 const servicesGridStyle = {
@@ -774,17 +665,15 @@ const servicesGridStyle = {
   gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
   gap: "30px",
   padding: "40px",
-  maxWidth: "1400px",
+  maxWidth: "1200px",
   margin: "0 auto",
 };
 
 const serviceCardStyle = {
   background: "#ffffff",
-  borderRadius: "12px",
+  borderRadius: "8px",
   padding: "25px",
-  boxShadow: "0 5px 15px rgba(0,0,0,0.08)",
-  border: "1px solid #ecf0f1",
-  transition: "transform 0.3s ease, box-shadow 0.3s ease",
+  border: "1px solid #eaeaea",
   textAlign: "center",
   display: "flex",
   flexDirection: "column",
@@ -799,7 +688,7 @@ const serviceIconStyle = {
 
 const serviceNameStyle = {
   fontSize: "1.2rem",
-  fontWeight: 600,
+  fontWeight: 500,
   margin: "0 0 15px 0",
   color: "#2c3e50"
 };
@@ -819,7 +708,7 @@ const serviceDetailStyle = {
 
 const serviceBenefitsStyle = {
   color: "#27ae60",
-  fontWeight: "500",
+  fontWeight: "400",
   marginTop: "15px",
   fontSize: "0.9rem",
   fontStyle: "italic",
