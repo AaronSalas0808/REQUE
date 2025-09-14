@@ -3,8 +3,6 @@ import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import Services from "./components/Services";
-import Subservices from "./components/Subservices";
 import Home from "./components/Home";
 import Appointments from "./components/Appointments";
 
@@ -14,7 +12,6 @@ function App() {
   const [showRegister, setShowRegister] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [currentScreen, setCurrentScreen] = useState("home");
-  const [selectedService, setSelectedService] = useState(null);
 
   // Referencias para secciones del Home
   const homeRef = useRef(null);
@@ -31,11 +28,10 @@ function App() {
 
   const handleRegister = (userData) => {
     setShowRegister(false);
-    setShowLogin(false); // Asegúrate de cerrar también el modal de login si está abierto
+    setShowLogin(false);
     setCurrentScreen("appointments");
     setUser(userData);
-  
-};
+  };
 
   const handleLogout = () => {
     setUser(null);
@@ -52,8 +48,9 @@ function App() {
         }
         break;
       case "servicios":
-        if (currentScreen === "home") serviciosRef.current?.scrollIntoView({ behavior: "smooth" });
-        else setCurrentScreen("services");
+        // Remove services navigation since it no longer exists
+        setCurrentScreen("home");
+        setTimeout(() => serviciosRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
         break;
       case "sobre-nosotros":
         if (currentScreen === "home") sobreNosotrosRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -82,16 +79,12 @@ function App() {
     setSidebarOpen(false);
   };
 
-  const handleExploreServices = () => {
-    setCurrentScreen("services");
-    setSidebarOpen(false);
-  };
+  // Remove handleExploreServices function since it's no longer needed
 
   const handleBackToHome = () => setCurrentScreen("home");
 
   // Props para Home
   const homeProps = {
-    onExploreServices: handleExploreServices,
     onReservaClick: () => {
       if (user) setCurrentScreen("appointments");
       else setShowLogin(true);
@@ -102,7 +95,7 @@ function App() {
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif", minHeight: "100vh", background: "#fff", color: "#2c3e50" }}>
       {/* Header */}
-      {(currentScreen === "home" || currentScreen === "services" || currentScreen === "subservices") && (
+      {(currentScreen === "home" || currentScreen === "appointments") && (
         <Header
           user={user}
           onLoginClick={() => { setShowLogin(true); setShowRegister(false); }}
@@ -113,22 +106,13 @@ function App() {
       )}
 
       {/* Sidebar */}
-      {(currentScreen === "home" || currentScreen === "services" || currentScreen === "subservices") && (
+      {(currentScreen === "home") && (
         <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} onNavigate={handleNavigation} />
       )}
 
       {/* Contenido principal */}
       <main>
         {currentScreen === "home" && <Home {...homeProps} />}
-        {currentScreen === "services" && (
-          <Services
-            onSelectService={(service) => { setSelectedService(service); setCurrentScreen("subservices"); }}
-            onBackToHome={() => setCurrentScreen("home")}
-          />
-        )}
-        {currentScreen === "subservices" && selectedService && (
-          <Subservices service={selectedService} onBack={() => setCurrentScreen("services")} />
-        )}
         {currentScreen === "appointments" && user && (
           <Appointments user={user} onBackToHome={handleBackToHome} onLogout={handleLogout} />
         )}
@@ -152,7 +136,7 @@ function App() {
       </main>
 
       {/* Footer */}
-      {(currentScreen === "home" || currentScreen === "services" || currentScreen === "subservices") && (
+      {(currentScreen === "home") && (
         <footer style={{ background: "#ecf0f1", padding: "30px 20px", textAlign: "center", color: "#7f8c8d", fontSize: "14px", borderTop: "1px solid #dce4e6" }}>
           <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
             <h3 style={{ margin: "0 0 15px 0", color: "#2c3e50" }}>Apolo Barber & Spa</h3>

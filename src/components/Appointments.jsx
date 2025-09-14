@@ -145,7 +145,7 @@ function Appointments({ user, onBackToHome, onLogout }) {
     "19:00",
   ];
 
-  const categories = ["Todas", "Barbería", "Belleza", "Manos y Pies", "Spa y Bienestar", "Especializados"];
+  const categories = ["Todas", "Barbería", "Belleza", "Manos y Pies", "Spa y Bienestar"];
 
   // Función para filtrar servicios según búsqueda y categoría
   const filteredServices = services.filter(service => {
