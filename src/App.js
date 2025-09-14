@@ -5,6 +5,7 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import Home from "./components/Home";
 import Appointments from "./components/Appointments";
+import WorkerDashboard from "./components/WorkerDashboard"; // Importar el nuevo componente
 
 function App() {
   const [user, setUser] = useState(null);
@@ -12,6 +13,7 @@ function App() {
   const [showRegister, setShowRegister] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [currentScreen, setCurrentScreen] = useState("home");
+  const [showWorkerDashboard, setShowWorkerDashboard] = useState(false);
 
   // Referencias para secciones del Home
   const homeRef = useRef(null);
@@ -23,19 +25,37 @@ function App() {
   const handleLogin = (loggedUser) => {
     setUser(loggedUser);
     setShowLogin(false);
-    setCurrentScreen("appointments");
+    
+    // Verificar si es un trabajador (email termina con @apolo.admin.cr)
+    if (loggedUser.email.endsWith('@apolo.admin.cr')) {
+      setShowWorkerDashboard(true);
+      setCurrentScreen("worker");
+    } else {
+      setShowWorkerDashboard(false);
+      setCurrentScreen("appointments");
+    }
   };
 
   const handleRegister = (userData) => {
     setShowRegister(false);
     setShowLogin(false);
-    setCurrentScreen("appointments");
+    
+    // Verificar si es un trabajador
+    if (userData.email.endsWith('@apolo.admin.cr')) {
+      setShowWorkerDashboard(true);
+      setCurrentScreen("worker");
+    } else {
+      setShowWorkerDashboard(false);
+      setCurrentScreen("appointments");
+    }
+    
     setUser(userData);
   };
 
   const handleLogout = () => {
     setUser(null);
     setCurrentScreen("home");
+    setShowWorkerDashboard(false);
   };
 
   const handleNavigation = (sectionId) => {
@@ -48,7 +68,6 @@ function App() {
         }
         break;
       case "servicios":
-        // Remove services navigation since it no longer exists
         setCurrentScreen("home");
         setTimeout(() => serviciosRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
         break;
@@ -79,33 +98,43 @@ function App() {
     setSidebarOpen(false);
   };
 
-  // Remove handleExploreServices function since it's no longer needed
-
-  const handleBackToHome = () => setCurrentScreen("home");
+  const handleBackToHome = () => {
+    setCurrentScreen("home");
+    setShowWorkerDashboard(false);
+  };
 
   // Props para Home
   const homeProps = {
     onReservaClick: () => {
-      if (user) setCurrentScreen("appointments");
-      else setShowLogin(true);
+      if (user) {
+        // Verificar si es trabajador para redirigir a la vista correcta
+        if (user.email.endsWith('@apolo.admin.cr')) {
+          setCurrentScreen("worker");
+          setShowWorkerDashboard(true);
+        } else {
+          setCurrentScreen("appointments");
+        }
+      } else {
+        setShowLogin(true);
+      }
     },
     ref: { homeRef, serviciosRef, sobreNosotrosRef, contactoRef, opinionesRef },
   };
 
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif", minHeight: "100vh", background: "#fff", color: "#2c3e50" }}>
-      {/* Header */}
-      {(currentScreen === "home" || currentScreen === "appointments") && (
-        <Header
-          user={user}
-          onLoginClick={() => { setShowLogin(true); setShowRegister(false); }}
-          onRegisterClick={() => { setShowRegister(true); setShowLogin(false); }}
-          onLogout={handleLogout}
-          onMenuClick={() => setSidebarOpen(true)}
-        />
-      )}
+      {/* Header - Mostrar en todas las pantallas excepto login/register */}
+      {(currentScreen === "home") && (
+  <Header
+    user={user}
+    onLoginClick={() => { setShowLogin(true); setShowRegister(false); }}
+    onRegisterClick={() => { setShowRegister(true); setShowLogin(false); }}
+    onLogout={handleLogout}
+    onMenuClick={() => setSidebarOpen(true)}
+  />
+)}
 
-      {/* Sidebar */}
+      {/* Sidebar - Solo mostrar en home */}
       {(currentScreen === "home") && (
         <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} onNavigate={handleNavigation} />
       )}
@@ -113,8 +142,11 @@ function App() {
       {/* Contenido principal */}
       <main>
         {currentScreen === "home" && <Home {...homeProps} />}
-        {currentScreen === "appointments" && user && (
+        {currentScreen === "appointments" && user && !showWorkerDashboard && (
           <Appointments user={user} onBackToHome={handleBackToHome} onLogout={handleLogout} />
+        )}
+        {currentScreen === "worker" && user && showWorkerDashboard && (
+          <WorkerDashboard user={user} onLogout={handleLogout} />
         )}
 
         {/* Login */}
@@ -135,7 +167,7 @@ function App() {
         )}
       </main>
 
-      {/* Footer */}
+      {/* Footer - Solo mostrar en home */}
       {(currentScreen === "home") && (
         <footer style={{ background: "#ecf0f1", padding: "30px 20px", textAlign: "center", color: "#7f8c8d", fontSize: "14px", borderTop: "1px solid #dce4e6" }}>
           <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
