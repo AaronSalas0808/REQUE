@@ -21,44 +21,44 @@ const Home = forwardRef(({ onExploreServices, onReservaClick }, ref) => {
   // Datos de servicios
   const servicesData = {
     "Barbería": [
-      { id: 1, name: "Corte de cabello clásico", duration: "30 min", price: "$15-25", category: "Barbería", image: "💇" },
-      { id: 2, name: "Corte de cabello moderno/estilo", duration: "45 min", price: "$20-30", category: "Barbería", image: "💇" },
-      { id: 3, name: "Afeitado tradicional con navaja", duration: "30 min", price: "$15-20", category: "Barbería", image: "✂️" },
-      { id: 4, name: "Arreglo de barba y bigote", duration: "25 min", price: "$12-18", category: "Barbería", image: "🧔" },
-      { id: 5, name: "Corte + Barba (Combo)", duration: "60 min", price: "$30-40", category: "Barbería", image: "👨" },
-      { id: 6, name: "Tinte para cabello/barba", duration: "45 min", price: "$20-30", category: "Barbería", image: "🎨" },
-      { id: 7, name: "Mascarilla facial/tratamientos", duration: "30 min", price: "$15-25", category: "Barbería", image: "🧴" },
-      { id: 8, name: "Depilación de cejas", duration: "15 min", price: "$8-12", category: "Barbería", image: "👁️" },
-      { id: 9, name: "Limpieza facial masculina", duration: "45 min", price: "$25-35", category: "Barbería", image: "✨" },
+      { id: 1, name: "Corte de cabello clásico", duration: "30 min", price: "$15-25", category: "Barbería", image: "💇", description: "Corte tradicional con técnicas probadas que nunca pasan de moda. Incluye lavado y acabado con productos premium.", benefits: "Estilo atemporal, acabado impecable, experiencia relajante" },
+      { id: 2, name: "Corte de cabello moderno/estilo", duration: "45 min", price: "$20-30", category: "Barbería", image: "💇", description: "Tendencias actuales y cortes vanguardistas con asesoramiento de estilo personalizado.", benefits: "Look actualizado, asesoramiento profesional, productos de fijación premium" },
+      { id: 3, name: "Afeitado tradicional con navaja", duration: "30 min", price: "$15-20", category: "Barbería", image: "✂️", description: "Afeitado clásico con navaja straight, toallas calientes y productos de primera calidad para una experiencia premium.", benefits: "Barba suave, exfoliación natural, menor irritación" },
+      { id: 4, name: "Arreglo de barba y bigote", duration: "25 min", price: "$12-18", category: "Barbería", image: "🧔", description: "Delineación, perfilado y arreglo de barba con técnicas precisas para mantener tu estilo impecable.", benefits: "Forma definida, líneas limpias, aspecto cuidado" },
+      { id: 5, name: "Corte + Barba (Combo)", duration: "60 min", price: "$30-40", category: "Barbería", image: "👨", description: "Servicio completo que incluye corte de cabello y arreglo de barba con productos premium y acabado perfecto.", benefits: "Precio especial, look completo, experiencia premium" },
+      { id: 6, name: "Tinte para cabello/barba", duration: "45 min", price: "$20-30", category: "Barbería", image: "🎨", description: "Aplicación profesional de tinte para cubrir canas o cambiar tu look con productos de calidad que cuidan tu piel y cabello.", benefits: "Cobertura natural, productos hipoalergénicos, resultado uniforme" },
+      { id: 7, name: "Mascarilla facial/tratamientos", duration: "30 min", price: "$15-25", category: "Barbería", image: "🧴", description: "Tratamientos rejuvenecedores con ingredientes naturales para hidratar y revitalizar la piel.", benefits: "Piel hidratada, aspecto rejuvenecido, relax absoluto" },
+      { id: 8, name: "Depilación de cejas", duration: "15 min", price: "$8-12", category: "Barbería", image: "👁️", description: "Delineación precisa de cejas con técnicas profesionales para realzar tu mirada de forma natural.", benefits: "Mirada definida, forma natural, técnica indolora" },
+      { id: 9, name: "Limpieza facial masculina", duration: "45 min", price: "$25-35", category: "Barbería", image: "✨", description: "Limpieza profunda con vapor, exfoliación y extracción de impurezas para una piel saludable.", benefits: "Puras limpios, piel oxigenada, prevención de imperfecciones" },
     ],
     "Belleza": [
-      { id: 10, name: "Corte de dama", duration: "45 min", price: "$20-30", category: "Belleza", image: "💇‍♀️" },
-      { id: 11, name: "Peinado para eventos", duration: "60 min", price: "$35-60", category: "Belleza", image: "👰" },
-      { id: 12, name: "Tinte/coloración", duration: "90 min", price: "$40-70", category: "Belleza", image: "🌈" },
-      { id: 13, name: "Mechas/balayage", duration: "120 min", price: "$60-100", category: "Belleza", image: "🎨" },
-      { id: 14, name: "Tratamientos capilares", duration: "45 min", price: "$25-45", category: "Belleza", image: "💆‍♀️" },
-      { id: 15, name: "Alisado/keratina", duration: "120 min", price: "$80-150", category: "Belleza", image: "🔀" },
-      { id: 16, name: "Extensiones de cabello", duration: "120 min", price: "$100-250", category: "Belleza", image: "👑" },
+      { id: 10, name: "Corte de dama", duration: "45 min", price: "$20-30", category: "Belleza", image: "💇‍♀️", description: "Corte moderno y personalizado según tu tipo de rostro, cabello y estilo de vida con técnicas actualizadas.", benefits: "Estilo personalizado, asesoramiento profesional, técnicas actualizadas" },
+      { id: 11, name: "Peinado para eventos", duration: "60 min", price: "$35-60", category: "Belleza", image: "👰", description: "Peinados elegantes para ocasiones especiales con fijación profesional que garantiza durabilidad.", benefits: "Diseño exclusivo, productos de larga duración, look fotográfico" },
+      { id: 12, name: "Tinte/coloración", duration: "90 min", price: "$40-70", category: "Belleza", image: "🌈", description: "Coloración profesional con productos de calidad que protegen el cabello y mantienen su vitalidad.", benefits: "Color vibrante, cubrimiento de canas, fórmula protectora" },
+      { id: 13, name: "Mechas/balayage", duration: "120 min", price: "$60-100", category: "Belleza", image: "🎨", description: "Técnicas de iluminación personalizadas para crear dimensiones y reflejos naturales con un efecto sun-kissed.", benefits: "Efecto natural, bajo mantenimiento, personalizado" },
+      { id: 14, name: "Tratamientos capilares", duration: "45 min", price: "$25-45", category: "Belleza", image: "💆‍♀️", description: "Hidratación, reconstrucción o nutrición profunda según las necesidades específicas de tu cabello.", benefits: "Cabello revitalizado, reparación de daños, brillo intenso" },
+      { id: 15, name: "Alisado/keratina", duration: "120 min", price: "$80-150", category: "Belleza", image: "🔀", description: "Tratamientos profesionales de alisado con fórmulas avanzadas que protegen la fibra capilar.", benefits: "Manejabilidad, reducción de frizz, efecto duradero" },
+      { id: 16, name: "Extensiones de cabello", duration: "120 min", price: "$100-250", category: "Belleza", image: "👑", description: "Aplicación profesional de extensiones de cabello de alta calidad con métodos seguros y naturales.", benefits: "Volumen instantáneo, longitud adicional, resultado natural" },
     ],
     "Manos y Pies": [
-      { id: 17, name: "Manicure básica", duration: "30 min", price: "$15-20", category: "Manos y Pies", image: "💅" },
-      { id: 18, name: "Manicure spa/lujo", duration: "45 min", price: "$25-35", category: "Manos y Pies", image: "💅" },
-      { id: 19, name: "Pedicure básica", duration: "45 min", price: "$20-25", category: "Manos y Pies", image: "👣" },
-      { id: 20, name: "Pedicure spa/lujo", duration: "60 min", price: "$30-40", category: "Manos y Pies", image: "👣" },
-      { id: 21, name: "Uñas acrílicas", duration: "90 min", price: "$40-60", category: "Manos y Pies", image: "💅" },
-      { id: 22, name: "Uñas de gel", duration: "75 min", price: "$35-50", category: "Manos y Pies", image: "💅" },
-      { id: 23, name: "Decoración de uñas", duration: "30 min", price: "$10-25", category: "Manos y Pies", image: "✨" },
+      { id: 17, name: "Manicure básica", duration: "30 min", price: "$15-20", category: "Manos y Pies", image: "💅", description: "Limpieza, cutículas, forma y esmaltado básico para mantener tus manos impecables.", benefits: "Manos presentables, cutículas cuidadas, esmaltado duradero" },
+      { id: 18, name: "Manicure spa/lujo", duration: "45 min", price: "$25-35", category: "Manos y Pies", image: "💅", description: "Experiencia premium que incluye exfoliación, mascarilla nutritiva y masaje relajante para manos.", benefits: "Hidratación profunda, relax, tratamiento completo" },
+      { id: 19, name: "Pedicure básica", duration: "45 min", price: "$20-25", category: "Manos y Pies", image: "👣", description: "Limpieza profunda, cuidado de cutículas, callosidades y esmaltado para pies perfectos.", benefits: "Pies cuidados, eliminación de durezas, aspecto saludable" },
+      { id: 20, name: "Pedicure spa/lujo", duration: "60 min", price: "$30-40", category: "Manos y Pies", image: "👣", description: "Tratamiento completo con baño relajante, exfoliación, mascarilla y masaje podal rejuvenecedor.", benefits: "Pies suaves, relax profundo, hidratación intensiva" },
+      { id: 21, name: "Uñas acrílicas", duration: "90 min", price: "$40-60", category: "Manos y Pies", image: "💅", description: "Aplicación profesional de uñas acrílicas con formas y longitudes personalizadas según tu preferencia.", benefits: "Durabilidad, resistencia, personalización de forma" },
+      { id: 22, name: "Uñas de gel", duration: "75 min", price: "$35-50", category: "Manos y Pies", image: "💅", description: "Esmaltado semipermanente que mantiene tus uñas perfectas por semanas con brillo intenso.", benefits: "Brillo prolongado, cero secado, hasta 3 semanas de duración" },
+      { id: 23, name: "Decoración de uñas", duration: "30 min", price: "$10-25", category: "Manos y Pies", image: "✨", description: "Diseños artísticos, nail art, cristales y técnicas especiales para uñas únicas y originales.", benefits: "Diseño personalizado, tendencias actuales, detalles exclusivos" },
     ],
     "Spa y Bienestar": [
-      { id: 24, name: "Masaje relajante (30 min)", duration: "30 min", price: "$40", category: "Spa y Bienestar", image: "💆" },
-      { id: 25, name: "Masaje relajante (50 min)", duration: "50 min", price: "$65", category: "Spa y Bienestar", image: "💆" },
-      { id: 26, name: "Masaje relajante (80 min)", duration: "80 min", price: "$90", category: "Spa y Bienestar", image: "💆" },
-      { id: 27, name: "Masaje descontracturante", duration: "60 min", price: "$50-80", category: "Spa y Bienestar", image: "💆‍♂️" },
-      { id: 28, name: "Tratamiento facial completo", duration: "60 min", price: "$45-70", category: "Spa y Bienestar", image: "✨" },
-      { id: 29, name: "Depilación facial", duration: "25 min", price: "$15-25", category: "Spa y Bienestar", image: "👁️" },
-      { id: 30, name: "Depilación corporal (por zona)", duration: "30 min", price: "$20-40", category: "Spa y Bienestar", image: "✨" },
-      { id: 31, name: "Maquillaje profesional", duration: "60 min", price: "$35-60", category: "Spa y Bienestar", image: "💄" },
-      { id: 32, name: "Ceja y pestañas (tinte/laminado)", duration: "45 min", price: "$20-35", category: "Spa y Bienestar", image: "👁️" },
+      { id: 24, name: "Masaje relajante (30 min)", duration: "30 min", price: "$40", category: "Spa y Bienestar", image: "💆", description: "Masaje suave que promueve la relajación profunda, alivia la tension y reduce el estrés.", benefits: "Reducción de estrés, circulación mejorada, relax inmediato" },
+      { id: 25, name: "Masaje relajante (50 min)", duration: "50 min", price: "$65", category: "Spa y Bienestar", image: "💆", description: "Sesión extendida de masaje relajante para una desconexión profunda y renovación completa.", benefits: "Relajación profunda, alivio muscular, experiencia rejuvenecedora" },
+      { id: 26, name: "Masaje relajante (80 min)", duration: "80 min", price: "$90", category: "Spa y Bienestar", image: "💆", description: "Experiencia premium de masaje que combina técnicas para alcanzar un estado de bienestar total.", benefits: "Bienestar integral, liberación total de tensiones, renovación física y mental" },
+      { id: 27, name: "Masaje descontracturante", duration: "60 min", price: "$50-80", category: "Spa y Bienestar", image: "💆‍♂️", description: "Masaje terapéutico focalizado en zonas de tensión y contracturas para aliviar dolores musculares.", benefits: "Alivio del dolor, mayor movilidad, liberación de puntos de tensión" },
+      { id: 28, name: "Tratamiento facial completo", duration: "60 min", price: "$45-70", category: "Spa y Bienestar", image: "✨", description: "Limpieza profunda, exfoliación, extracción, mascarilla y masaje facial personalizado según tu tipo de piel.", benefits: "Piel renovada, poros limpios, hidratación intensiva" },
+      { id: 29, name: "Depilación facial", duration: "25 min", price: "$15-25", category: "Spa y Bienestar", image: "👁️", description: "Depilación precisa de vello facial con cera de alta calidad y técnicas que minimizan molestias.", benefits: "Piel suave, resultados duraderos, técnica profesional" },
+      { id: 30, name: "Depilación corporal (por zona)", duration: "30 min", price: "$20-40", category: "Spa y Bienestar", image: "✨", description: "Depilación profesional por zonas con productos hipoalergénicos y técnicas que reducen el crecimiento futuro.", benefits: "Piel suave, menos rebrote, precisión en cada zona" },
+      { id: 31, name: "Maquillaje profesional", duration: "60 min", price: "$35-60", category: "Spa y Bienestar", image: "💄", description: "Aplicación profesional de maquillaje para eventos especiales con productos de alta gama y técnicas expertas.", benefits: "Look perfecto, productos de larga duración, realce de características" },
+      { id: 32, name: "Ceja y pestañas (tinte/laminado)", duration: "45 min", price: "$20-35", category: "Spa y Bienestar", image: "👁️", description: "Tinte y laminado de cejas y pestañas para realzar tu mirada con resultados naturales y duraderos.", benefits: "Mirada definida, ahorro de tiempo diario, efecto natural" },
     ]
   };
 
@@ -99,22 +99,10 @@ const Home = forwardRef(({ onExploreServices, onReservaClick }, ref) => {
             >
               <div style={serviceIconStyle}>{service.image}</div>
               <h3 style={serviceNameStyle}>{service.name}</h3>
+              <p style={serviceDescriptionStyle}>{service.description}</p>
               <p style={serviceDetailStyle}>Duración: {service.duration}</p>
               <p style={serviceDetailStyle}>Precio: {service.price}</p>
-              <button 
-                onClick={handleReservaClick}
-                style={serviceReserveButtonStyle}
-                onMouseEnter={(e) => {
-                  e.target.style.background = "#3498db";
-                  e.target.style.transform = "translateY(-2px)";
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.background = "#2c3e50";
-                  e.target.style.transform = "translateY(0)";
-                }}
-              >
-                Reservar
-              </button>
+              <p style={serviceBenefitsStyle}>Beneficios: {service.benefits}</p>
             </div>
           ))}
         </div>
@@ -156,6 +144,7 @@ const Home = forwardRef(({ onExploreServices, onReservaClick }, ref) => {
       <section ref={ref?.serviciosRef} style={sectionStyle}>
         <h2 style={sectionTitleStyle}>Nuestros Servicios</h2>
         <div style={servicesContainerStyle}>
+          {/* Primera fila con 2 servicios */}
           <div style={servicesRowStyle}>
             <div style={cardStyle}
               onMouseEnter={(e) => {
@@ -216,6 +205,7 @@ const Home = forwardRef(({ onExploreServices, onReservaClick }, ref) => {
             </div>
           </div>
           
+          {/* Segunda fila con 2 servicios */}
           <div style={servicesRowStyle}>
             <div style={cardStyle}
               onMouseEnter={(e) => {
@@ -497,7 +487,7 @@ const sectionTitleStyle = {
   textAlign: "center",
   fontSize: "2.8rem",
   fontWeight: 300,
-  margin: "0 0 60px 0",
+  margin: "0 极 60px 0",
   color: "#2c3e50"
 };
 
@@ -633,7 +623,7 @@ const placeholderImageStyle = {
   height: "400px",
   background: "linear-gradient(135deg, #eef5ff 0%, #d6e4ff 100%)",
   borderRadius: "15px",
-  display: "flex",
+  display: "极",
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "center",
@@ -685,7 +675,7 @@ const contactTitleStyle = {
 const contactTextStyle = {
   margin: "8px 0",
   color: "#7f8c8d",
-  fontSize: "14px"
+  fontSize: "极px"
 };
 
 const mapContainerStyle = {
@@ -694,7 +684,7 @@ const mapContainerStyle = {
 };
 
 const placeholderMapStyle = {
-  width: "100%",
+  width: "极%",
   height: "300px",
   background: "#eef5ff",
   borderRadius: "12px",
@@ -711,7 +701,7 @@ const reviewsGridStyle = {
   gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
   gap: "30px",
   maxWidth: "1300px",
-  margin: "极 auto"
+  margin: "0 auto"
 };
 
 const reviewCardStyle = {
@@ -773,7 +763,7 @@ const backButtonStyle = {
   border: "2px solid #3498db",
   padding: "12px 25px",
   borderRadius: "30px",
-  cursor: "极",
+  cursor: "pointer",
   fontWeight: 600,
   fontSize: "16px",
   transition: "all 0.3s ease",
@@ -814,24 +804,25 @@ const serviceNameStyle = {
   color: "#2c3e50"
 };
 
-const serviceDetailStyle = {
-  color: "#7极8d",
-  fontSize: "14px",
+const serviceDescriptionStyle = {
+  color: "#7f8c8d",
+  marginBottom: "15px",
   lineHeight: "1.5",
-  margin: "5px 0"
+  fontSize: "0.95rem",
 };
 
-const serviceReserveButtonStyle = {
-  background: "#2c3e50",
-  color: "white",
-  border: "none",
-  padding: "12px 25px",
-  borderRadius: "25px",
-  cursor: "pointer",
-  fontWeight: 600,
-  fontSize: "14px",
-  transition: "all 0.3s ease",
-  marginTop: "15px"
+const serviceDetailStyle = {
+  color: "#34495e",
+  marginBottom: "8px",
+  fontSize: "0.9rem",
+};
+
+const serviceBenefitsStyle = {
+  color: "#27ae60",
+  fontWeight: "500",
+  marginTop: "15px",
+  fontSize: "0.9rem",
+  fontStyle: "italic",
 };
 
 export default Home;
