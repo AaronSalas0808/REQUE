@@ -11,7 +11,9 @@ function WorkerDashboard({ user, onLogout }) {
       duration: "45 min",
       date: "Hoy, 10:30",
       fullService: "Corte + Peinado",
-      status: "Pendiente"
+      status: "Pendiente",
+      phone: "11-5555-1234",
+      notes: "Corte con degradado, no muy corto en los laterales."
     },
     {
       id: 2,
@@ -20,7 +22,9 @@ function WorkerDashboard({ user, onLogout }) {
       duration: "30 min",
       date: "Hoy, 12:00",
       fullService: "Afeitado clásico",
-      status: "Completada"
+      status: "Completada",
+      phone: "11-4444-5678",
+      notes: "Preferencia por productos con aroma a menta."
     },
     {
       id: 3,
@@ -29,7 +33,9 @@ function WorkerDashboard({ user, onLogout }) {
       duration: "90 min",
       date: "Hoy, 15:00",
       fullService: "Tinción completa",
-      status: "Cancelada"
+      status: "Cancelada",
+      phone: "11-3333-9012",
+      notes: "Alergia a productos con amoníaco."
     },
     {
       id: 4,
@@ -38,7 +44,9 @@ function WorkerDashboard({ user, onLogout }) {
       duration: "60 min",
       date: "Mañana, 09:00",
       fullService: "Corte degradado",
-      status: "Pendiente"
+      status: "Pendiente",
+      phone: "11-2222-3456",
+      notes: "Cita de seguimiento para mantenimiento."
     }
   ]);
 
@@ -50,7 +58,8 @@ function WorkerDashboard({ user, onLogout }) {
   };
 
   const [selectedFilter, setSelectedFilter] = useState("Todas");
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
 
   const filters = ["Todas", "Pendientes", "Completadas", "Canceladas"];
 
@@ -67,6 +76,25 @@ function WorkerDashboard({ user, onLogout }) {
     setAppointments(prev => 
       prev.map(apt => apt.id === id ? {...apt, status: newStatus} : apt)
     );
+    
+    // Si estamos viendo los detalles de esta cita, actualizamos el modal también
+    if (selectedAppointment && selectedAppointment.id === id) {
+      setSelectedAppointment({...selectedAppointment, status: newStatus});
+    }
+    
+    // Si marcamos como completada o cancelada, cerramos el modal
+    if (newStatus === "Completada" || newStatus === "Cancelada") {
+      setShowDetailsModal(false);
+    }
+  };
+
+  const handleShowDetails = (appointment) => {
+    setSelectedAppointment(appointment);
+    setShowDetailsModal(true);
+  };
+
+  const handleCloseDetails = () => {
+    setShowDetailsModal(false);
   };
 
   const handleLogout = async () => {
@@ -175,7 +203,12 @@ function WorkerDashboard({ user, onLogout }) {
                 </div>
                 
                 <div style={styles.cardActions}>
-                  <button style={styles.detailsButton}>Ver Detalles</button>
+                  <button 
+                    style={styles.detailsButton}
+                    onClick={() => handleShowDetails(appointment)}
+                  >
+                    Ver Detalles
+                  </button>
                   
                   {appointment.status === "Pendiente" && (
                     <div style={styles.statusActions}>
@@ -237,6 +270,81 @@ function WorkerDashboard({ user, onLogout }) {
           </div>
         </div>
       </div>
+
+      {/* Modal de detalles de cita */}
+      {showDetailsModal && selectedAppointment && (
+        <div style={styles.modalOverlay} onClick={handleCloseDetails}>
+          <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <div style={styles.modalHeader}>
+              <h2 style={styles.modalTitle}>Detalles de la Cita</h2>
+              <button style={styles.closeButton} onClick={handleCloseDetails}>×</button>
+            </div>
+            
+            <div style={styles.detailSection}>
+              <h3 style={styles.detailSectionTitle}>Cliente</h3>
+              <p style={styles.detailText}>
+                {selectedAppointment.client} · {selectedAppointment.phone}
+              </p>
+            </div>
+            
+            <div style={styles.detailSection}>
+              <h3 style={styles.detailSectionTitle}>Servicio</h3>
+              <p style={styles.detailText}>
+                {selectedAppointment.fullService} · {selectedAppointment.duration}
+              </p>
+            </div>
+            
+            <div style={styles.detailSection}>
+              <h3 style={styles.detailSectionTitle}>Fecha y hora</h3>
+              <p style={styles.detailText}>{selectedAppointment.date}</p>
+            </div>
+            
+            <div style={styles.detailSection}>
+              <h3 style={styles.detailSectionTitle}>Estado</h3>
+              <span style={{
+                ...styles.modalStatusBadge,
+                ...(selectedAppointment.status === "Pendiente" ? styles.statusPending : {}),
+                ...(selectedAppointment.status === "Completada" ? styles.statusCompleted : {}),
+                ...(selectedAppointment.status === "Cancelada" ? styles.statusCanceled : {})
+              }}>
+                {selectedAppointment.status}
+              </span>
+            </div>
+            
+            <div style={styles.separator}></div>
+            
+            <div style={styles.detailSection}>
+              <h3 style={styles.detailSectionTitle}>Notas adicionales</h3>
+              <p style={styles.detailText}>{selectedAppointment.notes}</p>
+            </div>
+            
+            <div style={styles.separator}></div>
+            
+            <div style={styles.modalActions}>
+              <button style={styles.contactButton}>
+                Contactar al Cliente
+              </button>
+              
+              {selectedAppointment.status === "Pendiente" && (
+                <>
+                  <button 
+                    style={styles.cancelAppointmentButton}
+                    onClick={() => handleStatusChange(selectedAppointment.id, "Cancelada")}
+                  >
+                    Cancelar Cita
+                  </button>
+                  <button 
+                    style={styles.completeAppointmentButton}
+                    onClick={() => handleStatusChange(selectedAppointment.id, "Completada")}
+                  >
+                    Marcar como Completada
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -248,6 +356,7 @@ const styles = {
     backgroundColor: "#f8fafc",
     minHeight: "100vh",
     padding: "0",
+    position: 'relative'
   },
   header: {
     backgroundColor: "#ffffff",
@@ -505,6 +614,123 @@ const styles = {
     color: "#64748b",
     fontSize: "16px",
     border: "1px solid #e2e8f0",
+  },
+  
+  // Estilos para el modal de detalles
+  modalOverlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1000,
+    padding: '20px'
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    borderRadius: '12px',
+    width: '100%',
+    maxWidth: '500px',
+    maxHeight: '90vh',
+    overflowY: 'auto',
+    boxShadow: '0 10px 25px rgba(0, 0, 0, 0.2)'
+  },
+  modalHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '20px 24px',
+    borderBottom: '1px solid #e2e8f0'
+  },
+  modalTitle: {
+    margin: 0,
+    fontSize: '20px',
+    fontWeight: '600',
+    color: '#1e293b'
+  },
+  closeButton: {
+    background: 'none',
+    border: 'none',
+    fontSize: '24px',
+    cursor: 'pointer',
+    color: '#64748b',
+    padding: '0',
+    width: '30px',
+    height: '30px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: '50%',
+    transition: 'background-color 0.2s ease'
+  },
+  detailSection: {
+    padding: '16px 24px'
+  },
+  detailSectionTitle: {
+    margin: '0 0 8px 0',
+    fontSize: '14px',
+    fontWeight: '600',
+    color: '#64748b',
+    textTransform: 'uppercase',
+    letterSpacing: '0.5px'
+  },
+  modalStatusBadge: {
+    padding: "6px 12px",
+    borderRadius: "20px",
+    fontSize: "14px",
+    fontWeight: "600",
+    display: 'inline-block'
+  },
+  separator: {
+    height: '1px',
+    backgroundColor: '#e2e8f0',
+    margin: '8px 0'
+  },
+  modalActions: {
+    padding: '16px 24px 24px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px'
+  },
+  contactButton: {
+    padding: "12px 16px",
+    backgroundColor: "#3b82f6",
+    color: "white",
+    border: "none",
+    borderRadius: "8px",
+    cursor: "pointer",
+    fontSize: "14px",
+    fontWeight: "500",
+    transition: "all 0.2s ease",
+    width: '100%'
+  },
+  cancelAppointmentButton: {
+    padding: "12px 16px",
+    backgroundColor: "#ef4444",
+    color: "white",
+    border: "none",
+    borderRadius: "8px",
+    cursor: "pointer",
+    fontSize: "14px",
+    fontWeight: "500",
+    transition: "all 0.2s ease",
+    width: '100%'
+  },
+  completeAppointmentButton: {
+    padding: "12px 16px",
+    backgroundColor: "#10b981",
+    color: "white",
+    border: "none",
+    borderRadius: "8px",
+    cursor: "pointer",
+    fontSize: "14px",
+    fontWeight: "500",
+    transition: "all 0.2s ease",
+    width: '100%'
   }
 };
 
