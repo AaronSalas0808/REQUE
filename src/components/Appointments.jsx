@@ -99,11 +99,16 @@ function Appointments({ user, onBackToHome, onLogout }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Todas");
 
-  // Nuevos estados para Mis Citas / Historial
+  // Estados para Mis Citas / Historial
   const [misCitas, setMisCitas] = useState([]);
   const [historial, setHistorial] = useState([]);
   const [showMyAppointmentsView, setShowMyAppointmentsView] = useState(false);
   const [showHistoryView, setShowHistoryView] = useState(false);
+  
+  // Estados para notificaciones
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [showNotificationsView, setShowNotificationsView] = useState(false);
 
   const centers = [
     { id: 1, name: "Centro A", address: "Av. Siempre Viva 123 - 1.2 km", rating: "4.8 (230)", image: "🏢" },
@@ -194,7 +199,7 @@ function Appointments({ user, onBackToHome, onLogout }) {
     { id: "profile", label: "Mi Perfil", icon: "👤" },
     { id: "appointments", label: "Mis Citas", icon: "📅" },
     { id: "history", label: "Historial", icon: "📋" },
-    { id: "notifications", label: "Notificaciones", icon: "🔔" },
+    { id: "notifications", label: "Notificaciones", icon: "🔔" , badge: unreadCount > 0 ? unreadCount : null},
     { id: "logout", label: "Cerrar Sesión", icon: "🚪" }
   ];
 
@@ -206,6 +211,51 @@ function Appointments({ user, onBackToHome, onLogout }) {
 
     return () => clearInterval(timer);
   }, []);
+
+  ////
+  useEffect(() => {
+  if (!user?.uid) {
+    setNotifications([]);
+    setUnreadCount(0);
+    return;
+  }
+
+  const notificationsRef = ref(database, "notifications");
+  const q = query(
+    notificationsRef, 
+    orderByChild("userId"), 
+    equalTo(user.uid)
+  );
+
+  const unsubscribe = onValue(
+      q,
+      (snapshot) => {
+        const data = snapshot.val() || {};
+        const allNotifications = Object.entries(data).map(([key, val]) => ({
+          id: key,
+          ...val,
+        }));
+        
+        // Ordenar por fecha (más recientes primero)
+        allNotifications.sort((a, b) => {
+          const da = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+          const db = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+          return db - da;
+        });
+        
+        setNotifications(allNotifications);
+        
+        // Contar notificaciones no leídas
+        const unread = allNotifications.filter(n => !n.read).length;
+        setUnreadCount(unread);
+      },
+      (err) => {
+        console.error("Error suscribiéndose a notificaciones:", err);
+      }
+    );
+
+    return () => unsubscribe();
+  }, [user]);
 
   // Suscripción en tiempo real a las citas del usuario
   useEffect(() => {
@@ -371,20 +421,42 @@ function Appointments({ user, onBackToHome, onLogout }) {
         status: "confirmed",
         userId: user?.uid || "anonymous",
         userEmail: user?.email || "unknown@email.com",
-        createdAt: serverTimestamp()
+        createdAt: serverTimestamp(),
+        notificationSent: false,
+        rating: null,
+        review: "",
+        ratedAt: null,
       };
 
+      // Guardar la cita en Firebase
+      console.log("Nuevo appointment:", newAppointment);
       const appointmentsRef = ref(database, 'appointments');
       const newAppointmentRef = await push(appointmentsRef, newAppointment);
+      const appointmentId = newAppointmentRef.key;
+      
+      console.log("Cita guardada con ID: ", appointmentId);
 
-      console.log("Cita guardada con ID: ", newAppointmentRef.key);
-
-      // Lo agregamos localmente (aunque onValue la recogerá pronto)
+      // Crear notificación de confirmación
+      const notification = {
+        userId: user?.uid,
+        appointmentId: appointmentId,
+        type: "appointment_confirmation",
+        title: "Cita Confirmada",
+        message: `Tu cita para ${selectedService?.name} ha sido confirmada para el ${formatDate(selectedDate)} a las ${selectedTime}`,
+        read: false,
+        createdAt: serverTimestamp(),
+        action: "rate",
+      };
+      
+      const notificationsRef = ref(database, 'notifications');
+      await push(notificationsRef, notification);
+      
+      // Actualizar estado local
       setAppointments((prev) => [
         ...prev,
         {
           ...newAppointment,
-          id: newAppointmentRef.key,
+          id: appointmentId,
           dateObj: selectedDate,
         },
       ]);
@@ -444,16 +516,182 @@ function Appointments({ user, onBackToHome, onLogout }) {
     } else if (section === "history") {
       setShowHistoryView(true);
       setShowMyAppointmentsView(false);
-    } else {
-      console.log("Navegar a:", section);
-      // cerrar vistas si navegamos a otra cosa
+    } else if (section === "notifications") {
+      setShowNotificationsView(true);
       setShowMyAppointmentsView(false);
       setShowHistoryView(false);
+      
+      // Marcar notificaciones como leídas al abrir la vista
+      markNotificationsAsRead();
+    }else {
+          console.log("Navegar a:", section);
+          // cerrar vistas si navegamos a otra cosa
+          setShowMyAppointmentsView(false);
+          setShowHistoryView(false);
+        }
+        setSidebarOpen(false);
+      };
+
+
+  //////
+  const markNotificationsAsRead = async () => {
+      try {
+        const updates = {};
+        notifications.forEach(notification => {
+          if (!notification.read) {
+            updates[`notifications/${notification.id}/read`] = true;
+          }
+        });
+        
+        if (Object.keys(updates).length > 0) {
+          await update(ref(database), updates);
+        }
+      } catch (error) {
+        console.error("Error marcando notificaciones como leídas:", error);
+      }
+    };
+    //////////////
+    const renderNotificationsView = () => {
+    return (
+      <div style={styles.stepContent}>
+        <div style={styles.stepHeader}>
+          <h2 style={styles.stepTitle}>Notificaciones</h2>
+          <p style={styles.stepSubtitle}>Tus alertas y recordatorios</p>
+        </div>
+
+        {notifications.length === 0 ? (
+          <div style={styles.noResults}>
+            <p>No tienes notificaciones.</p>
+          </div>
+        ) : (
+          <div style={{ display: "grid", gap: 12 }}>
+            {notifications.map((notification) => (
+              <div 
+                key={notification.id} 
+                style={{
+                  ...styles.summaryCard,
+                  backgroundColor: notification.read ? "#f8f9fa" : "#e3f2fd",
+                  borderLeft: notification.read ? "3px solid #bdbdbd" : "3px solid #2196f3"
+                }}
+              >
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: 600, marginBottom: 8 }}>
+                      {notification.title}
+                    </div>
+                    <div style={{ color: "#666", fontSize: 14, marginBottom: 8 }}>
+                      {notification.message}
+                    </div>
+                    <div style={{ color: "#999", fontSize: 13 }}>
+                      {notification.createdAt ? format(new Date(notification.createdAt), "PPPp", { locale: es }) : ""}
+                    </div>
+                    
+                    {/* Sección de calificación para notificaciones de citas */}
+                    {notification.type === "appointment_confirmation" && notification.action === "rate" && (
+                      <div style={{ marginTop: 16 }}>
+                        <div style={{ fontSize: 14, fontWeight: 500, marginBottom: 8 }}>
+                          Califica este servicio:
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <button
+                              key={star}
+                              style={{
+                                background: "none",
+                                border: "none",
+                                fontSize: "24px",
+                                cursor: "pointer",
+                                color: "#ffc107",
+                              }}
+                              onClick={() => handleRateAppointment(notification.appointmentId, star)}
+                              title={`Calificar con ${star} estrellas`}
+                            >
+                              {star <= (appointments.find(a => a.id === notification.appointmentId)?.rating || 0) ? "★" : "☆"}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {!notification.read && (
+                    <span style={{
+                      backgroundColor: "#2196f3",
+                      color: "white",
+                      fontSize: "11px",
+                      fontWeight: "600",
+                      padding: "4px 8px",
+                      borderRadius: "10px",
+                    }}>
+                      Nuevo
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div style={styles.navigationButtons}>
+          <button style={styles.secondaryButton} onClick={() => setShowNotificationsView(false)}>
+            Volver
+          </button>
+          {notifications.length > 0 && (
+            <button 
+              style={styles.secondaryButton} 
+              onClick={clearAllNotifications}
+              disabled={notifications.length === 0}
+            >
+              Limpiar todas
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  };
+///////////////
+  const handleRateAppointment = async (appointmentId, rating) => {
+    try {
+      const appointmentRef = ref(database, `appointments/${appointmentId}`);
+      await update(appointmentRef, { 
+        rating,
+        ratedAt: serverTimestamp()
+      });
+      
+      // Actualizar también la notificación para quitar la opción de calificación
+      const notification = notifications.find(n => n.appointmentId === appointmentId);
+      if (notification) {
+        const notificationRef = ref(database, `notifications/${notification.id}`);
+        await update(notificationRef, { 
+          action: null,
+          message: `${notification.message} - Calificado con ${rating} estrellas`
+        });
+      }
+      
+      alert("¡Gracias por tu calificación!");
+    } catch (error) {
+      console.error("Error calificando la cita:", error);
+      alert("Hubo un error al enviar tu calificación. Por favor, intenta nuevamente.");
     }
-    setSidebarOpen(false);
   };
 
-  const renderHeader = () => {
+
+////////////////////////
+    const clearAllNotifications = async () => {
+      try {
+        const updates = {};
+        notifications.forEach(notification => {
+          updates[`notifications/${notification.id}`] = null;
+        });
+        
+        await update(ref(database), updates);
+      } catch (error) {
+        console.error("Error eliminando notificaciones:", error);
+        alert("No se pudieron eliminar las notificaciones. Intenta nuevamente.");
+      }
+    };
+
+    const renderHeader = () => {
     return (
       <div style={headerStyles.container}>
         <div style={headerStyles.leftSection}>
@@ -1016,6 +1254,15 @@ function Appointments({ user, onBackToHome, onLogout }) {
 
   const renderStepContent = () => {
     // Prioridad: vistas Mis Citas / Historial abiertas desde el sidebar
+    if (showMyAppointmentsView) {
+      return renderMyAppointmentsView();
+    }
+    if (showHistoryView) {
+      return renderHistoryView();
+    }
+    if (showNotificationsView) {
+      return renderNotificationsView();
+    }
     if (showMyAppointmentsView) {
       return renderMyAppointmentsView();
     }
@@ -2470,6 +2717,32 @@ const styles = {
       borderColor: "#3498db",
       color: "#3498db"
     }
+  },
+  ratingStars: {
+    display: "flex",
+    gap: "4px",
+    marginTop: "8px"
+  },
+  starButton: {
+    background: "none",
+    border: "none",
+    fontSize: "24px",
+    cursor: "pointer",
+    padding: "0",
+    color: "#ffc107"
+  },
+  notificationBadge: {
+    backgroundColor: "#e74c3c",
+    color: "white",
+    borderRadius: "50%",
+    width: "20px",
+    height: "20px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "12px",
+    fontWeight: "bold",
+    marginLeft: "8px"
   }
 };
 
