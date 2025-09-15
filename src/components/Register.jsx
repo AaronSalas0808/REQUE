@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-// Ya no necesitamos 'setDoc' ni 'doc', pero los dejamos por si los reactivas
-import { doc, setDoc } from "firebase/firestore";
-import { auth, db } from "../firebase";
+import { auth, database } from "../firebase";
+import { ref, set } from "firebase/database";
 
 export default function Register({ onRegister, onSwitchToLogin, onClose }) {
   const [formData, setFormData] = useState({
@@ -23,7 +22,6 @@ export default function Register({ onRegister, onSwitchToLogin, onClose }) {
   };
 
   const validateForm = () => {
-    // ... (esta función no necesita cambios)
     if (
       !formData.nombre ||
       !formData.email ||
@@ -60,21 +58,18 @@ export default function Register({ onRegister, onSwitchToLogin, onClose }) {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         formData.email,
-        formData.password,
+        formData.password
       );
       const user = userCredential.user;
 
-      // --- PASO DE FIRESTORE OMITIDO ---
-      // Se comenta la escritura en Firestore para evitar el error de permisos.
-      /*
-      await setDoc(doc(db, "usuarios", user.uid), {
+      // Guardar datos del usuario en Realtime Database
+      await set(ref(database, `users/${user.uid}`), {
         nombre: formData.nombre,
         email: formData.email,
-        fechaRegistro: new Date(),
+        fechaRegistro: new Date().toISOString(),
       });
-      */
 
-      // Se llama a onRegister directamente después de la autenticación.
+      // Pasar user al estado principal
       onRegister({
         uid: user.uid,
         nombre: formData.nombre,
@@ -97,14 +92,13 @@ export default function Register({ onRegister, onSwitchToLogin, onClose }) {
           break;
         default:
           setError(
-            "Ocurrió un error durante el registro. Por favor intenta nuevamente.",
+            "Ocurrió un error durante el registro. Por favor intenta nuevamente."
           );
       }
       setLoading(false);
     }
   };
 
-  // ... (todo el código de estilos y JSX permanece igual)
   const overlayStyle = {
     position: "fixed",
     top: 0,
@@ -129,108 +123,59 @@ export default function Register({ onRegister, onSwitchToLogin, onClose }) {
     position: "relative",
   };
   const titleStyle = {
-    margin: 0,
     fontSize: "24px",
     fontWeight: "700",
     color: "#222222",
     marginBottom: "20px",
   };
-  const formStyle = {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    width: "100%",
-  };
+  const formStyle = { display: "flex", flexDirection: "column", gap: "1px" };
   const inputStyle = {
-    width: "100%",
-    padding: "14px",
-    margin: "10px 0",
-    borderRadius: "8px",
-    border: "1px solid #cccccc",
-    background: "#f9f9f9",
-    color: "#333",
-    fontSize: "15px",
-    textAlign: "center",
-    outline: "none",
-    transition: "border 0.3s ease",
-    boxSizing: "border-box",
+  width: "100%",              // Ocupa lo mismo que el botón
+  padding: "14px",            // Igual al botón
+  margin: "10px 0",
+  borderRadius: "8px",        // Igual al botón
+  border: "1px solid #ccc",
+  background: "#f9f9f9",
+  fontSize: "15px",
+  textAlign: "center",
+  outline: "none",
+  transition: "all 0.3s ease",
+  boxSizing: "border-box",    // 🔹 Hace que el padding y border no rompan el width
   };
   const buttonStyle = {
-    background: "linear-gradient(135deg, #0072ff, #00c6ff)",
-    color: "white",
-    border: "none",
+    marginTop: "15px",
     padding: "14px",
     width: "100%",
+    border: "none",
     borderRadius: "8px",
-    cursor: "pointer",
+    background: "linear-gradient(135deg,#0072ff,#00c6ff)",
+    color: "white",
     fontWeight: "600",
-    fontSize: "16px",
-    marginTop: "18px",
-    transition: "all 0.3s ease",
+    cursor: "pointer",
   };
-  const footerText = {
-    marginTop: "25px",
-    fontSize: "14px",
-    color: "#666666",
-    textAlign: "center",
-  };
+  const footerText = { marginTop: "20px", fontSize: "14px", color: "#666" };
   const linkBtn = {
     background: "none",
     border: "none",
+    cursor: "pointer",
     color: "#0072ff",
-    cursor: "pointer",
     fontWeight: "600",
-    fontSize: "14px",
-    transition: "color 0.3s ease",
-    padding: "0",
-    margin: "0 0 0 5px",
   };
-  const closeBtn = {
-    position: "absolute",
-    top: "12px",
-    right: "12px",
-    background: "none",
-    border: "none",
-    color: "#444444",
-    fontSize: "20px",
-    cursor: "pointer",
-    padding: "5px",
-    borderRadius: "50%",
-    width: "30px",
-    height: "30px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  };
-  const errorStyle = {
-    color: "#e74c3c",
-    fontSize: "14px",
-    margin: "10px 0",
-    textAlign: "center",
-  };
+
 
   return (
     <div style={overlayStyle}>
       <div style={cardStyle}>
-        <button
-          style={closeBtn}
-          onClick={onClose}
-          onMouseEnter={(e) => (e.target.style.background = "#f0f0f0")}
-          onMouseLeave={(e) => (e.target.style.background = "none")}
-          disabled={loading}
-        >
-          ×
-        </button>
         <h2 style={titleStyle}>Registro de Usuario</h2>
-        {error && <div style={errorStyle}>{error}</div>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
         <form onSubmit={handleSubmit} style={formStyle}>
           <input
             type="text"
             name="nombre"
-            placeholder="Nombre completo"
+            placeholder="Nombre"
             onChange={handleChange}
-            required
             style={inputStyle}
+            required
             disabled={loading}
           />
           <input
@@ -238,47 +183,35 @@ export default function Register({ onRegister, onSwitchToLogin, onClose }) {
             name="email"
             placeholder="Correo electrónico"
             onChange={handleChange}
-            required
             style={inputStyle}
+            required
             disabled={loading}
           />
           <input
             type="password"
             name="password"
-            placeholder="Contraseña (mín. 6 caracteres)"
+            placeholder="Contraseña"
             onChange={handleChange}
-            required
             style={inputStyle}
+            required
             disabled={loading}
           />
           <input
             type="password"
             name="confirmPassword"
-            placeholder="Confirmar contraseña"
+            placeholder="Confirmar Contraseña"
             onChange={handleChange}
-            required
             style={inputStyle}
+            required
             disabled={loading}
           />
-          <button
-            type="submit"
-            style={buttonStyle}
-            disabled={loading}
-            onMouseEnter={(e) => !loading && (e.target.style.opacity = "0.8")}
-            onMouseLeave={(e) => !loading && (e.target.style.opacity = "1")}
-          >
+          <button type="submit" style={buttonStyle} disabled={loading}>
             {loading ? "Registrando..." : "Registrar"}
           </button>
         </form>
         <div style={footerText}>
-          ¿Ya tienes una cuenta?
-          <button
-            style={linkBtn}
-            onClick={onSwitchToLogin}
-            onMouseEnter={(e) => (e.target.style.color = "#0056b3")}
-            onMouseLeave={(e) => (e.target.style.color = "#0072ff")}
-            disabled={loading}
-          >
+          ¿Ya tienes una cuenta?{" "}
+          <button style={linkBtn} onClick={onSwitchToLogin} disabled={loading}>
             Inicia sesión aquí
           </button>
         </div>

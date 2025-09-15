@@ -19,7 +19,7 @@ function Header({ user, onLoginClick, onRegisterClick, onLogout, onMenuClick }) 
         <div style={rightSectionStyle}>
           {user ? (
             <div style={userSectionStyle}>
-              <span style={userWelcomeStyle}>Hola, {user.email}</span>
+
               <button 
                 style={logoutButtonStyle}
                 onClick={onLogout}

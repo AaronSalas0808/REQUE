@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase";
+import { auth, database } from "../firebase";
+import { ref, get } from "firebase/database";
 
 function Login({ onLogin, onSwitchToRegister, onClose }) {
   const [email, setEmail] = useState("");
@@ -10,7 +11,7 @@ function Login({ onLogin, onSwitchToRegister, onClose }) {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    
+
     if (!email || !password) {
       setError("Por favor ingresa tus credenciales");
       return;
@@ -20,15 +21,29 @@ function Login({ onLogin, onSwitchToRegister, onClose }) {
     setError("");
 
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      // 🔹 Autenticamos al usuario con Firebase Auth
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const user = userCredential.user;
-      
-      // Obtener el nombre del usuario (puede que necesites ajustar esto según tu estructura de datos)
-      // Si no tienes el nombre en Firestore, puedes omitir esta parte
+
+      // 🔹 Consultamos en Realtime Database el nombre guardado en /users/{uid}
+      const userRef = ref(database, `users/${user.uid}`);
+      const snapshot = await get(userRef);
+
+      let nombre = "Usuario";
+      if (snapshot.exists()) {
+        const userData = snapshot.val();
+        nombre = userData.nombre || "Usuario";
+      }
+
+      // 🔹 Pasamos usuario con el nombre al estado principal
       onLogin({
         uid: user.uid,
         email: user.email,
-        nombre: user.displayName || "Usuario" // Usar displayName o un valor por defecto
+        nombre,
       });
     } catch (error) {
       console.error("Error en inicio de sesión:", error);
@@ -46,7 +61,9 @@ function Login({ onLogin, onSwitchToRegister, onClose }) {
           setError("Contraseña incorrecta");
           break;
         default:
-          setError("Ocurrió un error durante el inicio de sesión. Por favor intenta nuevamente.");
+          setError(
+            "Ocurrió un error durante el inicio de sesión. Por favor intenta nuevamente."
+          );
       }
     } finally {
       setLoading(false);
@@ -97,7 +114,7 @@ function Login({ onLogin, onSwitchToRegister, onClose }) {
   const inputStyle = {
     width: "100%",
     padding: "14px",
-    margin: "10px 0",
+    margin: "4px 0",
     borderRadius: "8px",
     border: "1px solid #cccccc",
     background: "#f9f9f9",
@@ -173,8 +190,6 @@ function Login({ onLogin, onSwitchToRegister, onClose }) {
         <button
           style={closeBtn}
           onClick={onClose}
-          onMouseEnter={(e) => (e.target.style.background = "#f0f0f0")}
-          onMouseLeave={(e) => (e.target.style.background = "none")}
           disabled={loading}
         >
           ×
@@ -202,8 +217,6 @@ function Login({ onLogin, onSwitchToRegister, onClose }) {
             type="submit"
             style={buttonStyle}
             disabled={loading}
-            onMouseEnter={(e) => !loading && (e.target.style.opacity = "0.8")}
-            onMouseLeave={(e) => !loading && (e.target.style.opacity = "1")}
           >
             {loading ? "Iniciando sesión..." : "Entrar"}
           </button>
@@ -213,8 +226,6 @@ function Login({ onLogin, onSwitchToRegister, onClose }) {
           <button
             style={linkBtn}
             onClick={onSwitchToRegister}
-            onMouseEnter={(e) => (e.target.style.color = "#0056b3")}
-            onMouseLeave={(e) => (e.target.style.color = "#0072ff")}
             disabled={loading}
           >
             Regístrate aquí

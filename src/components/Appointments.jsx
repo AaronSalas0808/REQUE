@@ -389,7 +389,7 @@ function Appointments({ user, onBackToHome, onLogout }) {
           <div style={headerStyles.userMenu}>
             <div style={headerStyles.userInfo}>
               <span style={headerStyles.userName}>
-                {user?.email?.split('@')[0] || 'Usuario'}
+                {user?.nombre || user?.email?.split('@')[0] || 'Usuario'}
               </span>
               <span style={headerStyles.userStatus}>Conectado</span>
             </div>
