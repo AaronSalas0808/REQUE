@@ -69,7 +69,7 @@ const employees = [
   { id: 27, name: "Eva Z.", photo: "👑", centerId: 3, category: "Manos y Pies", specialties: ["Diseño de lujo", "Aplicaciones premium", "Servicios VIP"], isGeneralist: false },
 
   // Spa y Bienestar - Especialistas en diferentes áreas
-  { id: 28, name: "Juan M.", photo: "💆", centerId: 1, category: "Spa y Bienestar", specialties: ["Masajes relajantes", "Terapias", "Bienestar general"], isGeneralist: true },
+  { id: 28, name: "Juan M.", photo: "💆", centerId: 1, category: "Spa y Bienestar", email: "juan@apolo.admin.cr", specialties: ["Masajes relajantes", "Terapias", "Bienestar general"], isGeneralist: true },
   { id: 29, name: "Alejandro P.", photo: "💆‍♂️", centerId: 1, category: "Spa y Bienestar", specialties: ["Masajes descontracturantes", "Deportivos", "Rehabilitación"], isGeneralist: false },
   { id: 30, name: "Ricardo L.", photo: "✨", centerId: 1, category: "Spa y Bienestar", specialties: ["Tratamientos faciales", "Limpieza", "Hidratación"], isGeneralist: false },
   { id: 31, name: "Gabriela R.", photo: "💆", centerId: 2, category: "Spa y Bienestar", specialties: ["Masajes terapéuticos", "Aromaterapia", "Relajación"], isGeneralist: true },
