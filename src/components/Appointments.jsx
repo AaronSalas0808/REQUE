@@ -13,7 +13,17 @@ import {
   subMonths,
 } from "date-fns";
 import { es } from "date-fns/locale";
-import { ref, push, serverTimestamp } from "firebase/database";
+import {
+  ref,
+  push,
+  serverTimestamp,
+  query,
+  orderByChild,
+  equalTo,
+  onValue,
+  update,
+  remove,
+} from "firebase/database";
 import { database } from "../firebase";
 
 const formatFileSize = (bytes) => {
@@ -89,6 +99,12 @@ function Appointments({ user, onBackToHome, onLogout }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Todas");
 
+  // Nuevos estados para Mis Citas / Historial
+  const [misCitas, setMisCitas] = useState([]);
+  const [historial, setHistorial] = useState([]);
+  const [showMyAppointmentsView, setShowMyAppointmentsView] = useState(false);
+  const [showHistoryView, setShowHistoryView] = useState(false);
+
   const centers = [
     { id: 1, name: "Centro A", address: "Av. Siempre Viva 123 - 1.2 km", rating: "4.8 (230)", image: "🏢" },
     { id: 2, name: "Centro B", address: "Calle Luna 45 - 3.4 km", rating: "4.6 (180)", image: "🏢" },
@@ -136,7 +152,6 @@ function Appointments({ user, onBackToHome, onLogout }) {
     { id: 30, name: "Depilación corporal (por zona)", duration: "30 min", price: "$20-40", category: "Spa y Bienestar", image: "✨" },
     { id: 31, name: "Maquillaje profesional", duration: "60 min", price: "$35-60", category: "Spa y Bienestar", image: "💄" },
     { id: 32, name: "Ceja y pestañas (tinte/laminado)", duration: "45 min", price: "$20-35", category: "Spa y Bienestar", image: "👁️" },
-
   ];
 
   const timeSlots = [
@@ -152,7 +167,7 @@ function Appointments({ user, onBackToHome, onLogout }) {
     const matchesSearch = service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          service.category.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === "Todas" || service.category === selectedCategory;
-    
+
     return matchesSearch && matchesCategory;
   });
 
@@ -188,12 +203,70 @@ function Appointments({ user, onBackToHome, onLogout }) {
     const timer = setInterval(() => {
       setSidebarCurrentTime(new Date());
     }, 60000);
-    
+
     return () => clearInterval(timer);
   }, []);
 
-  const nextStep = () => setCurrentStep(currentStep + 1);
-  const prevStep = () => setCurrentStep(currentStep - 1);
+  // Suscripción en tiempo real a las citas del usuario
+  useEffect(() => {
+    if (!user?.uid) {
+      setMisCitas([]);
+      setHistorial([]);
+      return;
+    }
+
+    const appointmentsRef = ref(database, "appointments");
+    const q = query(appointmentsRef, orderByChild("userId"), equalTo(user.uid));
+
+    const unsubscribe = onValue(
+      q,
+      (snapshot) => {
+        const data = snapshot.val() || {};
+        const all = Object.entries(data).map(([key, val]) => ({
+          id: key,
+          ...val,
+        }));
+
+        // Separar confirmed vs historial (cualquier otro estado)
+        const confirmed = all.filter((a) => a.status === "confirmed");
+        const other = all.filter((a) => a.status !== "confirmed");
+
+        // ordenar por fecha ascendente (opcional)
+        confirmed.sort((a, b) => {
+          const da = a.date ? new Date(a.date).getTime() : 0;
+          const db = b.date ? new Date(b.date).getTime() : 0;
+          return da - db;
+        });
+        other.sort((a, b) => {
+          const da = a.date ? new Date(a.date).getTime() : 0;
+          const db = b.date ? new Date(b.date).getTime() : 0;
+          return db - da; // historial más reciente primero
+        });
+
+        setMisCitas(confirmed);
+        setHistorial(other);
+
+        // También mantener appointments local para usos internos (ej: confirmación)
+        setAppointments(
+          all.map((a) => ({
+            ...a,
+            dateObj: a.date ? new Date(a.date) : null,
+          }))
+        );
+      },
+      (err) => {
+        console.error("Error suscribiéndose a citas:", err);
+      }
+    );
+
+    return () => {
+      // detach listener
+      unsubscribe();
+    };
+  }, [user]);
+
+  const nextStep = () => setCurrentStep((s) => s + 1);
+  const prevStep = () => setCurrentStep((s) => s - 1);
 
   const processFile = (file) => {
     if (file && file.type.startsWith("image/")) {
@@ -262,11 +335,11 @@ function Appointments({ user, onBackToHome, onLogout }) {
 
   // Formatear fecha de manera elegante para el sidebar
   const formatSidebarDate = (date) => {
-    const options = { 
-      weekday: 'long', 
-      day: 'numeric', 
-      month: 'long', 
-      year: 'numeric' 
+    const options = {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
     };
     return date.toLocaleDateString('es-ES', options);
   };
@@ -300,17 +373,22 @@ function Appointments({ user, onBackToHome, onLogout }) {
         userEmail: user?.email || "unknown@email.com",
         createdAt: serverTimestamp()
       };
-      
+
       const appointmentsRef = ref(database, 'appointments');
-      const newAppointmentRef = push(appointmentsRef, newAppointment);
-      
+      const newAppointmentRef = await push(appointmentsRef, newAppointment);
+
       console.log("Cita guardada con ID: ", newAppointmentRef.key);
-      
-      setAppointments([...appointments, { 
-        ...newAppointment, 
-        id: newAppointmentRef.key,
-        date: selectedDate
-      }]);
+
+      // Lo agregamos localmente (aunque onValue la recogerá pronto)
+      setAppointments((prev) => [
+        ...prev,
+        {
+          ...newAppointment,
+          id: newAppointmentRef.key,
+          dateObj: selectedDate,
+        },
+      ]);
+
       nextStep();
     } catch (error) {
       console.error("Error al guardar la cita: ", error);
@@ -328,13 +406,49 @@ function Appointments({ user, onBackToHome, onLogout }) {
     setNotes("");
     setSearchTerm("");
     setSelectedCategory("Todas");
+    setShowMyAppointmentsView(false);
+    setShowHistoryView(false);
+  };
+
+  const updateAppointmentStatus = async (appointmentId, newStatus) => {
+    try {
+      const apptRef = ref(database, `appointments/${appointmentId}`);
+      await update(apptRef, { status: newStatus, updatedAt: serverTimestamp() });
+      // La suscripción onValue actualizará misCitas y historial automáticamente.
+    } catch (err) {
+      console.error("Error actualizando estado de cita:", err);
+      alert("No se pudo actualizar la cita. Intenta nuevamente.");
+    }
+  };
+
+  // Opcional: mover físicamente a otra rama (archive) - aquí simplemente lo dejo comentado
+  const moveAppointmentToArchive = async (appointmentId) => {
+    // Si prefieres mover a /history/ en vez de solo cambiar status:
+    // const apptRef = ref(database, `appointments/${appointmentId}`);
+    // const snapshot = await get(apptRef);
+    // if (snapshot.exists()) {
+    //   const data = snapshot.val();
+    //   const historyRef = ref(database, `history/${appointmentId}`);
+    //   await set(historyRef, { ...data, archivedAt: serverTimestamp() });
+    //   await remove(apptRef);
+    // }
   };
 
   const handleNavigation = (section) => {
     if (section === "logout") {
       onLogout();
+    } else if (section === "appointments") {
+      // abrir la vista Mis Citas en el main content
+      setShowMyAppointmentsView(true);
+      setShowHistoryView(false);
+    } else if (section === "history") {
+      setShowHistoryView(true);
+      setShowMyAppointmentsView(false);
     } else {
       console.log("Navegar a:", section);
+      // cerrar vistas si navegamos a otra cosa
+      setShowMyAppointmentsView(false);
+      setShowHistoryView(false);
     }
     setSidebarOpen(false);
   };
@@ -385,7 +499,7 @@ function Appointments({ user, onBackToHome, onLogout }) {
           <button style={headerStyles.helpButton} title="Ayuda">
             ❓
           </button>
-          
+
           <div style={headerStyles.userMenu}>
             <div style={headerStyles.userInfo}>
               <span style={headerStyles.userName}>
@@ -398,7 +512,7 @@ function Appointments({ user, onBackToHome, onLogout }) {
             </div>
           </div>
 
-          <button 
+          <button
             style={headerStyles.newAppointmentButton}
             onClick={handleNewAppointment}
           >
@@ -411,7 +525,7 @@ function Appointments({ user, onBackToHome, onLogout }) {
 
   const renderSidebar = () => {
     if (!sidebarOpen) return null;
-    
+
     return (
       <>
         {/* Overlay que cubre toda la pantalla - permite abrir/cerrar desde cualquier lugar */}
@@ -430,7 +544,7 @@ function Appointments({ user, onBackToHome, onLogout }) {
           }}
           onClick={() => setSidebarOpen(false)}
         />
-        
+
         {/* Sidebar minimalista */}
         <div
           style={{
@@ -450,7 +564,7 @@ function Appointments({ user, onBackToHome, onLogout }) {
           }}
         >
           {/* Encabezado con fecha y hora */}
-          <div 
+          <div
             style={{
               padding: "25px 20px",
               background: "linear-gradient(135deg, #3498db 0%, #2c3e50 100%)",
@@ -459,8 +573,8 @@ function Appointments({ user, onBackToHome, onLogout }) {
               color: "white"
             }}
           >
-            <div style={{ 
-              fontSize: "36px", 
+            <div style={{
+              fontSize: "36px",
               color: "white",
               fontWeight: "400",
               marginBottom: "6px",
@@ -468,8 +582,8 @@ function Appointments({ user, onBackToHome, onLogout }) {
             }}>
               {formatSidebarTime(sidebarCurrentTime)}
             </div>
-            <div style={{ 
-              fontSize: "14px", 
+            <div style={{
+              fontSize: "14px",
               color: "rgba(255,255,255,0.9)",
               fontWeight: "400",
               letterSpacing: "0.3px"
@@ -479,8 +593,8 @@ function Appointments({ user, onBackToHome, onLogout }) {
           </div>
 
           {/* Logo y nombre */}
-          <div style={{ 
-            padding: "20px", 
+          <div style={{
+            padding: "20px",
             paddingBottom: "10px",
             textAlign: "center",
             borderBottom: "1px solid #f1f2f6"
@@ -496,33 +610,33 @@ function Appointments({ user, onBackToHome, onLogout }) {
               margin: "0 auto 15px auto",
               boxShadow: "0 4px 12px rgba(52, 152, 219, 0.3)"
             }}>
-              <span style={{ 
-                fontSize: "24px", 
-                fontWeight: "bold", 
-                color: "white" 
+              <span style={{
+                fontSize: "24px",
+                fontWeight: "bold",
+                color: "white"
               }}>
                 A
               </span>
             </div>
-            <h2 style={{ 
-              margin: "0 0 5px 0", 
+            <h2 style={{
+              margin: "0 0 5px 0",
               color: "#2c3e50",
               fontSize: "18px",
               fontWeight: "600"
             }}>
               Apolo Barber & Spa
             </h2>
-            <p style={{ 
-              margin: 0, 
-              fontSize: "12px", 
-              color: "#7f8c8d" 
+            <p style={{
+              margin: 0,
+              fontSize: "12px",
+              color: "#7f8c8d"
             }}>
               Juventud, fuerza y estilo
             </p>
           </div>
-          
+
           {/* Información del usuario */}
-          <div style={{ 
+          <div style={{
             padding: "20px",
             borderBottom: "1px solid #f1f2f6",
             textAlign: "center"
@@ -542,17 +656,17 @@ function Appointments({ user, onBackToHome, onLogout }) {
             }}>
               {user?.email?.charAt(0).toUpperCase() || 'U'}
             </div>
-            <h3 style={{ 
-              margin: "0 0 5px 0", 
+            <h3 style={{
+              margin: "0 0 5px 0",
               color: "#2c3e50",
               fontSize: "16px",
               fontWeight: "600"
             }}>
               {user?.email?.split('@')[0] || 'Usuario'}
             </h3>
-            <p style={{ 
-              margin: 0, 
-              fontSize: "12px", 
+            <p style={{
+              margin: 0,
+              fontSize: "12px",
               color: "#27ae60",
               fontWeight: "500"
             }}>
@@ -561,12 +675,12 @@ function Appointments({ user, onBackToHome, onLogout }) {
           </div>
 
           {/* Menú de navegación minimalista */}
-          <div style={{ 
+          <div style={{
             padding: "15px 0",
             flex: 1
           }}>
-            <div style={{ 
-              fontSize: "11px", 
+            <div style={{
+              fontSize: "11px",
               color: "#7f8c8d",
               fontWeight: "600",
               textTransform: "uppercase",
@@ -576,20 +690,20 @@ function Appointments({ user, onBackToHome, onLogout }) {
             }}>
               Mi Cuenta
             </div>
-            
-            <ul style={{ 
-              listStyle: "none", 
-              padding: 0, 
+
+            <ul style={{
+              listStyle: "none",
+              padding: 0,
               margin: 0
             }}>
               {menuItems.map((item) => (
                 <li key={item.id}>
                   <button
                     onClick={() => handleNavigation(item.id)}
-                    style={{ 
-                      color: "#2c3e50", 
-                      fontWeight: "500", 
-                      display: "flex", 
+                    style={{
+                      color: "#2c3e50",
+                      fontWeight: "500",
+                      display: "flex",
                       alignItems: "center",
                       padding: "12px 20px",
                       width: "100%",
@@ -612,8 +726,8 @@ function Appointments({ user, onBackToHome, onLogout }) {
                       e.target.style.paddingLeft = "20px";
                     }}
                   >
-                    <span style={{ 
-                      marginRight: "12px", 
+                    <span style={{
+                      marginRight: "12px",
                       fontSize: "16px",
                       width: "20px"
                     }}>
@@ -641,13 +755,13 @@ function Appointments({ user, onBackToHome, onLogout }) {
           </div>
 
           {/* Información de contacto minimalista */}
-          <div style={{ 
+          <div style={{
             padding: "20px",
             background: "#f8f9fa",
             borderTop: "1px solid #f1f2f6"
           }}>
-            <div style={{ 
-              fontSize: "11px", 
+            <div style={{
+              fontSize: "11px",
               color: "#7f8c8d",
               fontWeight: "600",
               textTransform: "uppercase",
@@ -656,17 +770,17 @@ function Appointments({ user, onBackToHome, onLogout }) {
             }}>
               Contacto Rápido
             </div>
-            
+
             <div style={{ marginBottom: "10px" }}>
-              <div style={{ 
-                fontSize: "13px", 
+              <div style={{
+                fontSize: "13px",
                 color: "#2c3e50",
                 display: "flex",
                 alignItems: "center",
                 marginBottom: "5px"
               }}>
-                <span style={{ 
-                  width: "20px", 
+                <span style={{
+                  width: "20px",
                   color: "#3498db",
                   fontWeight: "bold",
                   marginRight: "10px"
@@ -676,17 +790,17 @@ function Appointments({ user, onBackToHome, onLogout }) {
                 +34 123 456 789
               </div>
             </div>
-            
+
             <div style={{ marginBottom: "10px" }}>
-              <div style={{ 
-                fontSize: "13px", 
+              <div style={{
+                fontSize: "13px",
                 color: "#2c3e50",
                 display: "flex",
                 alignItems: "center",
                 marginBottom: "5px"
               }}>
-                <span style={{ 
-                  width: "20px", 
+                <span style={{
+                  width: "20px",
                   color: "#3498db",
                   fontWeight: "bold",
                   marginRight: "10px"
@@ -696,16 +810,16 @@ function Appointments({ user, onBackToHome, onLogout }) {
                 soporte@apolo.com
               </div>
             </div>
-            
+
             <div>
-              <div style={{ 
-                fontSize: "13px", 
+              <div style={{
+                fontSize: "13px",
                 color: "#2c3e50",
                 display: "flex",
                 alignItems: "center"
               }}>
-                <span style={{ 
-                  width: "20px", 
+                <span style={{
+                  width: "20px",
                   color: "#3498db",
                   fontWeight: "bold",
                   marginRight: "10px"
@@ -718,22 +832,22 @@ function Appointments({ user, onBackToHome, onLogout }) {
           </div>
 
           {/* Footer */}
-          <div style={{ 
+          <div style={{
             padding: "15px 20px",
             textAlign: "center",
             borderTop: "1px solid #f1f2f6"
           }}>
-            <p style={{ 
-              margin: "0 0 5px 0", 
-              fontSize: "14px", 
+            <p style={{
+              margin: "0 0 5px 0",
+              fontSize: "14px",
               fontWeight: "600",
               color: "#2c3e50"
             }}>
               Apolo Barber & Spa
             </p>
-            <p style={{ 
-              margin: 0, 
-              fontSize: "12px", 
+            <p style={{
+              margin: 0,
+              fontSize: "12px",
               color: "#7f8c8d",
               fontStyle: "italic"
             }}>
@@ -779,7 +893,136 @@ function Appointments({ user, onBackToHome, onLogout }) {
     );
   };
 
+  const renderMyAppointmentsView = () => {
+    return (
+      <div style={styles.stepContent}>
+        <div style={styles.stepHeader}>
+          <h2 style={styles.stepTitle}>Mis citas</h2>
+          <p style={styles.stepSubtitle}>Citas activas con estado confirmado</p>
+        </div>
+
+        {misCitas.length === 0 ? (
+          <div style={styles.noResults}>
+            <p>No tienes citas confirmadas.</p>
+          </div>
+        ) : (
+          <div style={{ display: "grid", gap: 12 }}>
+            {misCitas.map((c) => (
+              <div key={c.id} style={styles.summaryCard}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div>
+                    <div style={{ fontWeight: 600 }}>
+                      {c.service?.name || (c.service && c.service.name) || "Servicio"}
+                    </div>
+                    <div style={{ color: "#666", fontSize: 14 }}>
+                      {c.center?.name || (c.center && c.center.name) || ""} • {c.time || ""}
+                    </div>
+                    <div style={{ color: "#999", fontSize: 13 }}>
+                      {c.date ? format(new Date(c.date), "PPP", { locale: es }) : ""}
+                    </div>
+                  </div>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <button
+                      style={styles.primaryButton}
+                      onClick={() => {
+                        if (window.confirm("¿Deseas cancelar esta cita?")) {
+                          updateAppointmentStatus(c.id, "cancelled");
+                        }
+                      }}
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div style={styles.navigationButtons}>
+          <button style={styles.secondaryButton} onClick={() => setShowMyAppointmentsView(false)}>
+            Volver
+          </button>
+          <button style={styles.primaryButton} onClick={() => { setShowHistoryView(true); setShowMyAppointmentsView(false); }}>
+            Ver Historial
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  const renderHistoryView = () => {
+    return (
+      <div style={styles.stepContent}>
+        <div style={styles.stepHeader}>
+          <h2 style={styles.stepTitle}>Historial</h2>
+          <p style={styles.stepSubtitle}>Tus citas pasadas</p>
+        </div>
+
+        {historial.length === 0 ? (
+          <div style={styles.noResults}>
+            <p>No hay elementos en el historial.</p>
+          </div>
+        ) : (
+          <div style={{ display: "grid", gap: 12 }}>
+            {historial.map((c) => (
+              <div key={c.id} style={styles.summaryCard}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div>
+                    <div style={{ fontWeight: 600 }}>
+                      {c.service?.name || (c.service && c.service.name) || "Servicio"}
+                    </div>
+                    <div style={{ color: "#666", fontSize: 14 }}>
+                      {c.center?.name || (c.center && c.center.name) || ""} • {c.time || ""}
+                    </div>
+                    <div style={{ color: "#999", fontSize: 13 }}>
+                      {c.date ? format(new Date(c.date), "PPP", { locale: es }) : ""}
+                    </div>
+                    <div style={{ marginTop: 8, fontSize: 13, color: "#777" }}>
+                      Estado: <strong>{c.status}</strong>
+                    </div>
+                  </div>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <button
+                      style={styles.primaryButton}
+                      onClick={() => {
+                        // Opcional: eliminar historial (solo si es necesario)
+                        if (window.confirm("¿Deseas eliminar este elemento del historial? Esta acción no se puede deshacer.")) {
+                          const apptRef = ref(database, `appointments/${c.id}`);
+                          remove(apptRef).catch((err) => {
+                            console.error("Error eliminando historial:", err);
+                            alert("No se pudo eliminar. Intenta nuevamente.");
+                          });
+                        }
+                      }}
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div style={styles.navigationButtons}>
+          <button style={styles.secondaryButton} onClick={() => setShowHistoryView(false)}>
+            Volver
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   const renderStepContent = () => {
+    // Prioridad: vistas Mis Citas / Historial abiertas desde el sidebar
+    if (showMyAppointmentsView) {
+      return renderMyAppointmentsView();
+    }
+    if (showHistoryView) {
+      return renderHistoryView();
+    }
+
     switch (currentStep) {
       case 1:
         return (
@@ -790,8 +1033,8 @@ function Appointments({ user, onBackToHome, onLogout }) {
             </div>
             <div style={styles.centersGrid}>
               {centers.map(center => (
-                <div 
-                  key={center.id} 
+                <div
+                  key={center.id}
                   style={{
                     ...styles.centerCard,
                     borderColor: selectedCenter?.id === center.id ? "#3498db" : "#e0e0e0"
@@ -814,8 +1057,8 @@ function Appointments({ user, onBackToHome, onLogout }) {
               <button style={styles.secondaryButton} onClick={onBackToHome}>
                 Cancelar
               </button>
-              <button 
-                style={styles.primaryButton} 
+              <button
+                style={styles.primaryButton}
                 onClick={nextStep}
                 disabled={!selectedCenter}
               >
@@ -856,7 +1099,7 @@ function Appointments({ user, onBackToHome, onLogout }) {
                 ))}
               </div>
             </div>
-            
+
             {Object.keys(servicesByCategory).length === 0 ? (
               <div style={styles.noResults}>
                 <p>No se encontraron servicios que coincidan con tu búsqueda.</p>
@@ -868,8 +1111,8 @@ function Appointments({ user, onBackToHome, onLogout }) {
                     <h3 style={styles.categoryTitle}>{category}</h3>
                     <div style={styles.servicesGrid}>
                       {categoryServices.map(service => (
-                        <div 
-                          key={service.id} 
+                        <div
+                          key={service.id}
                           style={{
                             ...styles.serviceCard,
                             borderColor: selectedService?.id === service.id ? "#3498db" : "#e0e0e0"
@@ -894,13 +1137,13 @@ function Appointments({ user, onBackToHome, onLogout }) {
                 ))}
               </>
             )}
-            
+
             <div style={styles.navigationButtons}>
               <button style={styles.secondaryButton} onClick={prevStep}>
                 Atrás
               </button>
-              <button 
-                style={styles.primaryButton} 
+              <button
+                style={styles.primaryButton}
                 onClick={nextStep}
                 disabled={!selectedService}
               >
@@ -911,124 +1154,123 @@ function Appointments({ user, onBackToHome, onLogout }) {
         );
 
       case 3: {
-  // Filtrar empleados por centro y categoría del servicio seleccionado
-  const availableEmployees = employees.filter(
-    (emp) =>
-      emp.centerId === selectedCenter?.id &&
-      emp.category === selectedService?.category
-  );
+        // Filtrar empleados por centro y categoría del servicio seleccionado
+        const availableEmployees = employees.filter(
+          (emp) =>
+            emp.centerId === selectedCenter?.id &&
+            emp.category === selectedService?.category
+        );
 
-  // Separar generalistas de especialistas
-  const generalistEmployees = availableEmployees.filter(emp => emp.isGeneralist);
-  const specialistEmployees = availableEmployees.filter(emp => !emp.isGeneralist);
+        // Separar generalistas de especialistas
+        const generalistEmployees = availableEmployees.filter(emp => emp.isGeneralist);
+        const specialistEmployees = availableEmployees.filter(emp => !emp.isGeneralist);
 
-  return (
-    <div style={styles.stepContent}>
-      <div style={styles.stepHeader}>
-        <h2 style={styles.stepTitle}>Selecciona un profesional</h2>
-        <p style={styles.stepSubtitle}>
-          Elige con quién quieres ser atendido para {selectedService?.name}
-        </p>
-      </div>
+        return (
+          <div style={styles.stepContent}>
+            <div style={styles.stepHeader}>
+              <h2 style={styles.stepTitle}>Selecciona un profesional</h2>
+              <p style={styles.stepSubtitle}>
+                Elige con quién quieres ser atendido para {selectedService?.name}
+              </p>
+            </div>
 
-      {/* Sección de Generalistas */}
-      {generalistEmployees.length > 0 && (
-        <div style={styles.employeeSection}>
-          <h3 style={styles.sectionTitle}>Profesionales Generalistas</h3>
-          <p style={styles.sectionSubtitle}>Expertos en múltiples técnicas</p>
-          <div style={styles.employeeGrid}>
-            {generalistEmployees.map((employee) => (
-              <div
-                key={employee.id}
-                style={{
-                  ...styles.employeeCard,
-                  borderColor:
-                    selectedEmployee?.id === employee.id
-                      ? "#3498db"
-                      : "#e0e0e0",
-                }}
-                onClick={() => setSelectedEmployee(employee)}
-              >
-                <div style={styles.employeePhoto}>{employee.photo}</div>
-                <h3 style={styles.employeeName}>{employee.name}</h3>
-                <div style={styles.specialties}>
-                  {employee.specialties.slice(0, 2).map((spec, index) => (
-                    <span key={index} style={styles.specialtyTag}>
-                      {spec}
-                    </span>
+            {/* Sección de Generalistas */}
+            {generalistEmployees.length > 0 && (
+              <div style={styles.employeeSection}>
+                <h3 style={styles.sectionTitle}>Profesionales Generalistas</h3>
+                <p style={styles.sectionSubtitle}>Expertos en múltiples técnicas</p>
+                <div style={styles.employeeGrid}>
+                  {generalistEmployees.map((employee) => (
+                    <div
+                      key={employee.id}
+                      style={{
+                        ...styles.employeeCard,
+                        borderColor:
+                          selectedEmployee?.id === employee.id
+                            ? "#3498db"
+                            : "#e0e0e0",
+                      }}
+                      onClick={() => setSelectedEmployee(employee)}
+                    >
+                      <div style={styles.employeePhoto}>{employee.photo}</div>
+                      <h3 style={styles.employeeName}>{employee.name}</h3>
+                      <div style={styles.specialties}>
+                        {employee.specialties.slice(0, 2).map((spec, index) => (
+                          <span key={index} style={styles.specialtyTag}>
+                            {spec}
+                          </span>
+                        ))}
+                        {employee.specialties.length > 2 && (
+                          <span style={styles.moreSpecialties}>
+                            +{employee.specialties.length - 2} más
+                          </span>
+                        )}
+                      </div>
+                      {selectedEmployee?.id === employee.id && (
+                        <div style={styles.selectedIndicator}>✓ Seleccionado</div>
+                      )}
+                    </div>
                   ))}
-                  {employee.specialties.length > 2 && (
-                    <span style={styles.moreSpecialties}>
-                      +{employee.specialties.length - 2} más
-                    </span>
-                  )}
                 </div>
-                {selectedEmployee?.id === employee.id && (
-                  <div style={styles.selectedIndicator}>✓ Seleccionado</div>
-                )}
               </div>
-            ))}
-          </div>
-        </div>
-      )}
+            )}
 
-      {/* Sección de Especialistas */}
-      {specialistEmployees.length > 0 && (
-        <div style={styles.employeeSection}>
-          <h3 style={styles.sectionTitle}>Especialistas</h3>
-          <p style={styles.sectionSubtitle}>Expertos en áreas específicas</p>
-          <div style={styles.employeeGrid}>
-            {specialistEmployees.map((employee) => (
-              <div
-                key={employee.id}
-                style={{
-                  ...styles.employeeCard,
-                  borderColor:
-                    selectedEmployee?.id === employee.id
-                      ? "#3498db"
-                      : "#e0e0e0",
-                }}
-                onClick={() => setSelectedEmployee(employee)}
-              >
-                <div style={styles.employeePhoto}>{employee.photo}</div>
-                <h3 style={styles.employeeName}>{employee.name}</h3>
-                <div style={styles.specialties}>
-                  {employee.specialties.slice(0, 2).map((spec, index) => (
-                    <span key={index} style={styles.specialtyTag}>
-                      {spec}
-                    </span>
+            {/* Sección de Especialistas */}
+            {specialistEmployees.length > 0 && (
+              <div style={styles.employeeSection}>
+                <h3 style={styles.sectionTitle}>Especialistas</h3>
+                <p style={styles.sectionSubtitle}>Expertos en áreas específicas</p>
+                <div style={styles.employeeGrid}>
+                  {specialistEmployees.map((employee) => (
+                    <div
+                      key={employee.id}
+                      style={{
+                        ...styles.employeeCard,
+                        borderColor:
+                          selectedEmployee?.id === employee.id
+                            ? "#3498db"
+                            : "#e0e0e0",
+                      }}
+                      onClick={() => setSelectedEmployee(employee)}
+                    >
+                      <div style={styles.employeePhoto}>{employee.photo}</div>
+                      <h3 style={styles.employeeName}>{employee.name}</h3>
+                      <div style={styles.specialties}>
+                        {employee.specialties.slice(0, 2).map((spec, index) => (
+                          <span key={index} style={styles.specialtyTag}>
+                            {spec}
+                          </span>
+                        ))}
+                        {employee.specialties.length > 2 && (
+                          <span style={styles.moreSpecialties}>
+                            +{employee.specialties.length - 2} más
+                          </span>
+                        )}
+                      </div>
+                      {selectedEmployee?.id === employee.id && (
+                        <div style={styles.selectedIndicator}>✓ Seleccionado</div>
+                      )}
+                    </div>
                   ))}
-                  {employee.specialties.length > 2 && (
-                    <span style={styles.moreSpecialties}>
-                      +{employee.specialties.length - 2} más
-                    </span>
-                  )}
                 </div>
-                {selectedEmployee?.id === employee.id && (
-                  <div style={styles.selectedIndicator}>✓ Seleccionado</div>
-                )}
               </div>
-            ))}
+            )}
+
+            <div style={styles.navigationButtons}>
+              <button style={styles.secondaryButton} onClick={prevStep}>
+                Atrás
+              </button>
+              <button
+                style={styles.primaryButton}
+                onClick={nextStep}
+                disabled={!selectedEmployee}
+              >
+                Siguiente
+              </button>
+            </div>
           </div>
-        </div>
-      )}
-
-      <div style={styles.navigationButtons}>
-        <button style={styles.secondaryButton} onClick={prevStep}>
-          Atrás
-        </button>
-        <button
-          style={styles.primaryButton}
-          onClick={nextStep}
-          disabled={!selectedEmployee}
-        >
-          Siguiente
-        </button>
-      </div>
-    </div>
-  );
-}
-
+        );
+      }
 
       case 4:
         return (
@@ -1318,11 +1560,11 @@ function Appointments({ user, onBackToHome, onLogout }) {
                 >
                   <span style={styles.summaryLabel}>Notas e imágenes:</span>
                   <button
-                  style={styles.editButton}
-                  onClick={() => setCurrentStep(4)}
-                >
-                  Editar
-                </button>
+                    style={styles.editButton}
+                    onClick={() => setCurrentStep(4)}
+                  >
+                    Editar
+                  </button>
                 </div>
                 <p style={styles.notesText}>
                   {notes || "No se han agregado notas."}
@@ -1363,7 +1605,7 @@ function Appointments({ user, onBackToHome, onLogout }) {
               <div style={styles.confirmationIcon}>✓</div>
               <h2 style={styles.confirmationTitle}>¡Cita confirmada!</h2>
               <p style={styles.confirmationDetails}>
-                {formatDate(appointment.date)} - {appointment.time} - {appointment.center.name} - {appointment.service.name} ({appointment.service.duration})
+                {formatDate(appointment.dateObj || new Date(appointment.date))} - {appointment.time} - {appointment.center?.name || appointment.center} - {appointment.service?.name || appointment.service?.name} ({appointment.service?.duration})
               </p>
               <div style={styles.confirmationActions}>
                 <button style={styles.confirmationActionButton}>
@@ -1408,7 +1650,6 @@ function Appointments({ user, onBackToHome, onLogout }) {
 }
 
 // Estilos
-// Estilos
 const headerStyles = {
   container: {
     display: "flex",
@@ -1444,9 +1685,6 @@ const headerStyles = {
     justifyContent: "center",
     width: "40px",
     height: "40px",
-    ":hover": {
-      backgroundColor: "#f8f9fa"
-    }
   },
   backButton: {
     backgroundColor: "transparent",
@@ -1458,10 +1696,6 @@ const headerStyles = {
     color: "#666",
     fontWeight: "500",
     transition: "all 0.3s ease",
-    ":hover": {
-      backgroundColor: "#f8f9fa",
-      borderColor: "#3498db"
-    }
   },
   centerSection: {
     display: "flex",
@@ -1512,10 +1746,6 @@ const headerStyles = {
     fontSize: "16px",
     cursor: "pointer",
     transition: "all 0.3s ease",
-    ":hover": {
-      backgroundColor: "#f8f9fa",
-      borderColor: "#3498db"
-    }
   },
   userMenu: {
     display: "flex",
@@ -1525,9 +1755,6 @@ const headerStyles = {
     borderRadius: "8px",
     cursor: "pointer",
     transition: "all 0.3s ease",
-    ":hover": {
-      backgroundColor: "#f8f9fa"
-    }
   },
   userInfo: {
     display: "flex",
@@ -1566,10 +1793,6 @@ const headerStyles = {
     cursor: "pointer",
     fontSize: "14px",
     transition: "all 0.3s ease",
-    ":hover": {
-      backgroundColor: "#2980b9",
-      transform: "translateY(-1px)"
-    }
   }
 };
 
