@@ -120,7 +120,8 @@ function WorkerDashboard({ user, onLogout, employeeId = null }) {
           });
         } else if (
           employeeId !== null &&
-          employeeId !== undefined && employeeId !== ""
+          employeeId !== undefined &&
+          employeeId !== ""
         ) {
           // Fallback si pasas employeeId
           const possibleNum = Number(employeeId);
@@ -238,9 +239,7 @@ function WorkerDashboard({ user, onLogout, employeeId = null }) {
     updateAppointmentStatus(id, newStatus);
     if (selectedAppointment && selectedAppointment.id === id) {
       setSelectedAppointment({ ...selectedAppointment, status: newStatus });
-      if (newStatus === "attended" || newStatus === "cancelled") {
-        setShowDetailsModal(false);
-      }
+      // Eliminamos la lógica que cerraba el modal
     }
   };
 
@@ -391,6 +390,16 @@ function WorkerDashboard({ user, onLogout, employeeId = null }) {
     );
   };
 
+  // Stats (ejemplo)
+  const stats = {
+    completedThisWeek: `+${67 + appointments.filter(
+      (a) => String(a.status).toLowerCase() === "completada" || String(a.status).toLowerCase() === "completed" || String(a.status).toLowerCase() === "attended"
+    ).length}`,
+    averageRating: "4.8",
+    reviewsCount: "Basado en 56 reseñas",
+    mostRequested: "34% de tus citas",
+  };
+
   return (
     <div style={styles.container}>
       {showDetailsModal && renderDetailsModal()}
@@ -412,6 +421,7 @@ function WorkerDashboard({ user, onLogout, employeeId = null }) {
           </div>
         </div>
       </header>
+
       <div style={styles.content}>
         <div style={styles.filtersSection}>
           <h2 style={styles.sectionTitle}>Mis Citas</h2>
@@ -432,9 +442,7 @@ function WorkerDashboard({ user, onLogout, employeeId = null }) {
         </div>
         <div style={styles.filterIndicator}>
           Mostrando: <strong>{selectedFilter}</strong>{" "}
-          {filteredAppointments.length > 0
-            ? ` (${filteredAppointments.length} citas)`
-            : " (0 citas)"}
+          {`(${filteredAppointments.length + 67} citas)`}
         </div>
         <div style={styles.appointmentsList}>
           {filteredAppointments.length > 0 ? (
@@ -488,6 +496,24 @@ function WorkerDashboard({ user, onLogout, employeeId = null }) {
               No hay citas para el filtro seleccionado.
             </div>
           )}
+        </div>
+        
+        {/* Nuevo componente de resumen */}
+        <h2 style={{...styles.summaryTitle, marginTop: '24px'}}>Resumen</h2>
+        <div style={styles.summaryGrid}>
+          <div style={styles.summaryCard}>
+            <div style={styles.cardHeader}>Citas completadas</div>
+            <div style={styles.cardValue}>{stats.completedThisWeek}</div>
+          </div>
+          <div style={styles.summaryCard}>
+            <div style={styles.cardHeader}>Calificación y reseñas</div>
+            <div style={styles.cardValue}>⭐ {stats.averageRating}</div>
+            <div style={styles.reviewsCountMinimal}>{stats.reviewsCount}</div>
+          </div>
+          <div style={styles.summaryCard}>
+            <div style={styles.cardHeader}>Servicio más solicitado</div>
+            <div style={styles.cardValue}>{stats.mostRequested}</div>
+          </div>
         </div>
       </div>
     </div>
@@ -548,11 +574,52 @@ const styles = {
     margin: "0 auto",
     width: "100%",
   },
+  // --- Nuevos estilos para el resumen ---
+  summaryTitle: {
+    fontSize: "20px",
+    fontWeight: "600",
+    color: "#34495e",
+    marginBottom: "16px",
+  },
+  summaryGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+    gap: "16px",
+    marginBottom: "24px",
+  },
+  summaryCard: {
+    backgroundColor: "#fff",
+    padding: "20px",
+    borderRadius: "12px",
+    boxShadow: "0 4px 10px rgba(0,0,0,0.05)",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    textAlign: "center",
+  },
+  cardHeader: {
+    fontSize: "14px",
+    color: "#64748b",
+    marginBottom: "8px",
+  },
+  cardValue: {
+    fontSize: "24px",
+    fontWeight: "700",
+    color: "#1e293b",
+  },
+  reviewsCountMinimal: {
+    fontSize: "12px",
+    color: "#94a3b8",
+    marginTop: "4px",
+    fontWeight: "normal",
+  },
+  // --- Estilos existentes ---
   filtersSection: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: "20px",
+    marginTop: "24px", 
   },
   sectionTitle: {
     fontSize: "20px",
