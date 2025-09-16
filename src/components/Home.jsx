@@ -291,7 +291,7 @@ const Home = forwardRef(({ onExploreServices, onReservaClick }, ref) => {
               <span style={reviewRatingStyle}>★★★★★</span>
             </div>
             <p style={reviewTextStyle}>
-              "Me enanta!!! El trato es excelente y siempre salgo sintiéndome renovada."
+              "Me encanta!!! El trato es excelente y siempre salgo sintiéndome renovada."
             </p>
           </div>
           

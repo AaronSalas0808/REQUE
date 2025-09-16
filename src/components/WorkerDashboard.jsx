@@ -13,9 +13,9 @@ import {
  * WorkerDashboard conectado a Firebase Realtime Database.
  *
  * Props:
- *  - user: objeto auth (obligatorio)
- *  - onLogout: callback para cuando el worker cierra sesión
- *  - employeeId: (opcional) id interno del empleado (por ejemplo 5)
+ * - user: objeto auth (obligatorio)
+ * - onLogout: callback para cuando el worker cierra sesión
+ * - employeeId: (opcional) id interno del empleado (por ejemplo 5)
  *
  * Nota: se compara por employee.name (normalizado).
  */
@@ -77,7 +77,7 @@ function WorkerDashboard({ user, onLogout, employeeId = null }) {
         // no-op
       }
     };
-  }, [user?.uid]);
+  }, [user?.uid, user?.displayName, user?.email]);
 
   // Normalizador de nombres: quita acentos, puntos y espacios extra, pasa a minúsculas
   const normalizeName = (s) => {
@@ -120,8 +120,7 @@ function WorkerDashboard({ user, onLogout, employeeId = null }) {
           });
         } else if (
           employeeId !== null &&
-          employeeId !== undefined &&
-          employeeId !== ""
+          employeeId !== undefined && employeeId !== ""
         ) {
           // Fallback si pasas employeeId
           const possibleNum = Number(employeeId);
@@ -160,7 +159,7 @@ function WorkerDashboard({ user, onLogout, employeeId = null }) {
         // no-op
       }
     };
-  }, [database, profileName, employeeId, user?.uid]);
+  }, [profileName, employeeId, user?.uid]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -229,7 +228,7 @@ function WorkerDashboard({ user, onLogout, employeeId = null }) {
     if (selectedFilter === "Canceladas")
       return (
         String(apt.status).toLowerCase() === "cancelled" ||
-        String(apt.status).toLowerCase() === "cancelled"
+        String(apt.status).toLowerCase() === "cancelada"
       );
     return true;
   });
@@ -261,28 +260,146 @@ function WorkerDashboard({ user, onLogout, employeeId = null }) {
     }
   };
 
-  // Stats (ejemplo)
-  const stats = {
-    completedThisWeek: `+${appointments.filter(
-      (a) =>
-        String(a.status).toLowerCase() === "completada" ||
-        String(a.status).toLowerCase() === "completed" ||
-        String(a.status).toLowerCase() === "attended"
-    ).length}`,
-    averageRating: "4.8",
-    reviewsCount: "Basado en 56 reseñas",
-    mostRequested: "34% de tus citas",
+  const getStatusBadgeStyle = (status) => {
+    const s = String(status).toLowerCase();
+    let color = "#64748b"; // gris por defecto
+    if (s === "confirmed" || s === "pendiente" || s === "pending") {
+      color = "#3b82f6"; // azul
+    } else if (s === "completed" || s === "completada" || s === "attended") {
+      color = "#22c55e"; // verde
+    } else if (s === "cancelled" || s === "cancelada") {
+      color = "#ef4444"; // rojo
+    }
+    return {
+      backgroundColor: color,
+      color: "white",
+      padding: "4px 8px",
+      borderRadius: "10px",
+      fontSize: "12px",
+      fontWeight: "600",
+      textTransform: "capitalize",
+    };
+  };
+
+  const renderDetailsModal = () => {
+    if (!selectedAppointment) return null;
+
+    const {
+      userEmail,
+      service,
+      date,
+      time,
+      notes,
+      status,
+      imageUrl,
+    } = selectedAppointment;
+
+    const formattedDate = date
+      ? new Date(date).toLocaleDateString("es-ES", {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })
+      : "Fecha no especificada";
+
+    return (
+      <div style={styles.modalBackdrop} onClick={handleCloseDetails}>
+        <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+          <div style={styles.modalHeader}>
+            <h2 style={styles.modalTitle}>Detalles de la Cita</h2>
+            <button style={styles.closeButton} onClick={handleCloseDetails}>
+              &times;
+            </button>
+          </div>
+          <div style={styles.modalBody}>
+            <div style={styles.modalGrid}>
+              {/* Sección de detalles a la izquierda */}
+              <div style={styles.detailsLeft}>
+                <div style={styles.detailSection}>
+                  <h3 style={styles.detailTitle}>Cliente y Servicio</h3>
+                  <p style={styles.detailItem}>
+                    <span style={styles.detailLabel}>Cliente:</span> {userEmail}
+                  </p>
+                  <p style={styles.detailItem}>
+                    <span style={styles.detailLabel}>Servicio:</span>{" "}
+                    {service?.name || "No especificado"}
+                  </p>
+                </div>
+
+                <div style={styles.detailSection}>
+                  <h3 style={styles.detailTitle}>Horario</h3>
+                  <p style={styles.detailItem}>
+                    <span style={styles.detailLabel}>Fecha:</span> {formattedDate}
+                  </p>
+                  <p style={styles.detailItem}>
+                    <span style={styles.detailLabel}>Hora:</span> {time}
+                  </p>
+                </div>
+
+                {notes && (
+                  <div style={styles.detailSection}>
+                    <h3 style={styles.detailTitle}>Notas</h3>
+                    <p style={styles.detailItem}>{notes}</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Sección de imagen a la derecha */}
+              <div style={styles.imageRight}>
+                <h3 style={styles.detailTitle}>Imagen de Referencia</h3>
+                <div style={styles.imageContainer}>
+                  {imageUrl ? (
+                    <img
+                      src={imageUrl}
+                      alt="Imagen de referencia"
+                      style={styles.appointmentImage}
+                    />
+                  ) : (
+                    <p style={styles.noImageText}>No hay imagen</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style={styles.modalActions}>
+            <span style={getStatusBadgeStyle(status)}>{status}</span>
+            <div style={styles.buttonGroup}>
+              <button
+                style={{ ...styles.actionButton, backgroundColor: "#22c55e" }}
+                onClick={() => handleStatusChange(selectedAppointment.id, "completada")}
+              >
+                Completada
+              </button>
+              <button
+                style={{ ...styles.actionButton, backgroundColor: "#ef4444" }}
+                onClick={() => handleStatusChange(selectedAppointment.id, "cancelada")}
+              >
+                Cancelada
+              </button>
+              <button
+                style={{ ...styles.actionButton, backgroundColor: "#64748b" }}
+                onClick={() => removeAppointment(selectedAppointment.id)}
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
     <div style={styles.container}>
+      {showDetailsModal && renderDetailsModal()}
       <header style={styles.header}>
         <div style={styles.headerContent}>
           <h1 style={styles.title}>Agenda</h1>
           <div style={styles.headerRight}>
             <div style={{ textAlign: "right" }}>
               <div style={styles.userWelcome}>
-                {/* Mostrar el nombre del perfil tal como está en la BD */}
                 Hola, {profileName || user?.displayName || user?.email?.split("@")[0]}
               </div>
               <div style={{ fontSize: 12, color: "#64748b" }}>
@@ -295,7 +412,6 @@ function WorkerDashboard({ user, onLogout, employeeId = null }) {
           </div>
         </div>
       </header>
-
       <div style={styles.content}>
         <div style={styles.filtersSection}>
           <h2 style={styles.sectionTitle}>Mis Citas</h2>
@@ -314,383 +430,353 @@ function WorkerDashboard({ user, onLogout, employeeId = null }) {
             ))}
           </div>
         </div>
-
         <div style={styles.filterIndicator}>
-          Mostrando: <strong>{selectedFilter}</strong>
+          Mostrando: <strong>{selectedFilter}</strong>{" "}
           {filteredAppointments.length > 0
             ? ` (${filteredAppointments.length} citas)`
             : " (0 citas)"}
         </div>
-
         <div style={styles.appointmentsList}>
           {filteredAppointments.length > 0 ? (
             filteredAppointments.map((appointment) => (
-              <div key={appointment.id} style={styles.appointmentCard}>
-                <div style={styles.cardHeader}>
-                  <h3 style={styles.clientName}>
-                    {appointment.client ||
-                      appointment.userEmail ||
-                      (appointment.customer && appointment.customer.name) ||
-                      "Cliente"}
-                  </h3>
-                  <span
-                    style={{
-                      ...styles.statusBadge,
-                      ...(isActiveStatus(appointment.status)
-                        ? styles.statusPending
-                        : {}),
-                      ...(String(appointment.status).toLowerCase() ===
-                      "attended"
-                        ? styles.statusCompleted
-                        : {}),
-                      ...(String(appointment.status).toLowerCase() ===
-                      "cancelled"
-                        ? styles.statusCanceled
-                        : {}),
-                    }}
-                  >
-                    {appointment.status || "Pendiente"}
-                  </span>
+              <div
+                key={appointment.id}
+                style={{
+                  ...styles.appointmentCard,
+                  ...(isActiveStatus(appointment.status)
+                    ? styles.activeAppointment
+                    : {}),
+                }}
+                onClick={() => handleShowDetails(appointment)}
+              >
+                <div style={styles.appointmentHeader}>
+                  <div style={styles.appointmentTime}>
+                    {appointment.time}
+                  </div>
+                  <div style={styles.appointmentStatus}>
+                    {getStatusBadgeStyle(appointment.status) ? (
+                      <span style={getStatusBadgeStyle(appointment.status)}>
+                        {appointment.status}
+                      </span>
+                    ) : (
+                      "Estatus no disponible"
+                    )}
+                  </div>
                 </div>
-
-                <div style={styles.serviceInfo}>
-                  <p style={styles.serviceText}>
-                    <strong style={styles.serviceName}>
-                      {appointment.service?.name ||
-                        appointment.service ||
-                        "Servicio"}
-                    </strong>{" "}
-                    • {appointment.duration || appointment.service?.duration || ""}
-                  </p>
-                  <p style={styles.dateText}>
-                    {appointment.date
-                      ? new Date(appointment.date).toLocaleString("es-ES", {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })
-                      : appointment.time || ""}
-                  </p>
-                  <p style={styles.detailText}>
-                    {appointment.fullService ||
-                      (appointment.service && appointment.service.name) ||
-                      ""}
-                  </p>
+                <div style={styles.appointmentBody}>
+                  <div style={styles.appointmentUser}>{appointment.userEmail}</div>
+                  <div style={styles.appointmentService}>
+                    {appointment.service?.name}
+                  </div>
+                  <div style={styles.appointmentNotes}>{appointment.notes || "Sin notas"}</div>
                 </div>
-
-                <div style={styles.cardActions}>
+                <div style={styles.appointmentActions}>
                   <button
                     style={styles.detailsButton}
-                    onClick={() => handleShowDetails(appointment)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleShowDetails(appointment);
+                    }}
                   >
                     Ver Detalles
                   </button>
-
-                  {isActiveStatus(appointment.status) && (
-                    <div style={styles.statusActions}>
-                      <button
-                        style={styles.completeButton}
-                        onClick={() =>
-                          handleStatusChange(appointment.id, "attended")
-                        }
-                      >
-                        Completar
-                      </button>
-                      <button
-                        style={styles.cancelButton}
-                        onClick={() =>
-                          handleStatusChange(appointment.id, "cancelled")
-                        }
-                      >
-                        Cancelar
-                      </button>
-                    </div>
-                  )}
                 </div>
               </div>
             ))
           ) : (
-            <div style={styles.noResults}>
-              <p>
-                No hay citas{" "}
-                {selectedFilter !== "Todas" ? selectedFilter.toLowerCase() : ""}
-              </p>
+            <div style={styles.noAppointments}>
+              No hay citas para el filtro seleccionado.
             </div>
           )}
         </div>
-
-        <div style={styles.statsSection}>
-          <div style={styles.statsCard}>
-            <h3 style={styles.statsTitle}>Resumen</h3>
-            <div style={styles.statsGrid}>
-              <div style={styles.statItem}>
-                <span style={styles.statLabel}>Citas completadas</span>
-                <span style={styles.statValue}>{stats.completedThisWeek}</span>
-              </div>
-              <div style={styles.statItem}>
-                <span style={styles.statLabel}>Calificación promedio</span>
-                <span style={styles.statValue}>⭐ {stats.averageRating}</span>
-              </div>
-              <div style={styles.statItem}>
-                <span style={styles.statLabel}>Reseñas</span>
-                <span style={styles.statValue}>{stats.reviewsCount}</span>
-              </div>
-              <div style={styles.statItem}>
-                <span style={styles.statLabel}>Servicio más solicitado</span>
-                <span style={styles.statValue}>{stats.mostRequested}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div style={styles.footerSection}>
-          <div style={styles.contactInfo}>
-            <p style={styles.contactText}>
-              <strong>Soporte:</strong> soporte@apolo.com
-            </p>
-          </div>
-        </div>
       </div>
-
-      {showDetailsModal && selectedAppointment && (
-        <div style={styles.modalOverlay} onClick={handleCloseDetails}>
-          <div
-            style={styles.modalContent}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div style={styles.modalHeader}>
-              <h2 style={styles.modalTitle}>Detalles de la Cita</h2>
-              <button style={styles.closeButton} onClick={handleCloseDetails}>
-                ×
-              </button>
-            </div>
-
-            <div style={styles.detailSection}>
-              <h3 style={styles.detailSectionTitle}>Cliente</h3>
-              <p style={styles.detailText}>
-                {selectedAppointment.client || selectedAppointment.userEmail}
-                {selectedAppointment.phone ? ` · ${selectedAppointment.phone}` : ""}
-              </p>
-            </div>
-
-            <div style={styles.detailSection}>
-              <h3 style={styles.detailSectionTitle}>Servicio</h3>
-              <p style={styles.detailText}>
-                {selectedAppointment.fullService ||
-                  (selectedAppointment.service &&
-                    (selectedAppointment.service.name ||
-                      selectedAppointment.service))}
-                {selectedAppointment.duration
-                  ? ` · ${selectedAppointment.duration}`
-                  : ""}
-              </p>
-            </div>
-
-            <div style={styles.detailSection}>
-              <h3 style={styles.detailSectionTitle}>Fecha y hora</h3>
-              <p style={styles.detailText}>
-                {selectedAppointment.date
-                  ? new Date(selectedAppointment.date).toLocaleString("es-ES", {
-                      day: "2-digit",
-                      month: "short",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })
-                  : selectedAppointment.time || ""}
-              </p>
-            </div>
-
-            <div style={styles.detailSection}>
-              <h3 style={styles.detailSectionTitle}>Estado</h3>
-              <span
-                style={{
-                  ...styles.modalStatusBadge,
-                  ...(isActiveStatus(selectedAppointment.status)
-                    ? styles.statusPending
-                    : {}),
-                  ...(String(selectedAppointment.status).toLowerCase() ===
-                  "attended"
-                    ? styles.statusCompleted
-                    : {}),
-                  ...(String(selectedAppointment.status).toLowerCase() ===
-                  "cancelled"
-                    ? styles.statusCanceled
-                    : {}),
-                }}
-              >
-                {selectedAppointment.status}
-              </span>
-            </div>
-
-            <div style={styles.separator}></div>
-
-            <div style={styles.detailSection}>
-              <h3 style={styles.detailSectionTitle}>Notas adicionales</h3>
-              <p style={styles.detailText}>
-                {selectedAppointment.notes || "-"}
-              </p>
-            </div>
-
-            <div style={styles.separator}></div>
-
-            <div style={styles.modalActions}>
-              <button style={styles.contactButton}>Contactar al Cliente</button>
-
-              {isActiveStatus(selectedAppointment.status) && (
-                <>
-                  <button
-                    style={styles.cancelAppointmentButton}
-                    onClick={() =>
-                      handleStatusChange(selectedAppointment.id, "cancelled")
-                    }
-                  >
-                    Cancelar Cita
-                  </button>
-                  <button
-                    style={styles.completeAppointmentButton}
-                    onClick={() =>
-                      handleStatusChange(selectedAppointment.id, "attended")
-                    }
-                  >
-                    Marcar como Completada
-                  </button>
-                </>
-              )}
-
-              <button
-                style={{ ...styles.cancelAppointmentButton, backgroundColor: "#9ca3af" }}
-                onClick={() => removeAppointment(selectedAppointment.id)}
-              >
-                Eliminar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
 
-// (Los estilos permanecen igual a los que ya estabas usando; se pueden dejar tal cual)
 const styles = {
   container: {
-    fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif",
-    backgroundColor: "#f8fafc",
+    display: "flex",
+    flexDirection: "column",
     minHeight: "100vh",
-    padding: "0",
-    position: "relative",
+    backgroundColor: "#f4f7f9",
+    fontFamily: "Arial, sans-serif",
   },
   header: {
-    backgroundColor: "#ffffff",
-    color: "#1e293b",
-    padding: "16px 0",
-    boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+    width: "100%",
+    backgroundColor: "#fff",
+    padding: "20px",
     borderBottom: "1px solid #e2e8f0",
+    boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
   },
   headerContent: {
+    maxWidth: "1200px",
+    margin: "0 auto",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    maxWidth: "1000px",
-    margin: "0 auto",
-    padding: "0 20px",
   },
-  title: { margin: 0, fontSize: "24px", fontWeight: "600", color: "#1e293b" },
-  headerRight: { display: "flex", alignItems: "center", gap: "16px" },
-  userWelcome: { fontSize: "14px", color: "#64748b" },
-  logoutButton: {
-    backgroundColor: "transparent",
-    color: "#64748b",
-    border: "1px solid #e2e8f0",
-    padding: "8px 16px",
-    borderRadius: "6px",
-    cursor: "pointer",
+  title: {
+    fontSize: "24px",
+    fontWeight: "600",
+    color: "#1e293b",
+  },
+  headerRight: {
+    display: "flex",
+    alignItems: "center",
+    gap: "20px",
+  },
+  userWelcome: {
     fontSize: "14px",
     fontWeight: "500",
-    transition: "all 0.2s ease",
+    color: "#34495e",
   },
-  content: { maxWidth: "1000px", margin: "0 auto", padding: "30px 20px" },
-  filtersSection: { marginBottom: "24px" },
+  logoutButton: {
+    padding: "8px 16px",
+    backgroundColor: "#3b82f6",
+    color: "white",
+    border: "none",
+    borderRadius: "8px",
+    cursor: "pointer",
+    fontSize: "14px",
+    fontWeight: "600",
+  },
+  content: {
+    flexGrow: 1,
+    padding: "24px",
+    maxWidth: "1200px",
+    margin: "0 auto",
+    width: "100%",
+  },
+  filtersSection: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: "20px",
+  },
   sectionTitle: {
     fontSize: "20px",
     fontWeight: "600",
-    color: "#1e293b",
-    margin: "0 0 16px 0",
+    color: "#34495e",
+    margin: 0,
   },
-  filters: { display: "flex", gap: "12px", flexWrap: "wrap" },
+  filters: {
+    display: "flex",
+    gap: "8px",
+  },
   filterButton: {
-    padding: "10px 20px",
-    backgroundColor: "#ffffff",
+    padding: "8px 16px",
     border: "1px solid #e2e8f0",
-    borderRadius: "8px",
+    borderRadius: "20px",
+    backgroundColor: "white",
+    color: "#4a5568",
     cursor: "pointer",
-    fontSize: "14px",
+    transition: "all 0.2s",
     fontWeight: "500",
-    color: "#64748b",
-    transition: "all 0.2s ease",
   },
-  activeFilter: { backgroundColor: "#3b82f6", color: "white", borderColor: "#3b82f6" },
+  activeFilter: {
+    backgroundColor: "#3b82f6",
+    color: "white",
+    borderColor: "#3b82f6",
+  },
   filterIndicator: {
-    padding: "12px 16px",
-    backgroundColor: "#f1f5f9",
-    borderRadius: "8px",
-    marginBottom: "20px",
     fontSize: "14px",
     color: "#64748b",
+    marginBottom: "16px",
+    paddingLeft: "10px",
   },
-  appointmentsList: { display: "flex", flexDirection: "column", gap: "16px", marginBottom: "40px" },
+  appointmentsList: {
+    display: "grid",
+    gap: "20px",
+    gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+  },
   appointmentCard: {
     backgroundColor: "white",
     borderRadius: "12px",
+    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.05)",
     padding: "20px",
-    boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
-    border: "1px solid #e2e8f0",
+    borderLeft: "4px solid #e2e8f0",
+    cursor: "pointer",
+    transition: "all 0.3s",
+    ":hover": {
+      transform: "translateY(-3px)",
+      boxShadow: "0 6px 15px rgba(0, 0, 0, 0.1)",
+    },
   },
-  cardHeader: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", flexWrap: "wrap", gap: "12px" },
-  clientName: { margin: 0, fontSize: "18px", fontWeight: "600", color: "#1e293b" },
-  statusBadge: { padding: "6px 12px", borderRadius: "20px", fontSize: "12px", fontWeight: "600" },
-  statusPending: { backgroundColor: "#fffbeb", color: "#f59e0b" },
-  statusCompleted: { backgroundColor: "#ecfdf5", color: "#10b981" },
-  statusCanceled: { backgroundColor: "#fef2f2", color: "#ef4444" },
-  serviceInfo: { marginBottom: "20px" },
-  serviceText: { margin: "0 0 8px 0", fontSize: "16px", color: "#1e293b" },
-  serviceName: { color: "#1e293b" },
-  dateText: { margin: "0 0 8px 0", fontSize: "14px", color: "#64748b" },
-  detailText: { margin: 0, fontSize: "14px", color: "#64748b" },
-  cardActions: { display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px" },
-  detailsButton: { padding: "10px 16px", backgroundColor: "transparent", border: "1px solid #e2e8f0", color: "#64748b", borderRadius: "6px", cursor: "pointer", fontSize: "14px", fontWeight: "500" },
-  statusActions: { display: "flex", gap: "8px" },
-  completeButton: { padding: "10px 16px", backgroundColor: "#10b981", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "14px", fontWeight: "500" },
-  cancelButton: { padding: "10px 16px", backgroundColor: "#ef4444", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "14px", fontWeight: "500" },
-  statsSection: { marginBottom: "40px" },
-  statsCard: { backgroundColor: "#ffffff", borderRadius: "12px", padding: "24px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" },
-  statsTitle: { fontSize: "18px", fontWeight: "600", color: "#1e293b", margin: "0 0 20px 0", textAlign: "center" },
-  statsGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "20px" },
-  statItem: { textAlign: "center", padding: "16px", backgroundColor: "#f8fafc", borderRadius: "8px" },
-  statLabel: { display: "block", fontSize: "13px", color: "#64748b", marginBottom: "8px", fontWeight: "500" },
-  statValue: { display: "block", fontSize: "16px", fontWeight: "600", color: "#1e293b" },
-  footerSection: { borderTop: "1px solid #e2e8f0", paddingTop: "24px" },
-  contactInfo: { textAlign: "center" },
-  contactText: { margin: "0 0 8px 0", fontSize: "13px", color: "#64748b" },
-  noResults: { textAlign: "center", padding: "40px 20px", backgroundColor: "#ffffff", borderRadius: "12px", color: "#64748b", fontSize: "16px", border: "1px solid #e2e8f0" },
-
-  // Modal styles
-  modalOverlay: { position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: "20px" },
-  modalContent: { backgroundColor: "white", borderRadius: "12px", width: "100%", maxWidth: "500px", maxHeight: "90vh", overflowY: "auto", boxShadow: "0 10px 25px rgba(0,0,0,0.2)" },
-  modalHeader: { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "20px 24px", borderBottom: "1px solid #e2e8f0" },
+  activeAppointment: {
+    borderLeftColor: "#3b82f6",
+  },
+  appointmentHeader: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: "12px",
+  },
+  appointmentTime: {
+    fontSize: "18px",
+    fontWeight: "600",
+    color: "#1e293b",
+  },
+  appointmentStatus: {
+    // estilos definidos por getStatusBadgeStyle
+  },
+  appointmentBody: {
+    marginBottom: "12px",
+    borderBottom: "1px solid #e2e8f0",
+    paddingBottom: "12px",
+  },
+  appointmentUser: {
+    fontSize: "14px",
+    fontWeight: "500",
+    color: "#34495e",
+    marginBottom: "4px",
+  },
+  appointmentService: {
+    fontSize: "16px",
+    fontWeight: "600",
+    color: "#1e293b",
+  },
+  appointmentNotes: {
+    fontSize: "14px",
+    color: "#64748b",
+    marginTop: "8px",
+    whiteSpace: "pre-wrap",
+  },
+  appointmentActions: {
+    display: "flex",
+    gap: "10px",
+  },
+  detailsButton: {
+    padding: "8px 12px",
+    backgroundColor: "#3b82f6",
+    color: "white",
+    border: "none",
+    borderRadius: "8px",
+    cursor: "pointer",
+    fontSize: "14px",
+    fontWeight: "600",
+  },
+  noAppointments: {
+    textAlign: "center",
+    color: "#64748b",
+    padding: "40px",
+  },
+  modalBackdrop: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 100,
+  },
+  modalContent: {
+    backgroundColor: "white",
+    borderRadius: "12px",
+    width: "90%",
+    maxWidth: "800px",
+    boxShadow: "0 8px 16px rgba(0, 0, 0, 0.2)",
+    overflow: "hidden",
+    display: "flex",
+    flexDirection: "column",
+  },
+  modalHeader: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: "16px 24px",
+    borderBottom: "1px solid #e2e8f0",
+  },
   modalTitle: { margin: 0, fontSize: "20px", fontWeight: "600", color: "#1e293b" },
   closeButton: { background: "none", border: "none", fontSize: "24px", cursor: "pointer", color: "#64748b", padding: "0", width: "30px", height: "30px", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "50%" },
-  detailSection: { padding: "16px 24px" },
-  detailSectionTitle: { margin: "0 0 8px 0", fontSize: "14px", fontWeight: "600", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.5px" },
-  modalStatusBadge: { padding: "6px 12px", borderRadius: "20px", fontSize: "14px", fontWeight: "600", display: "inline-block" },
-  separator: { height: "1px", backgroundColor: "#e2e8f0", margin: "8px 0" },
-  modalActions: { padding: "16px 24px 24px", display: "flex", flexDirection: "column", gap: "12px" },
-  contactButton: { padding: "12px 16px", backgroundColor: "#3b82f6", color: "white", border: "none", borderRadius: "8px", cursor: "pointer", fontSize: "14px", fontWeight: "500", width: "100%" },
-  cancelAppointmentButton: { padding: "12px 16px", backgroundColor: "#ef4444", color: "white", border: "none", borderRadius: "8px", cursor: "pointer", fontSize: "14px", fontWeight: "500", width: "100%" },
-  completeAppointmentButton: { padding: "12px 16px", backgroundColor: "#10b981", color: "white", border: "none", borderRadius: "8px", cursor: "pointer", fontSize: "14px", fontWeight: "500", width: "100%" },
+  modalBody: {
+    padding: "24px",
+    overflowY: "auto",
+    maxHeight: "70vh",
+  },
+  modalGrid: {
+    display: "grid",
+    gridTemplateColumns: "2fr 1fr",
+    gap: "24px",
+    "@media (max-width: 600px)": {
+      gridTemplateColumns: "1fr",
+    },
+  },
+  detailsLeft: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "16px",
+  },
+  imageRight: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "8px",
+  },
+  imageContainer: {
+    backgroundColor: "#f0f2f5",
+    borderRadius: "8px",
+    padding: "12px",
+    border: "1px solid #e2e8f0",
+  },
+  detailSection: {
+    backgroundColor: "#f9fafb",
+    padding: "16px",
+    borderRadius: "10px",
+  },
+  detailTitle: {
+    margin: "0 0 8px 0",
+    fontSize: "16px",
+    fontWeight: "600",
+    color: "#34495e",
+  },
+  detailItem: {
+    margin: "0 0 8px 0",
+    fontSize: "14px",
+    color: "#4a5568",
+  },
+  detailLabel: {
+    fontWeight: "600",
+    color: "#1e293b",
+  },
+  modalActions: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: "16px 24px",
+    backgroundColor: "#fff",
+    borderTop: "1px solid #e2e8f0",
+  },
+  buttonGroup: {
+    display: "flex",
+    gap: "8px",
+    flexWrap: "wrap",
+    justifyContent: "flex-end",
+  },
+  actionButton: {
+    padding: "10px 16px",
+    color: "white",
+    border: "none",
+    borderRadius: "8px",
+    cursor: "pointer",
+    fontSize: "13px",
+    fontWeight: "600",
+    transition: "background-color 0.2s",
+  },
+  appointmentImage: {
+    width: "100%",
+    height: "auto",
+    borderRadius: "8px",
+    display: "block",
+  },
+  noImageText: {
+    fontSize: "14px",
+    color: "#64748b",
+    textAlign: "center",
+    marginTop: "20px",
+  },
 };
 
 export default WorkerDashboard;

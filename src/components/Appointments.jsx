@@ -196,13 +196,13 @@ function Appointments({ user, onBackToHome, onLogout }) {
   ];
 
   const menuItems = [
-    { id: "profile", label: "Mi Perfil", icon: "👤" },
     { id: "appointments", label: "Mis Citas", icon: "📅" },
     { id: "history", label: "Historial", icon: "📋" },
     { id: "notifications", label: "Notificaciones", icon: "🔔" , badge: unreadCount > 0 ? unreadCount : null},
-    { id: "logout", label: "Cerrar Sesión", icon: "🚪" }
+    { id: "logout", label: "Cerrar Sesión", icon: "X" }
   ];
-
+  
+  
   // Actualizar la hora cada minuto para el sidebar
   useEffect(() => {
     const timer = setInterval(() => {
@@ -264,7 +264,6 @@ function Appointments({ user, onBackToHome, onLogout }) {
       setHistorial([]);
       return;
     }
-
     const appointmentsRef = ref(database, "appointments");
     const q = query(appointmentsRef, orderByChild("userId"), equalTo(user.uid));
 
@@ -494,7 +493,7 @@ function Appointments({ user, onBackToHome, onLogout }) {
   };
 
   // Opcional: mover físicamente a otra rama (archive) - aquí simplemente lo dejo comentado
-  const moveAppointmentToArchive = async (appointmentId) => {
+ //onst moveAppointmentToArchive = async (appointmentId) => {
     // Si prefieres mover a /history/ en vez de solo cambiar status:
     // const apptRef = ref(database, `appointments/${appointmentId}`);
     // const snapshot = await get(apptRef);
@@ -504,7 +503,7 @@ function Appointments({ user, onBackToHome, onLogout }) {
     //   await set(historyRef, { ...data, archivedAt: serverTimestamp() });
     //   await remove(apptRef);
     // }
-  };
+ //;
 
   const handleNavigation = (section) => {
     if (section === "logout") {
@@ -697,10 +696,10 @@ function Appointments({ user, onBackToHome, onLogout }) {
         <div style={headerStyles.leftSection}>
           <button style={headerStyles.menuButton} onClick={() => setSidebarOpen(!sidebarOpen)}>
             ☰
-          </button>
-          <button style={headerStyles.backButton} onClick={onBackToHome}>
-            ← Volver al Inicio
-          </button>
+         </button>
+         <button style={headerStyles.backButton} onClick={onBackToHome}>
+           ← Volver al Inicio
+         </button>
         </div>
 
         <div style={headerStyles.centerSection}>
@@ -2747,3 +2746,5 @@ const styles = {
 };
 
 export default Appointments;
+
+

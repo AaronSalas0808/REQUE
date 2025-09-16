@@ -99,6 +99,7 @@ export default function Register({ onRegister, onSwitchToLogin, onClose }) {
     }
   };
 
+  // Estilos (actualizados para incluir el botón de cierre)
   const overlayStyle = {
     position: "fixed",
     top: 0,
@@ -111,6 +112,7 @@ export default function Register({ onRegister, onSwitchToLogin, onClose }) {
     alignItems: "center",
     zIndex: 2000,
   };
+
   const cardStyle = {
     background: "#ffffff",
     color: "#333333",
@@ -122,26 +124,34 @@ export default function Register({ onRegister, onSwitchToLogin, onClose }) {
     boxShadow: "0 8px 28px rgba(0,0,0,0.25)",
     position: "relative",
   };
+
   const titleStyle = {
     fontSize: "24px",
     fontWeight: "700",
     color: "#222222",
     marginBottom: "20px",
   };
-  const formStyle = { display: "flex", flexDirection: "column", gap: "1px" };
-  const inputStyle = {
-  width: "100%",              // Ocupa lo mismo que el botón
-  padding: "14px",            // Igual al botón
-  margin: "10px 0",
-  borderRadius: "8px",        // Igual al botón
-  border: "1px solid #ccc",
-  background: "#f9f9f9",
-  fontSize: "15px",
-  textAlign: "center",
-  outline: "none",
-  transition: "all 0.3s ease",
-  boxSizing: "border-box",    // 🔹 Hace que el padding y border no rompan el width
+
+  const formStyle = { 
+    display: "flex", 
+    flexDirection: "column", 
+    gap: "1px" 
   };
+
+  const inputStyle = {
+    width: "100%",
+    padding: "14px",
+    margin: "10px 0",
+    borderRadius: "8px",
+    border: "1px solid #ccc",
+    background: "#f9f9f9",
+    fontSize: "15px",
+    textAlign: "center",
+    outline: "none",
+    transition: "all 0.3s ease",
+    boxSizing: "border-box",
+  };
+
   const buttonStyle = {
     marginTop: "15px",
     padding: "14px",
@@ -153,7 +163,13 @@ export default function Register({ onRegister, onSwitchToLogin, onClose }) {
     fontWeight: "600",
     cursor: "pointer",
   };
-  const footerText = { marginTop: "20px", fontSize: "14px", color: "#666" };
+
+  const footerText = { 
+    marginTop: "20px", 
+    fontSize: "14px", 
+    color: "#666" 
+  };
+
   const linkBtn = {
     background: "none",
     border: "none",
@@ -162,12 +178,45 @@ export default function Register({ onRegister, onSwitchToLogin, onClose }) {
     fontWeight: "600",
   };
 
+  const closeBtn = {
+    position: "absolute",
+    top: "12px",
+    right: "12px",
+    background: "none",
+    border: "none",
+    color: "#444444",
+    fontSize: "20px",
+    cursor: "pointer",
+    padding: "5px",
+    borderRadius: "50%",
+    width: "30px",
+    height: "30px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  };
+
+  const errorStyle = {
+    color: "#e74c3c",
+    fontSize: "14px",
+    margin: "10px 0",
+    textAlign: "center",
+  };
 
   return (
     <div style={overlayStyle}>
       <div style={cardStyle}>
+        {/* Botón de cierre añadido aquí */}
+        <button
+          style={closeBtn}
+          onClick={onClose}
+          disabled={loading}
+        >
+          ×
+        </button>
+        
         <h2 style={titleStyle}>Registro de Usuario</h2>
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        {error && <div style={errorStyle}>{error}</div>}
         <form onSubmit={handleSubmit} style={formStyle}>
           <input
             type="text"
