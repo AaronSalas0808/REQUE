@@ -125,36 +125,28 @@ function Appointments({ user, onBackToHome, onLogout }) {
     { id: 4, name: "Arreglo de barba y bigote", duration: "25 min", price: "$12-18", category: "Barbería", image: "🧔" },
     { id: 5, name: "Corte + Barba (Combo)", duration: "60 min", price: "$30-40", category: "Barbería", image: "👨" },
     { id: 6, name: "Tinte para cabello/barba", duration: "45 min", price: "$20-30", category: "Barbería", image: "🎨" },
-    { id: 7, name: "Mascarilla facial/tratamientos", duration: "30 min", price: "$15-25", category: "Barbería", image: "🧴" },
-    { id: 8, name: "Depilación de cejas", duration: "15 min", price: "$8-12", category: "Barbería", image: "👁️" },
-    { id: 9, name: "Limpieza facial masculina", duration: "45 min", price: "$25-35", category: "Barbería", image: "✨" },
-
+  
     // 💆 Servicios de Belleza
     { id: 10, name: "Corte de dama", duration: "45 min", price: "$20-30", category: "Belleza", image: "💇‍♀️" },
-    { id: 11, name: "Peinado para eventos", duration: "60 min", price: "$35-60", category: "Belleza", image: "👰" },
-    { id: 12, name: "Tinte/coloración", duration: "90 min", price: "$40-70", category: "Belleza", image: "🌈" },
-    { id: 13, name: "Mechas/balayage", duration: "120 min", price: "$60-100", category: "Belleza", image: "🎨" },
+    { id: 11, name: "Peinado para eventos", duration: "40 min", price: "$35-60", category: "Belleza", image: "👰" },
+    { id: 12, name: "Tinte/coloración", duration: "60 min", price: "$40-70", category: "Belleza", image: "🌈" },
+    { id: 13, name: "Mechas/balayage", duration: "60 min", price: "$60-100", category: "Belleza", image: "🎨" },
     { id: 14, name: "Tratamientos capilares", duration: "45 min", price: "$25-45", category: "Belleza", image: "💆‍♀️" },
-    { id: 15, name: "Alisado/keratina", duration: "120 min", price: "$80-150", category: "Belleza", image: "🔀" },
-    { id: 16, name: "Extensiones de cabello", duration: "120 min", price: "$100-250", category: "Belleza", image: "👑" },
+    { id: 15, name: "Alisado/keratina", duration: "60 min", price: "$80-150", category: "Belleza", image: "🔀" },
+    { id: 16, name: "Extensiones de cabello", duration: "60 min", price: "$100-250", category: "Belleza", image: "👑" },
 
     // 💅 Servicios de Manos y Pies
-    { id: 17, name: "Manicure básica", duration: "30 min", price: "$15-20", category: "Manos y Pies", image: "💅" },
     { id: 18, name: "Manicure spa/lujo", duration: "45 min", price: "$25-35", category: "Manos y Pies", image: "💅" },
-    { id: 19, name: "Pedicure básica", duration: "45 min", price: "$20-25", category: "Manos y Pies", image: "👣" },
     { id: 20, name: "Pedicure spa/lujo", duration: "60 min", price: "$30-40", category: "Manos y Pies", image: "👣" },
-    { id: 21, name: "Uñas acrílicas", duration: "90 min", price: "$40-60", category: "Manos y Pies", image: "💅" },
-    { id: 22, name: "Uñas de gel", duration: "75 min", price: "$35-50", category: "Manos y Pies", image: "💅" },
+    { id: 21, name: "Uñas acrílicas", duration: "50 min", price: "$40-60", category: "Manos y Pies", image: "💅" },
+    { id: 22, name: "Uñas de gel", duration: "50 min", price: "$35-50", category: "Manos y Pies", image: "💅" },
     { id: 23, name: "Decoración de uñas", duration: "30 min", price: "$10-25", category: "Manos y Pies", image: "✨" },
 
     // ✨ Servicios de Spa y Bienestar
-    { id: 24, name: "Masaje relajante (30 min)", duration: "30 min", price: "$40", category: "Spa y Bienestar", image: "💆" },
+    
     { id: 25, name: "Masaje relajante (50 min)", duration: "50 min", price: "$65", category: "Spa y Bienestar", image: "💆" },
-    { id: 26, name: "Masaje relajante (80 min)", duration: "80 min", price: "$90", category: "Spa y Bienestar", image: "💆" },
-    { id: 27, name: "Masaje descontracturante", duration: "60 min", price: "$50-80", category: "Spa y Bienestar", image: "💆‍♂️" },
-    { id: 28, name: "Tratamiento facial completo", duration: "60 min", price: "$45-70", category: "Spa y Bienestar", image: "✨" },
-    { id: 29, name: "Depilación facial", duration: "25 min", price: "$15-25", category: "Spa y Bienestar", image: "👁️" },
-    { id: 30, name: "Depilación corporal (por zona)", duration: "30 min", price: "$20-40", category: "Spa y Bienestar", image: "✨" },
+    { id: 28, name: "Tratamiento facial completo", duration: "45 min", price: "$45-70", category: "Spa y Bienestar", image: "✨" },
+    { id: 30, name: "Depilación corporal (por zona)", duration: "55 min", price: "$20-40", category: "Spa y Bienestar", image: "✨" },
     { id: 31, name: "Maquillaje profesional", duration: "60 min", price: "$35-60", category: "Spa y Bienestar", image: "💄" },
     { id: 32, name: "Ceja y pestañas (tinte/laminado)", duration: "45 min", price: "$20-35", category: "Spa y Bienestar", image: "👁️" },
   ];
@@ -697,7 +689,7 @@ function Appointments({ user, onBackToHome, onLogout }) {
           <button style={headerStyles.menuButton} onClick={() => setSidebarOpen(!sidebarOpen)}>
             ☰
          </button>
-         <button style={headerStyles.backButton} onClick={onBackToHome}>
+         <button style={headerStyles.backButton} onClick={onLogout}>
            ← Volver al Inicio
          </button>
         </div>
@@ -733,9 +725,6 @@ function Appointments({ user, onBackToHome, onLogout }) {
         </div>
 
         <div style={headerStyles.rightSection}>
-          <button style={headerStyles.helpButton} title="Ayuda">
-            ❓
-          </button>
 
           <div style={headerStyles.userMenu}>
             <div style={headerStyles.userInfo}>
@@ -829,87 +818,45 @@ function Appointments({ user, onBackToHome, onLogout }) {
             </div>
           </div>
 
-          {/* Logo y nombre */}
+          
+        {/* Información del usuario */}
+        <div style={{
+          padding: "20px",
+          borderBottom: "1px solid #f1f2f6",
+          textAlign: "center"
+        }}>
           <div style={{
-            padding: "20px",
-            paddingBottom: "10px",
-            textAlign: "center",
-            borderBottom: "1px solid #f1f2f6"
+            width: "70px",
+            height: "70px",
+            borderRadius: "50%",
+            background: "linear-gradient(135deg, #3498db 0%, #2c3e50 100%)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            margin: "0 auto 15px auto",
+            fontSize: "28px",
+            color: "white",
+            fontWeight: "bold"
           }}>
-            <div style={{
-              width: "60px",
-              height: "60px",
-              borderRadius: "12px",
-              background: "linear-gradient(135deg, #3498db 0%, #2c3e50 100%)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              margin: "0 auto 15px auto",
-              boxShadow: "0 4px 12px rgba(52, 152, 219, 0.3)"
-            }}>
-              <span style={{
-                fontSize: "24px",
-                fontWeight: "bold",
-                color: "white"
-              }}>
-                A
-              </span>
-            </div>
-            <h2 style={{
-              margin: "0 0 5px 0",
-              color: "#2c3e50",
-              fontSize: "18px",
-              fontWeight: "600"
-            }}>
-              Apolo Barber & Spa
-            </h2>
-            <p style={{
-              margin: 0,
-              fontSize: "12px",
-              color: "#7f8c8d"
-            }}>
-              Juventud, fuerza y estilo
-            </p>
+            {user?.nombre?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || 'U'}
           </div>
-
-          {/* Información del usuario */}
-          <div style={{
-            padding: "20px",
-            borderBottom: "1px solid #f1f2f6",
-            textAlign: "center"
+          <h3 style={{
+            margin: "0 0 5px 0",
+            color: "#2c3e50",
+            fontSize: "16px",
+            fontWeight: "600"
           }}>
-            <div style={{
-              width: "70px",
-              height: "70px",
-              borderRadius: "50%",
-              background: "linear-gradient(135deg, #3498db 0%, #2c3e50 100%)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              margin: "0 auto 15px auto",
-              fontSize: "28px",
-              color: "white",
-              fontWeight: "bold"
-            }}>
-              {user?.email?.charAt(0).toUpperCase() || 'U'}
-            </div>
-            <h3 style={{
-              margin: "0 0 5px 0",
-              color: "#2c3e50",
-              fontSize: "16px",
-              fontWeight: "600"
-            }}>
-              {user?.email?.split('@')[0] || 'Usuario'}
-            </h3>
-            <p style={{
-              margin: 0,
-              fontSize: "12px",
-              color: "#27ae60",
-              fontWeight: "500"
-            }}>
-              ⭐ Cliente Premium
-            </p>
-          </div>
+            {user?.nombre || user?.email?.split('@')[0] || 'Usuario'}
+          </h3>
+          <p style={{
+            margin: 0,
+            fontSize: "12px",
+            color: "#27ae60",
+            fontWeight: "500"
+          }}>
+            ⭐ Cliente Premium
+          </p>
+</div>
 
           {/* Menú de navegación minimalista */}
           <div style={{
@@ -1618,125 +1565,175 @@ function Appointments({ user, onBackToHome, onLogout }) {
           </div>
         );
 
-      case 5: {
-        const weekStartsOn = 1;
-        const firstDayOfMonth = startOfMonth(currentDate);
-        const lastDayOfMonth = endOfMonth(currentDate);
-        const startDate = startOfWeek(firstDayOfMonth, { weekStartsOn });
-        const endDate = endOfWeek(lastDayOfMonth, { weekStartsOn });
+      // ... (código anterior sin cambios hasta la sección del calendario)
 
-        const daysInMonthGrid = eachDayOfInterval({
-          start: startDate,
-          end: endDate,
-        });
+case 5: {
+  const weekStartsOn = 1; // Lunes como primer día de la semana
+  const firstDayOfMonth = startOfMonth(currentDate);
+  const lastDayOfMonth = endOfMonth(currentDate);
+  const startDate = startOfWeek(firstDayOfMonth, { weekStartsOn });
+  const endDate = endOfWeek(lastDayOfMonth, { weekStartsOn });
 
-        return (
-          <div style={styles.stepContent}>
-            <div style={styles.stepHeader}>
-              <h2 style={styles.stepTitle}>Selecciona fecha y hora</h2>
-            </div>
-            <div style={styles.dateAndTimeContainer}>
-              <div style={styles.calendarWrapper}>
-                <div style={styles.calendarHeader}>
-                  <button
-                    style={styles.calendarNavButton}
-                    onClick={handlePrevMonth}
-                  >
-                    ‹
-                  </button>
-                  <h3 style={styles.calendarMonth}>
-                    {format(currentDate, "MMMM yyyy", { locale: es })}
-                  </h3>
-                  <button
-                    style={styles.calendarNavButton}
-                    onClick={handleNextMonth}
-                  >
-                    ›
-                  </button>
-                </div>
-                <div style={styles.calendarGrid}>
-                  {["L", "M", "X", "J", "V", "S", "D"].map((day) => (
-                    <div key={day} style={styles.calendarDayHeader}>
-                      {day}
-                    </div>
-                  ))}
-                  {daysInMonthGrid.map((day) => {
-                    const isCurrentMonth = isSameMonth(day, currentDate);
-                    const isSelected =
-                      selectedDate && isSameDay(day, selectedDate);
-                    const isCurrentToday = isToday(day);
+  const daysInMonthGrid = eachDayOfInterval({
+    start: startDate,
+    end: endDate,
+  });
 
-                    return (
-                      <button
-                        key={day.toString()}
-                        disabled={!isCurrentMonth}
-                        style={{
-                          ...styles.calendarDay,
-                          ...(isCurrentMonth
-                            ? {}
-                            : styles.calendarDayNotInMonth),
-                          backgroundColor: isSelected ? "#3498db" : "white",
-                          color: isSelected ? "white" : isCurrentMonth ? "#333" : "#ccc",
-                          borderColor: isCurrentToday && isCurrentMonth ? "#3498db" : "transparent",
-                          fontWeight: isSelected || isCurrentToday ? "600" : "500",
-                        }}
-                        onClick={() => handleDateClick(day)}
-                      >
-                        {format(day, "d")}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
+  // Función para verificar si una hora ya está reservada
+  const isTimeSlotBooked = (time) => {
+    if (!selectedDate) return false;
+    
+    return appointments.some(appt => {
+      if (appt.status !== "confirmed") return false;
+      
+      const apptDate = new Date(appt.date);
+      return (
+        isSameDay(apptDate, selectedDate) &&
+        appt.time === time
+      );
+    });
+  };
 
-              <div style={styles.timeSlotsWrapper}>
-                {selectedDate ? (
-                  <div style={styles.timeContainer}>
-                    <h3 style={styles.timeTitle}>
-                      Horarios para el {format(selectedDate, "d 'de' MMMM", { locale: es })}
-                    </h3>
-                    <div style={styles.timeGrid}>
-                      {timeSlots.map((time) => (
-                        <button
-                          key={time}
-                          style={{
-                            ...styles.timeSlot,
-                            backgroundColor:
-                              selectedTime === time ? "#3498db" : "#f8f9fa",
-                            color:
-                              selectedTime === time ? "white" : "#2c3e50",
-                          }}
-                          onClick={() => setSelectedTime(time)}
-                        >
-                          {time}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  <div style={styles.timePrompt}>
-                    <p>Selecciona un día en el calendario para ver los horarios disponibles.</p>
-                  </div>
-                )}
-              </div>
-            </div>
+  // Función para verificar si es domingo (0 = domingo)
+  const isSunday = (date) => {
+    return date.getDay() === 0;
+  };
 
-            <div style={styles.navigationButtons}>
-              <button style={styles.secondaryButton} onClick={prevStep}>
-                Atrás
-              </button>
-              <button
-                style={styles.primaryButton}
-                onClick={nextStep}
-                disabled={!selectedDate || !selectedTime}
-              >
-                Siguiente
-              </button>
-            </div>
+  return (
+    <div style={styles.stepContent}>
+      <div style={styles.stepHeader}>
+        <h2 style={styles.stepTitle}>Selecciona fecha y hora</h2>
+        <p style={styles.stepSubtitle}>
+          Elige el día y horario para tu cita con {selectedEmployee?.name}
+        </p>
+      </div>
+      
+      <div style={styles.dateAndTimeContainer}>
+        <div style={styles.calendarWrapper}>
+          <div style={styles.calendarHeader}>
+            <button
+              style={styles.calendarNavButton}
+              onClick={handlePrevMonth}
+            >
+              ‹
+            </button>
+            <h3 style={styles.calendarMonth}>
+              {format(currentDate, "MMMM yyyy", { locale: es })}
+            </h3>
+            <button
+              style={styles.calendarNavButton}
+              onClick={handleNextMonth}
+            >
+              ›
+            </button>
           </div>
-        );
-      }
+          
+          <div style={styles.calendarGrid}>
+            {["L", "M", "X", "J", "V", "S", "D"].map((day) => (
+              <div key={day} style={styles.calendarDayHeader}>
+                {day}
+              </div>
+            ))}
+            
+            {daysInMonthGrid.map((day) => {
+              const isCurrentMonth = isSameMonth(day, currentDate);
+              const isSelected = selectedDate && isSameDay(day, selectedDate);
+              const isCurrentToday = isToday(day);
+              const isDaySunday = isSunday(day);
+              
+              return (
+                <button
+                  key={day.toString()}
+                  disabled={!isCurrentMonth || isDaySunday}
+                  style={{
+                    ...styles.calendarDay,
+                    ...(!isCurrentMonth ? styles.calendarDayNotInMonth : {}),
+                    ...(isDaySunday ? styles.calendarDaySunday : {}),
+                    backgroundColor: isSelected ? "#3498db" : "white",
+                    color: isSelected ? "white" : 
+                           !isCurrentMonth ? "#ccc" : 
+                           isDaySunday ? "#ccc" : "#333",
+                    border: isCurrentToday && isCurrentMonth && !isSelected ? 
+                            "2px solid #3498db" : "1px solid #eee",
+                    fontWeight: isSelected || isCurrentToday ? "600" : "500",
+                  }}
+                  onClick={() => isCurrentMonth && !isDaySunday && handleDateClick(day)}
+                  title={isDaySunday ? "Domingo - Cerrado" : ""}
+                >
+                  {format(day, "d")}
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
+        <div style={styles.timeSlotsWrapper}>
+          {selectedDate ? (
+            <div style={styles.timeContainer}>
+              <h3 style={styles.timeTitle}>
+                Horarios para el {format(selectedDate, "d 'de' MMMM", { locale: es })}
+              </h3>
+              <div style={styles.timeGrid}>
+                {timeSlots.map((time) => {
+                  const isBooked = isTimeSlotBooked(time);
+                  const isSelected = selectedTime === time;
+                  
+                  return (
+                    <button
+                      key={time}
+                      disabled={isBooked}
+                      style={{
+                        ...styles.timeSlot,
+                        backgroundColor: isSelected ? "#3498db" : 
+                                        isBooked ? "#f8d7da" : "#f8f9fa",
+                        color: isSelected ? "white" : 
+                              isBooked ? "#721c24" : "#2c3e50",
+                        borderColor: isSelected ? "#3498db" : 
+                                    isBooked ? "#f5c6cb" : "#ddd",
+                        cursor: isBooked ? "not-allowed" : "pointer",
+                      }}
+                      onClick={() => !isBooked && setSelectedTime(time)}
+                      title={isBooked ? "Este horario ya está reservado" : ""}
+                    >
+                      {time}
+                      {isBooked && " ×"}
+                    </button>
+                  );
+                })}
+              </div>
+              
+              {selectedTime && (
+                <div style={styles.selectedTimeInfo}>
+                  <p>Has seleccionado las <strong>{selectedTime}</strong></p>
+                  <p>Duración estimada: {selectedService?.duration}</p>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div style={styles.timePrompt}>
+              <p>Selecciona un día en el calendario para ver los horarios disponibles.</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div style={styles.navigationButtons}>
+        <button style={styles.secondaryButton} onClick={prevStep}>
+          Atrás
+        </button>
+        <button
+          style={styles.primaryButton}
+          onClick={nextStep}
+          disabled={!selectedDate || !selectedTime}
+        >
+          Siguiente
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ... (resto del código sin cambios)
       case 6:
         return (
           <div style={styles.stepContent}>
@@ -1854,18 +1851,9 @@ function Appointments({ user, onBackToHome, onLogout }) {
                 {formatDate(appointment.dateObj || new Date(appointment.date))} - {appointment.time} - {appointment.center?.name || appointment.center} - {appointment.service?.name || appointment.service?.name} ({appointment.service?.duration})
               </p>
               <div style={styles.confirmationActions}>
-                <button style={styles.confirmationActionButton}>
-                  Agregar al calendario
-                </button>
-                <button style={styles.confirmationActionButton}>
-                  Compartir
-                </button>
-                <button style={styles.primaryButton}>
-                  Guardar comprobante
-                </button>
               </div>
               <button style={styles.secondaryButton} onClick={handleNewAppointment}>
-                Agendar nueva cita
+                + Nueva cita
               </button>
             </div>
           </div>
