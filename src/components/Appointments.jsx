@@ -60,49 +60,49 @@ const formatFileSize = (bytes) => {
 };
 
 const employees = [
-  // Barbería - Especialistas en diferentes áreas
-  { id: 1, name: "Carlos R.", photo: "💇", centerId: 1, category: "Barbería", specialties: ["Cortes clásicos", "Afeitado tradicional", "Arreglo de barba"], isGeneralist: true },
-  { id: 2, name: "Javier M.", photo: "✂️", centerId: 1, category: "Barbería", specialties: ["Cortes modernos", "Estilos de moda", "Tintes"], isGeneralist: false },
-  { id: 3, name: "Luis G.", photo: "🧔", centerId: 1, category: "Barbería", specialties: ["Barba y bigote", "Tratamientos faciales", "Depilación"], isGeneralist: false },
-  { id: 4, name: "Miguel A.", photo: "👨", centerId: 2, category: "Barbería", specialties: ["Cortes clásicos", "Combo corte+barba", "Limpieza facial"], isGeneralist: true },
-  { id: 5, name: "David F.", photo: "🎨", centerId: 2, category: "Barbería", specialties: ["Tintes", "Mechas", "Estilos creativos"], isGeneralist: false },
-  { id: 6, name: "Pedro S.", photo: "✨", centerId: 2, category: "Barbería", specialties: ["Afeitado premium", "Tratamientos VIP", "Servicios a domicilio"], isGeneralist: false },
-  { id: 7, name: "Andrés V.", photo: "💆‍♂️", centerId: 3, category: "Barbería", specialties: ["Cortes tradicionales", "Masajes capilares", "Relajación"], isGeneralist: true },
-  { id: 8, name: "Sergio P.", photo: "👁️", centerId: 3, category: "Barbería", specialties: ["Depilación de cejas", "Diseño facial", "Maquillaje masculino"], isGeneralist: false },
-  { id: 9, name: "Jorge L.", photo: "🧴", centerId: 3, category: "Barbería", specialties: ["Tratamientos capilares", "Mascarillas", "Cuidado premium"], isGeneralist: false },
+ // Barbería - Especialistas en diferentes áreas
+{ id: 1, name: "Carlos R.", photo: "👨", centerId: 1, category: "Barbería", specialties: ["Cortes clásicos", "Afeitado tradicional", "Arreglo de barba"], isGeneralist: true },
+{ id: 2, name: "Javier M.", photo: "👨", centerId: 1, category: "Barbería", specialties: ["Cortes modernos", "Estilos de moda", "Tintes"], isGeneralist: false },
+{ id: 3, name: "Luis G.", photo: "👨", centerId: 1, category: "Barbería", specialties: ["Barba y bigote", "Tratamientos faciales", "Depilación"], isGeneralist: false },
+{ id: 4, name: "Miguel A.", photo: "👨", centerId: 2, category: "Barbería", specialties: ["Cortes clásicos", "Combo corte+barba", "Limpieza facial"], isGeneralist: true },
+{ id: 5, name: "David F.", photo: "👨", centerId: 2, category: "Barbería", specialties: ["Tintes", "Mechas", "Estilos creativos"], isGeneralist: false },
+{ id: 6, name: "Pedro S.", photo: "👨", centerId: 2, category: "Barbería", specialties: ["Afeitado premium", "Tratamientos VIP", "Servicios a domicilio"], isGeneralist: false },
+{ id: 7, name: "Andrés V.", photo: "👨", centerId: 3, category: "Barbería", specialties: ["Cortes tradicionales", "Masajes capilares", "Relajación"], isGeneralist: true },
+{ id: 8, name: "Sergio P.", photo: "👨", centerId: 3, category: "Barbería", specialties: ["Depilación de cejas", "Diseño facial", "Maquillaje masculino"], isGeneralist: false },
+{ id: 9, name: "Jorge L.", photo: "👨", centerId: 3, category: "Barbería", specialties: ["Tratamientos capilares", "Mascarillas", "Cuidado premium"], isGeneralist: false },
 
-  // Belleza - Especialistas en diferentes áreas
-  { id: 10, name: "Ana P.", photo: "💇‍♀️", centerId: 1, category: "Belleza", specialties: ["Cortes de dama", "Peinados", "Asesoría de imagen"], isGeneralist: true },
-  { id: 11, name: "Sofía L.", photo: "🌈", centerId: 1, category: "Belleza", specialties: ["Coloración", "Tintes", "Mechas"], isGeneralist: false },
-  { id: 12, name: "María C.", photo: "🔀", centerId: 1, category: "Belleza", specialties: ["Alisados", "Keratina", "Tratamientos"], isGeneralist: false },
-  { id: 13, name: "Lucía H.", photo: "👰", centerId: 2, category: "Belleza", specialties: ["Peinados para eventos", "Bodas", "Ceremonias"], isGeneralist: true },
-  { id: 14, name: "Carmen R.", photo: "👑", centerId: 2, category: "Belleza", specialties: ["Extensiones", "Recogidos", "Estilos elaborados"], isGeneralist: false },
-  { id: 15, name: "Paula D.", photo: "💆‍♀️", centerId: 2, category: "Belleza", specialties: ["Tratamientos", "Hidratación", "Terapias capilares"], isGeneralist: false },
-  { id: 16, name: "Cristina M.", photo: "💄", centerId: 3, category: "Belleza", specialties: ["Maquillaje", "Colorimetría", "Asesoría de color"], isGeneralist: true },
-  { id: 17, name: "Beatriz F.", photo: "✨", centerId: 3, category: "Belleza", specialties: ["Estilos de pasarela", "Tendencias", "Looks modernos"], isGeneralist: false },
-  { id: 18, name: "Nerea J.", photo: "🌟", centerId: 3, category: "Belleza", specialties: ["Alisados brasileños", "Tratamientos especializados", "Cuidado intensivo"], isGeneralist: false },
+// Belleza - Especialistas en diferentes áreas
+{ id: 10, name: "Ana P.", photo: "👩", centerId: 1, category: "Belleza", specialties: ["Cortes de dama", "Peinados", "Asesoría de imagen"], isGeneralist: true },
+{ id: 11, name: "Sofía L.", photo: "👩", centerId: 1, category: "Belleza", specialties: ["Coloración", "Tintes", "Mechas"], isGeneralist: false },
+{ id: 12, name: "María C.", photo: "👩", centerId: 1, category: "Belleza", specialties: ["Alisados", "Keratina", "Tratamientos"], isGeneralist: false },
+{ id: 13, name: "Lucía H.", photo: "👩", centerId: 2, category: "Belleza", specialties: ["Peinados para eventos", "Bodas", "Ceremonias"], isGeneralist: true },
+{ id: 14, name: "Carmen R.", photo: "👩", centerId: 2, category: "Belleza", specialties: ["Extensiones", "Recogidos", "Estilos elaborados"], isGeneralist: false },
+{ id: 15, name: "Paula D.", photo: "👩", centerId: 2, category: "Belleza", specialties: ["Tratamientos", "Hidratación", "Terapias capilares"], isGeneralist: false },
+{ id: 16, name: "Cristina M.", photo: "👩", centerId: 3, category: "Belleza", specialties: ["Maquillaje", "Colorimetría", "Asesoría de color"], isGeneralist: true },
+{ id: 17, name: "Beatriz F.", photo: "👩", centerId: 3, category: "Belleza", specialties: ["Estilos de pasarela", "Tendencias", "Looks modernos"], isGeneralist: false },
+{ id: 18, name: "Nerea J.", photo: "👩", centerId: 3, category: "Belleza", specialties: ["Alisados brasileños", "Tratamientos especializados", "Cuidado intensivo"], isGeneralist: false },
 
-  // Manos y Pies - Especialistas en diferentes áreas
-  { id: 19, name: "Elena V.", photo: "💅", centerId: 1, category: "Manos y Pies", specialties: ["Manicure básica", "Pedicure", "Esmaltado"], isGeneralist: true },
-  { id: 20, name: "Isabel S.", photo: "👣", centerId: 1, category: "Manos y Pies", specialties: ["Pedicure spa", "Tratamientos", "Relajación"], isGeneralist: false },
-  { id: 21, name: "Laura T.", photo: "🎨", centerId: 1, category: "Manos y Pies", specialties: ["Uñas acrílicas", "Decoración", "Diseños artísticos"], isGeneralist: false },
-  { id: 22, name: "Verónica N.", photo: "💅", centerId: 2, category: "Manos y Pies", specialties: ["Manicure spa", "Uñas de gel", "Lujo"], isGeneralist: true },
-  { id: 23, name: "Raquel B.", photo: "✨", centerId: 2, category: "Manos y Pies", specialties: ["Decoración premium", "Cristales", "Diseños exclusivos"], isGeneralist: false },
-  { id: 24, name: "Marta G.", photo: "🧴", centerId: 2, category: "Manos y Pies", specialties: ["Tratamientos", "Hidratación", "Cuidado profesional"], isGeneralist: false },
-  { id: 25, name: "Silvia Q.", photo: "💅", centerId: 3, category: "Manos y Pies", specialties: ["Manicure tradicional", "Pedicure básica", "Esmaltado semi"], isGeneralist: true },
-  { id: 26, name: "Lorena A.", photo: "🌟", centerId: 3, category: "Manos y Pies", specialties: ["Uñas esculpidas", "Alargamientos", "Técnicas avanzadas"], isGeneralist: false },
-  { id: 27, name: "Eva Z.", photo: "👑", centerId: 3, category: "Manos y Pies", specialties: ["Diseño de lujo", "Aplicaciones premium", "Servicios VIP"], isGeneralist: false },
+// Manos y Pies - Especialistas en diferentes áreas
+{ id: 19, name: "Elena V.", photo: "👩", centerId: 1, category: "Manos y Pies", specialties: ["Manicure básica", "Pedicure", "Esmaltado"], isGeneralist: true },
+{ id: 20, name: "Isabel S.", photo: "👩", centerId: 1, category: "Manos y Pies", specialties: ["Pedicure spa", "Tratamientos", "Relajación"], isGeneralist: false },
+{ id: 21, name: "Laura T.", photo: "👩", centerId: 1, category: "Manos y Pies", specialties: ["Uñas acrílicas", "Decoración", "Diseños artísticos"], isGeneralist: false },
+{ id: 22, name: "Verónica N.", photo: "👩", centerId: 2, category: "Manos y Pies", specialties: ["Manicure spa", "Uñas de gel", "Lujo"], isGeneralist: true },
+{ id: 23, name: "Raquel B.", photo: "👩", centerId: 2, category: "Manos y Pies", specialties: ["Decoración premium", "Cristales", "Diseños exclusivos"], isGeneralist: false },
+{ id: 24, name: "Marta G.", photo: "👩", centerId: 2, category: "Manos y Pies", specialties: ["Tratamientos", "Hidratación", "Cuidado profesional"], isGeneralist: false },
+{ id: 25, name: "Silvia Q.", photo: "👩", centerId: 3, category: "Manos y Pies", specialties: ["Manicure tradicional", "Pedicure básica", "Esmaltado semi"], isGeneralist: true },
+{ id: 26, name: "Lorena A.", photo: "👩", centerId: 3, category: "Manos y Pies", specialties: ["Uñas esculpidas", "Alargamientos", "Técnicas avanzadas"], isGeneralist: false },
+{ id: 27, name: "Eva Z.", photo: "👩", centerId: 3, category: "Manos y Pies", specialties: ["Diseño de lujo", "Aplicaciones premium", "Servicios VIP"], isGeneralist: false },
 
-  // Spa y Bienestar - Especialistas en diferentes áreas
-  { id: 28, name: "Juan M.", photo: "💆", centerId: 1, category: "Spa y Bienestar", email: "juan@apolo.admin.cr", specialties: ["Masajes relajantes", "Terapias", "Bienestar general"], isGeneralist: true },
-  { id: 29, name: "Alejandro P.", photo: "💆‍♂️", centerId: 1, category: "Spa y Bienestar", specialties: ["Masajes descontracturantes", "Deportivos", "Rehabilitación"], isGeneralist: false },
-  { id: 30, name: "Ricardo L.", photo: "✨", centerId: 1, category: "Spa y Bienestar", specialties: ["Tratamientos faciales", "Limpieza", "Hidratación"], isGeneralist: false },
-  { id: 31, name: "Gabriela R.", photo: "💆", centerId: 2, category: "Spa y Bienestar", specialties: ["Masajes terapéuticos", "Aromaterapia", "Relajación"], isGeneralist: true },
-  { id: 32, name: "Daniela S.", photo: "👁️", centerId: 2, category: "Spa y Bienestar", specialties: ["Depilación", "Diseño de cejas", "Cejas y pestañas"], isGeneralist: false },
-  { id: 33, name: "Patricia M.", photo: "💄", centerId: 2, category: "Spa y Bienestar", specialties: ["Maquillaje profesional", "Eventos", "Asesoría de imagen"], isGeneralist: false },
-  { id: 34, name: "Roberto C.", photo: "💆", centerId: 3, category: "Spa y Bienestar", specialties: ["Masajes tradicionales", "Terapias orientales", "Bienestar integral"], isGeneralist: true },
-  { id: 35, name: "Fernando G.", photo: "✨", centerId: 3, category: "Spa y Bienestar", specialties: ["Tratamientos corporales", "Reducción", "Moldeamiento"], isGeneralist: false },
-  { id: 36, name: "Martina V.", photo: "🌿", centerId: 3, category: "Spa y Bienestar", specialties: ["Terapias naturales", "Productos orgánicos", "Wellness"], isGeneralist: false },
+// Spa y Bienestar - Especialistas en diferentes áreas
+{ id: 28, name: "Juan M.", photo: "👨", centerId: 1, category: "Spa y Bienestar", email: "juan@apolo.admin.cr", specialties: ["Masajes relajantes", "Terapias", "Bienestar general"], isGeneralist: true },
+{ id: 29, name: "Alejandro P.", photo: "👨", centerId: 1, category: "Spa y Bienestar", specialties: ["Masajes descontracturantes", "Deportivos", "Rehabilitación"], isGeneralist: false },
+{ id: 30, name: "Ricardo L.", photo: "👨", centerId: 1, category: "Spa y Bienestar", specialties: ["Tratamientos faciales", "Limpieza", "Hidratación"], isGeneralist: false },
+{ id: 31, name: "Gabriela R.", photo: "👩", centerId: 2, category: "Spa y Bienestar", specialties: ["Masajes terapéuticos", "Aromaterapia", "Relajación"], isGeneralist: true },
+{ id: 32, name: "Daniela S.", photo: "👩", centerId: 2, category: "Spa y Bienestar", specialties: ["Depilación", "Diseño de cejas", "Cejas y pestañas"], isGeneralist: false },
+{ id: 33, name: "Patricia M.", photo: "👩", centerId: 2, category: "Spa y Bienestar", specialties: ["Maquillaje profesional", "Eventos", "Asesoría de imagen"], isGeneralist: false },
+{ id: 34, name: "Roberto C.", photo: "👨", centerId: 3, category: "Spa y Bienestar", specialties: ["Masajes tradicionales", "Terapias orientales", "Bienestar integral"], isGeneralist: true },
+{ id: 35, name: "Fernando G.", photo: "👨", centerId: 3, category: "Spa y Bienestar", specialties: ["Tratamientos corporales", "Reducción", "Moldeamiento"], isGeneralist: false },
+{ id: 36, name: "Martina V.", photo: "👩", centerId: 3, category: "Spa y Bienestar", specialties: ["Terapias naturales", "Productos orgánicos", "Wellness"], isGeneralist: false },
 ];
 
 function Appointments({ user, onBackToHome, onLogout }) {
@@ -1159,7 +1159,7 @@ function Appointments({ user, onBackToHome, onLogout }) {
       </div>
     );
   };
-
+//////////////////////////////////////////////////////////////////////
   const renderHistoryView = () => {
     return (
       <div style={styles.stepContent}>
@@ -1600,173 +1600,217 @@ function Appointments({ user, onBackToHome, onLogout }) {
           </div>
         );
 
-      // ... (código anterior sin cambios hasta la sección del calendario)
 
-case 5: {
-  const weekStartsOn = 1; // Lunes como primer día de la semana
-  const firstDayOfMonth = startOfMonth(currentDate);
-  const lastDayOfMonth = endOfMonth(currentDate);
-  const startDate = startOfWeek(firstDayOfMonth, { weekStartsOn });
-  const endDate = endOfWeek(lastDayOfMonth, { weekStartsOn });
+    case 5: {
+      const weekStartsOn = 1; // Lunes como primer día de la semana
+      const firstDayOfMonth = startOfMonth(currentDate);
+      const lastDayOfMonth = endOfMonth(currentDate);
+      const startDate = startOfWeek(firstDayOfMonth, { weekStartsOn });
+      const endDate = endOfWeek(lastDayOfMonth, { weekStartsOn });
 
-  const daysInMonthGrid = eachDayOfInterval({
-    start: startDate,
-    end: endDate,
-  });
+      const daysInMonthGrid = eachDayOfInterval({
+        start: startDate,
+        end: endDate,
+      });
 
-  // Función para verificar si una hora ya está reservada
-  const isTimeSlotBooked = (time) => {
-    if (!selectedDate) return false;
-    
-    return appointments.some(appt => {
-      if (appt.status !== "confirmed") return false;
-      
-      const apptDate = new Date(appt.date);
+      // Función para verificar si una hora ya está reservada o ya pasó
+      const isTimeSlotBooked = (time) => {
+        if (!selectedDate) return false;
+        
+        // Verificar si la hora ya pasó
+        const now = new Date();
+        const selectedDateTime = new Date(selectedDate);
+        const [hours, minutes] = time.split(':').map(Number);
+        selectedDateTime.setHours(hours, minutes, 0, 0);
+        
+        const isPastTime = selectedDateTime < now;
+        
+        // Verificar si ya está reservada
+        const isBooked = appointments.some(appt => {
+          if (appt.status !== "confirmed") return false;
+          
+          const apptDate = new Date(appt.date);
+          return (
+            isSameDay(apptDate, selectedDate) &&
+            appt.time === time
+          );
+        });
+        
+        return isBooked || isPastTime;
+      };
+
+      // Función para obtener el texto del tooltip según el motivo de indisponibilidad
+      const getTimeSlotTooltip = (time) => {
+        if (!selectedDate) return "";
+        
+        const now = new Date();
+        const selectedDateTime = new Date(selectedDate);
+        const [hours, minutes] = time.split(':').map(Number);
+        selectedDateTime.setHours(hours, minutes, 0, 0);
+        
+        if (selectedDateTime < now) {
+          return "Esta hora ya ha pasado";
+        }
+        
+        const isBooked = appointments.some(appt => {
+          if (appt.status !== "confirmed") return false;
+          
+          const apptDate = new Date(appt.date);
+          return (
+            isSameDay(apptDate, selectedDate) &&
+            appt.time === time
+          );
+        });
+        
+        return isBooked ? "Este horario ya está reservado" : "";
+      };
+
+      // Función para verificar si es domingo (0 = domingo)
+      const isSunday = (date) => {
+        return date.getDay() === 0;
+      };
+
       return (
-        isSameDay(apptDate, selectedDate) &&
-        appt.time === time
-      );
-    });
-  };
-
-  // Función para verificar si es domingo (0 = domingo)
-  const isSunday = (date) => {
-    return date.getDay() === 0;
-  };
-
-  return (
-    <div style={styles.stepContent}>
-      <div style={styles.stepHeader}>
-        <h2 style={styles.stepTitle}>Selecciona fecha y hora</h2>
-        <p style={styles.stepSubtitle}>
-          Elige el día y horario para tu cita con {selectedEmployee?.name}
-        </p>
-      </div>
-      
-      <div style={styles.dateAndTimeContainer}>
-        <div style={styles.calendarWrapper}>
-          <div style={styles.calendarHeader}>
-            <button
-              style={styles.calendarNavButton}
-              onClick={handlePrevMonth}
-            >
-              ‹
-            </button>
-            <h3 style={styles.calendarMonth}>
-              {format(currentDate, "MMMM yyyy", { locale: es })}
-            </h3>
-            <button
-              style={styles.calendarNavButton}
-              onClick={handleNextMonth}
-            >
-              ›
-            </button>
+        <div style={styles.stepContent}>
+          <div style={styles.stepHeader}>
+            <h2 style={styles.stepTitle}>Selecciona fecha y hora</h2>
+            <p style={styles.stepSubtitle}>
+              Elige el día y horario para tu cita con {selectedEmployee?.name}
+            </p>
           </div>
           
-          <div style={styles.calendarGrid}>
-            {["L", "M", "X", "J", "V", "S", "D"].map((day) => (
-              <div key={day} style={styles.calendarDayHeader}>
-                {day}
-              </div>
-            ))}
-            
-            {daysInMonthGrid.map((day) => {
-              const isCurrentMonth = isSameMonth(day, currentDate);
-              const isSelected = selectedDate && isSameDay(day, selectedDate);
-              const isCurrentToday = isToday(day);
-              const isDaySunday = isSunday(day);
-              
-              return (
+          <div style={styles.dateAndTimeContainer}>
+            <div style={styles.calendarWrapper}>
+              <div style={styles.calendarHeader}>
                 <button
-                  key={day.toString()}
-                  disabled={!isCurrentMonth || isDaySunday}
-                  style={{
-                    ...styles.calendarDay,
-                    ...(!isCurrentMonth ? styles.calendarDayNotInMonth : {}),
-                    ...(isDaySunday ? styles.calendarDaySunday : {}),
-                    backgroundColor: isSelected ? "#3498db" : "white",
-                    color: isSelected ? "white" : 
-                           !isCurrentMonth ? "#ccc" : 
-                           isDaySunday ? "#ccc" : "#333",
-                    border: isCurrentToday && isCurrentMonth && !isSelected ? 
-                            "2px solid #3498db" : "1px solid #eee",
-                    fontWeight: isSelected || isCurrentToday ? "600" : "500",
-                  }}
-                  onClick={() => isCurrentMonth && !isDaySunday && handleDateClick(day)}
-                  title={isDaySunday ? "Domingo - Cerrado" : ""}
+                  style={styles.calendarNavButton}
+                  onClick={handlePrevMonth}
                 >
-                  {format(day, "d")}
+                  ‹
                 </button>
-              );
-            })}
-          </div>
-        </div>
-
-        <div style={styles.timeSlotsWrapper}>
-          {selectedDate ? (
-            <div style={styles.timeContainer}>
-              <h3 style={styles.timeTitle}>
-                Horarios para el {format(selectedDate, "d 'de' MMMM", { locale: es })}
-              </h3>
-              <div style={styles.timeGrid}>
-                {timeSlots.map((time) => {
-                  const isBooked = isTimeSlotBooked(time);
-                  const isSelected = selectedTime === time;
+                <h3 style={styles.calendarMonth}>
+                  {format(currentDate, "MMMM yyyy", { locale: es })}
+                </h3>
+                <button
+                  style={styles.calendarNavButton}
+                  onClick={handleNextMonth}
+                >
+                  ›
+                </button>
+              </div>
+              
+              <div style={styles.calendarGrid}>
+                {["L", "M", "X", "J", "V", "S", "D"].map((day) => (
+                  <div key={day} style={styles.calendarDayHeader}>
+                    {day}
+                  </div>
+                ))}
+                
+                {daysInMonthGrid.map((day) => {
+                  const isCurrentMonth = isSameMonth(day, currentDate);
+                  const isSelected = selectedDate && isSameDay(day, selectedDate);
+                  const isCurrentToday = isToday(day);
+                  const isDaySunday = isSunday(day);
                   
                   return (
                     <button
-                      key={time}
-                      disabled={isBooked}
+                      key={day.toString()}
+                      disabled={!isCurrentMonth || isDaySunday}
                       style={{
-                        ...styles.timeSlot,
-                        backgroundColor: isSelected ? "#3498db" : 
-                                        isBooked ? "#f8d7da" : "#f8f9fa",
+                        ...styles.calendarDay,
+                        ...(!isCurrentMonth ? styles.calendarDayNotInMonth : {}),
+                        ...(isDaySunday ? styles.calendarDaySunday : {}),
+                        backgroundColor: isSelected ? "#3498db" : "white",
                         color: isSelected ? "white" : 
-                              isBooked ? "#721c24" : "#2c3e50",
-                        borderColor: isSelected ? "#3498db" : 
-                                    isBooked ? "#f5c6cb" : "#ddd",
-                        cursor: isBooked ? "not-allowed" : "pointer",
+                              !isCurrentMonth ? "#ccc" : 
+                              isDaySunday ? "#ccc" : "#333",
+                        border: isCurrentToday && isCurrentMonth && !isSelected ? 
+                                "2px solid #3498db" : "1px solid #eee",
+                        fontWeight: isSelected || isCurrentToday ? "600" : "500",
                       }}
-                      onClick={() => !isBooked && setSelectedTime(time)}
-                      title={isBooked ? "Este horario ya está reservado" : ""}
+                      onClick={() => isCurrentMonth && !isDaySunday && handleDateClick(day)}
+                      title={isDaySunday ? "Domingo - Cerrado" : ""}
                     >
-                      {time}
-                      {isBooked && " ×"}
+                      {format(day, "d")}
                     </button>
                   );
                 })}
               </div>
-              
-              {selectedTime && (
-                <div style={styles.selectedTimeInfo}>
-                  <p>Has seleccionado las <strong>{selectedTime}</strong></p>
-                  <p>Duración estimada: {selectedService?.duration}</p>
+            </div>
+
+            <div style={styles.timeSlotsWrapper}>
+              {selectedDate ? (
+                <div style={styles.timeContainer}>
+                  <h3 style={styles.timeTitle}>
+                    Horarios para el {format(selectedDate, "d 'de' MMMM", { locale: es })}
+                  </h3>
+                  <div style={styles.timeGrid}>
+                    {timeSlots.map((time) => {
+                      const isUnavailable = isTimeSlotBooked(time);
+                      const isSelected = selectedTime === time;
+                      
+                      // Determinar si es una hora pasada
+                      const now = new Date();
+                      const selectedDateTime = new Date(selectedDate);
+                      const [hours, minutes] = time.split(':').map(Number);
+                      selectedDateTime.setHours(hours, minutes, 0, 0);
+                      const isPastTime = selectedDateTime < now;
+                      
+                      return (
+                        <button
+                          key={time}
+                          disabled={isUnavailable}
+                          style={{
+                            ...styles.timeSlot,
+                            backgroundColor: isSelected ? "#3498db" : 
+                                            isUnavailable ? (isPastTime ? "#e9ecef" : "#f8d7da") : "#f8f9fa",
+                            color: isSelected ? "white" : 
+                                  isUnavailable ? (isPastTime ? "#6c757d" : "#721c24") : "#2c3e50",
+                            borderColor: isSelected ? "#3498db" : 
+                                        isUnavailable ? (isPastTime ? "#dee2e6" : "#f5c6cb") : "#ddd",
+                            cursor: isUnavailable ? "not-allowed" : "pointer",
+                            textDecoration: isPastTime ? "line-through" : "none",
+                          }}
+                          onClick={() => !isUnavailable && setSelectedTime(time)}
+                          title={getTimeSlotTooltip(time)}
+                        >
+                          {time}
+                          {isUnavailable && !isPastTime && " ×"}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  
+                  {selectedTime && (
+                    <div style={styles.selectedTimeInfo}>
+                      <p>Has seleccionado las <strong>{selectedTime}</strong></p>
+                      <p>Duración estimada: {selectedService?.duration}</p>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div style={styles.timePrompt}>
+                  <p>Selecciona un día en el calendario para ver los horarios disponibles.</p>
                 </div>
               )}
             </div>
-          ) : (
-            <div style={styles.timePrompt}>
-              <p>Selecciona un día en el calendario para ver los horarios disponibles.</p>
-            </div>
-          )}
-        </div>
-      </div>
+          </div>
 
-      <div style={styles.navigationButtons}>
-        <button style={styles.secondaryButton} onClick={prevStep}>
-          Atrás
-        </button>
-        <button
-          style={styles.primaryButton}
-          onClick={nextStep}
-          disabled={!selectedDate || !selectedTime}
-        >
-          Siguiente
-        </button>
-      </div>
-    </div>
-  );
-}
+          <div style={styles.navigationButtons}>
+            <button style={styles.secondaryButton} onClick={prevStep}>
+              Atrás
+            </button>
+            <button
+              style={styles.primaryButton}
+              onClick={nextStep}
+              disabled={!selectedDate || !selectedTime}
+            >
+              Siguiente
+            </button>
+          </div>
+        </div>
+      );
+    }
 
 // ... (resto del código sin cambios)
       case 6:
