@@ -972,7 +972,7 @@ function Appointments({ user, onBackToHome, onLogout }) {
                       {item.icon}
                     </span>
                     {item.label}
-                    {item.id === "notifications" && (
+                    {item.id === "notifications" && unreadCount > 0 && (
                       <span style={{
                         marginLeft: "auto",
                         backgroundColor: "#e74c3c",
@@ -983,7 +983,7 @@ function Appointments({ user, onBackToHome, onLogout }) {
                         borderRadius: "10px",
                         minWidth: "18px"
                       }}>
-                        3
+                        {unreadCount}  {/* ← Usa la variable real */}
                       </span>
                     )}
                   </button>
