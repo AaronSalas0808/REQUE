@@ -1159,70 +1159,102 @@ function Appointments({ user, onBackToHome, onLogout }) {
       </div>
     );
   };
-//////////////////////////////////////////////////////////////////////
-  const renderHistoryView = () => {
-    return (
-      <div style={styles.stepContent}>
-        <div style={styles.stepHeader}>
-          <h2 style={styles.stepTitle}>Historial</h2>
-          <p style={styles.stepSubtitle}>Tus citas pasadas</p>
-        </div>
 
-        {historial.length === 0 ? (
-          <div style={styles.noResults}>
-            <p>No hay elementos en el historial.</p>
-          </div>
-        ) : (
-          <div style={{ display: "grid", gap: 12 }}>
-            {historial.map((c) => (
-              <div key={c.id} style={styles.summaryCard}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <div>
-                    <div style={{ fontWeight: 600 }}>
-                      {c.service?.name || (c.service && c.service.name) || "Servicio"}
-                    </div>
-                    <div style={{ color: "#666", fontSize: 14 }}>
-                      {c.center?.name || (c.center && c.center.name) || ""} • {c.time || ""}
-                    </div>
-                    <div style={{ color: "#999", fontSize: 13 }}>
-                      {c.date ? format(new Date(c.date), "PPP", { locale: es }) : ""}
-                    </div>
-                    <div style={{ marginTop: 8, fontSize: 13, color: "#777" }}>
-                      Estado: <strong>{c.status}</strong>
-                    </div>
+  //////////////////////////////////////////////////////////////////////
+const renderHistoryView = () => {
+  return (
+    <div style={styles.stepContent}>
+      <div style={styles.stepHeader}>
+        <h2 style={styles.stepTitle}>Historial de Citas</h2>
+        <p style={styles.stepSubtitle}>Citas finalizadas y canceladas</p>
+      </div>
+
+      {historial.length === 0 ? (
+        <div style={styles.noResults}>
+          <p>No tienes citas en el historial.</p>
+        </div>
+      ) : (
+        <div style={{ display: "grid", gap: 12 }}>
+          {historial.map((c) => (
+            <div key={c.id} style={styles.summaryCard}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: 600, marginBottom: 8 }}>
+                    Cita para: {c.service?.name}
                   </div>
-                  <div style={{ display: "flex", gap: 8 }}>
-                    <button
-                      style={styles.primaryButton}
-                      onClick={() => {
-                        // Opcional: eliminar historial (solo si es necesario)
-                        if (window.confirm("¿Deseas eliminar este elemento del historial? Esta acción no se puede deshacer.")) {
-                          const apptRef = ref(database, `appointments/${c.id}`);
-                          remove(apptRef).catch((err) => {
-                            console.error("Error eliminando historial:", err);
-                            alert("No se pudo eliminar. Intenta nuevamente.");
-                          });
-                        }
-                      }}
-                    >
-                      Eliminar
-                    </button>
+                  <div style={{ color: "#666", fontSize: 14 }}>
+                    Con: {c.employee?.name}
+                  </div>
+                  <div style={{ color: "#666", fontSize: 14 }}>
+                    Fecha: {c.date ? format(new Date(c.date), "PPP", { locale: es }) : "Fecha no disponible"}
+                  </div>
+                  <div style={{ color: "#666", fontSize: 14, marginBottom: 8 }}>
+                    Estado: <span style={{ textTransform: "capitalize" }}>{c.status}</span>
+                  </div>
+
+                  {/* Sección de calificación para historial */}
+                  <div style={{ marginTop: 16 }}>
+                    <div style={{ fontSize: 14, fontWeight: 500, marginBottom: 8 }}>
+                      Califica este servicio:
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          style={{
+                            background: "none",
+                            border: "none",
+                            fontSize: "24px",
+                            cursor: "pointer",
+                            color: "#ffc107",
+                          }}
+                          onClick={() => handleRateAppointment(c.id, star)}
+                          title={`Calificar con ${star} estrellas`}
+                        >
+                          {star <= (c.rating || 0) ? "★" : "☆"}
+                        </button>
+                      ))}
+                    </div>
+                    {c.rating && (
+                      <div style={{ marginTop: 8, fontSize: 13, color: "#27ae60" }}>
+                        Ya calificaste esta cita con {c.rating} estrellas.
+                      </div>
+                    )}
                   </div>
                 </div>
+                
+                {/* Botón para eliminar del historial */}
+                <div style={{ display: "flex", gap: 8 }}>
+                  <button
+                    style={styles.primaryButton}
+                    onClick={() => {
+                      // Opcional: eliminar historial (solo si es necesario)
+                      if (window.confirm("¿Deseas eliminar este elemento del historial? Esta acción no se puede deshacer.")) {
+                        const apptRef = ref(database, `appointments/${c.id}`);
+                        remove(apptRef).catch((err) => {
+                          console.error("Error eliminando historial:", err);
+                          alert("No se pudo eliminar. Intenta nuevamente.");
+                        });
+                      }
+                    }}
+                  >
+                    Eliminar
+                  </button>
+                </div>
               </div>
-            ))}
-          </div>
-        )}
-
-        <div style={styles.navigationButtons}>
-          <button style={styles.secondaryButton} onClick={() => setShowHistoryView(false)}>
-            Volver
-          </button>
+            </div>
+          ))}
         </div>
-      </div>
-    );
-  };
+      )}
 
+      <div style={styles.navigationButtons}>
+        <button style={styles.secondaryButton} onClick={() => setShowHistoryView(false)}>
+          Volver
+        </button>
+      </div>
+    </div>
+  );
+};
   const renderStepContent = () => {
     // Prioridad: vistas Mis Citas / Historial abiertas desde el sidebar
     if (showMyAppointmentsView) {
