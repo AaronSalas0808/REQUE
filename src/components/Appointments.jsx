@@ -26,6 +26,31 @@ import {
 } from "firebase/database";
 import { database } from "../firebase";
 
+import barbaCompletaImg from "./images/barba-completa.jpg";
+import corteCabelloModernoImg from "./images/corteModerno.jpg";
+import afeitadoNavajaImg from "./images/afeitadoNavaja.jpg";
+import arregloBarbaImg from "./images/arregloBarba.jpg";
+import corteBarbaImg from "./images/cabelloBarba.jpg";
+import tinteCabelloImg from "./images/tinteCabello.jpg";
+import corteDamaImg from "./images/corteDama.jpg";
+import peinadoEventosImg from "./images/peinadoEvento.jpg";
+import tinteDamaImg from "./images/tinteDama.jpg";
+import mechasImg from "./images/mechasDama.jpg";
+import tratamientoCapilarImg from "./images/tratamientoCapilar.jpg";
+import keratinaImg from "./images/keratina.jpg";
+import extensionesImg from "./images/extensionesCabello.jpg";
+import manicureLujoImg from "./images/manicureLujo.jpeg";
+import uñasAcrilicaImg from "./images/uñasAcrilicas.webp";
+import uñasGelImg from "./images/uñasGel.jpg";
+import pedicureLujoImg from "./images/pedicuraLujo.webp";
+import decoracionUñasImg from "./images/decoracionUñas.webp";
+import masajeRelajanteImg from "./images/masaje.jpg";
+import tratamientoFacialImg from "./images/tratamientoFacial.jpg";
+import depilacionCorporalImg from "./images/depilacionCorporal.jpg";
+import maquillajeImg from "./images/maquillaje.jpg";
+import cejaPestañaImg from "./images/cejasPestañas.jpeg";
+
+
 const formatFileSize = (bytes) => {
   if (bytes === 0) return "0 Bytes";
   const k = 1024;
@@ -119,36 +144,36 @@ function Appointments({ user, onBackToHome, onLogout }) {
   // 2. Actualizar los servicios
   const services = [
     // 💇 Servicios de Barbería
-    { id: 1, name: "Corte de cabello clásico", duration: "30 min", price: "$15-25", category: "Barbería", image: "💇" },
-    { id: 2, name: "Corte de cabello moderno/estilo", duration: "45 min", price: "$20-30", category: "Barbería", image: "💇" },
-    { id: 3, name: "Afeitado tradicional con navaja", duration: "30 min", price: "$15-20", category: "Barbería", image: "✂️" },
-    { id: 4, name: "Arreglo de barba y bigote", duration: "25 min", price: "$12-18", category: "Barbería", image: "🧔" },
-    { id: 5, name: "Corte + Barba (Combo)", duration: "60 min", price: "$30-40", category: "Barbería", image: "👨" },
-    { id: 6, name: "Tinte para cabello/barba", duration: "45 min", price: "$20-30", category: "Barbería", image: "🎨" },
+    { id: 1, name: "Corte de cabello clásico", duration: "30 min", price: "$15-25", category: "Barbería", image: barbaCompletaImg },
+    { id: 2, name: "Corte de cabello moderno/estilo", duration: "45 min", price: "$20-30", category: "Barbería", image: corteCabelloModernoImg},
+    { id: 3, name: "Afeitado tradicional con navaja", duration: "30 min", price: "$15-20", category: "Barbería", image: afeitadoNavajaImg },
+    { id: 4, name: "Arreglo de barba y bigote", duration: "25 min", price: "$12-18", category: "Barbería", image: arregloBarbaImg },
+    { id: 5, name: "Corte + Barba (Combo)", duration: "60 min", price: "$30-40", category: "Barbería", image: corteBarbaImg },
+    { id: 6, name: "Tinte para cabello/barba", duration: "45 min", price: "$20-30", category: "Barbería", image: tinteCabelloImg },
   
     // 💆 Servicios de Belleza
-    { id: 10, name: "Corte de dama", duration: "45 min", price: "$20-30", category: "Belleza", image: "💇‍♀️" },
-    { id: 11, name: "Peinado para eventos", duration: "40 min", price: "$35-60", category: "Belleza", image: "👰" },
-    { id: 12, name: "Tinte/coloración", duration: "60 min", price: "$40-70", category: "Belleza", image: "🌈" },
-    { id: 13, name: "Mechas/balayage", duration: "60 min", price: "$60-100", category: "Belleza", image: "🎨" },
-    { id: 14, name: "Tratamientos capilares", duration: "45 min", price: "$25-45", category: "Belleza", image: "💆‍♀️" },
-    { id: 15, name: "Alisado/keratina", duration: "60 min", price: "$80-150", category: "Belleza", image: "🔀" },
-    { id: 16, name: "Extensiones de cabello", duration: "60 min", price: "$100-250", category: "Belleza", image: "👑" },
+    { id: 10, name: "Corte de dama", duration: "45 min", price: "$20-30", category: "Belleza", image: corteDamaImg },
+    { id: 11, name: "Peinado para eventos", duration: "40 min", price: "$35-60", category: "Belleza", image: peinadoEventosImg },
+    { id: 12, name: "Tinte/coloración", duration: "60 min", price: "$40-70", category: "Belleza", image: tinteDamaImg },
+    { id: 13, name: "Mechas/balayage", duration: "60 min", price: "$60-100", category: "Belleza", image: mechasImg },
+    { id: 14, name: "Tratamientos capilares", duration: "45 min", price: "$25-45", category: "Belleza", image: tratamientoCapilarImg },
+    { id: 15, name: "Alisado/keratina", duration: "60 min", price: "$80-150", category: "Belleza", image: keratinaImg },
+    { id: 16, name: "Extensiones de cabello", duration: "60 min", price: "$100-250", category: "Belleza", image: extensionesImg },
 
     // 💅 Servicios de Manos y Pies
-    { id: 18, name: "Manicure spa/lujo", duration: "45 min", price: "$25-35", category: "Manos y Pies", image: "💅" },
-    { id: 20, name: "Pedicure spa/lujo", duration: "60 min", price: "$30-40", category: "Manos y Pies", image: "👣" },
-    { id: 21, name: "Uñas acrílicas", duration: "50 min", price: "$40-60", category: "Manos y Pies", image: "💅" },
-    { id: 22, name: "Uñas de gel", duration: "50 min", price: "$35-50", category: "Manos y Pies", image: "💅" },
-    { id: 23, name: "Decoración de uñas", duration: "30 min", price: "$10-25", category: "Manos y Pies", image: "✨" },
+    { id: 18, name: "Manicure spa/lujo", duration: "45 min", price: "$25-35", category: "Manos y Pies", image: manicureLujoImg },
+    { id: 20, name: "Pedicure spa/lujo", duration: "60 min", price: "$30-40", category: "Manos y Pies", image: pedicureLujoImg },
+    { id: 21, name: "Uñas acrílicas", duration: "50 min", price: "$40-60", category: "Manos y Pies", image: uñasAcrilicaImg },
+    { id: 22, name: "Uñas de gel", duration: "50 min", price: "$35-50", category: "Manos y Pies", image: uñasGelImg },
+    { id: 23, name: "Decoración de uñas", duration: "30 min", price: "$10-25", category: "Manos y Pies", image: decoracionUñasImg },
 
     // ✨ Servicios de Spa y Bienestar
     
-    { id: 25, name: "Masaje relajante (50 min)", duration: "50 min", price: "$65", category: "Spa y Bienestar", image: "💆" },
-    { id: 28, name: "Tratamiento facial completo", duration: "45 min", price: "$45-70", category: "Spa y Bienestar", image: "✨" },
-    { id: 30, name: "Depilación corporal (por zona)", duration: "55 min", price: "$20-40", category: "Spa y Bienestar", image: "✨" },
-    { id: 31, name: "Maquillaje profesional", duration: "60 min", price: "$35-60", category: "Spa y Bienestar", image: "💄" },
-    { id: 32, name: "Ceja y pestañas (tinte/laminado)", duration: "45 min", price: "$20-35", category: "Spa y Bienestar", image: "👁️" },
+    { id: 25, name: "Masaje relajante (50 min)", duration: "50 min", price: "$65", category: "Spa y Bienestar", image: masajeRelajanteImg },
+    { id: 28, name: "Tratamiento facial completo", duration: "45 min", price: "$45-70", category: "Spa y Bienestar", image: tratamientoFacialImg },
+    { id: 30, name: "Depilación corporal (por zona)", duration: "55 min", price: "$20-40", category: "Spa y Bienestar", image: depilacionCorporalImg },
+    { id: 31, name: "Maquillaje profesional", duration: "60 min", price: "$35-60", category: "Spa y Bienestar", image: maquillajeImg },
+    { id: 32, name: "Ceja y pestañas (tinte/laminado)", duration: "45 min", price: "$20-35", category: "Spa y Bienestar", image: cejaPestañaImg },
   ];
 
   const timeSlots = [
@@ -690,7 +715,7 @@ function Appointments({ user, onBackToHome, onLogout }) {
             ☰
          </button>
          <button style={headerStyles.backButton} onClick={onLogout}>
-           ← Volver al Inicio
+           ← Cerrar Sesión
          </button>
         </div>
 
@@ -1312,7 +1337,17 @@ function Appointments({ user, onBackToHome, onLogout }) {
                           }}
                           onClick={() => setSelectedService(service)}
                         >
-                          <div style={styles.serviceImage}>{service.image}</div>
+                          <div style={styles.serviceImage}>
+                            {service.image && (service.image.startsWith('/') || service.image.startsWith('http')) ? (
+                              <img
+                                src={service.image}
+                                alt={service.name}
+                                style={styles.actualServiceImage} // Nuevo estilo para la imagen
+                              />
+                            ) : (
+                              service.image // Si es un emoji o texto simple
+                            )}
+                          </div>
                           <h3 style={styles.serviceName}>{service.name}</h3>
                           <p style={styles.serviceDuration}>{service.duration}</p>
                           <p style={styles.servicePrice}>{service.price}</p>
@@ -2717,6 +2752,23 @@ const styles = {
     cursor: "pointer",
     padding: "0",
     color: "#ffc107"
+  },
+  serviceImage: {
+    fontSize: "36px", // Mantengo el tamaño del emoji por si lo usas
+    marginBottom: "15px",
+    // Aseguramos que la imagen se centre y tenga un tamaño específico
+    width: "150px", // Ancho fijo para el contenedor
+    height: "150px", // Alto fijo para el contenedor
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    margin: "0 auto 15px auto", // Centrar el contenedor
+  },
+  actualServiceImage: { // NUEVO ESTILO para la etiqueta <img>
+    maxWidth: "100%",
+    maxHeight: "100%",
+    objectFit: "contain", // Asegura que la imagen se ajuste sin recortarse
+    borderRadius: "8px", // Opcional: bordes redondeados para las imágenes
   },
   notificationBadge: {
     backgroundColor: "#e74c3c",
