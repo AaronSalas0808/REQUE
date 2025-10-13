@@ -1,0 +1,70 @@
+{
+  "electionStatus": "inactive",
+  "users": [
+    {
+      "id": "admin",
+      "password": "admin",
+      "name": "Administrador General",
+      "role": "admin"
+    },
+    {
+      "id": "12345678A",
+      "password": "123",
+      "name": "Ana Torres",
+      "role": "voter",
+      "hasVoted": false
+    },
+    {
+      "id": "87654321B",
+      "password": "456",
+      "name": "Carlos Vera",
+      "role": "voter",
+      "hasVoted": true
+    },
+    {
+      "id": "Hola",
+      "password": "123",
+      "name": "Hola Como Estas",
+      "email": "holacomoestas@gmail.com",
+      "role": "candidate"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "candidato1",
+      "name": "Elena Ríos",
+      "party": "Partido de la Innovación",
+      "email": "elena.rios@example.com",
+      "biography": "Con más de 15 años de experiencia...",
+      "proposal": "Mi propuesta se centra en tres pilares...",
+      "photo": "https://i.pravatar.cc/150?img=1",
+      "partyLogo": "/uploads/placeholder-logo.png",
+      "status": "approved"
+    },
+    {
+      "id": "candidato3",
+      "name": "Sofía Castro",
+      "party": "Unidad Democrática",
+      "email": "sofia.castro@example.com",
+      "biography": "Activista social y defensora...",
+      "proposal": "Buscaremos fortalecer las juntas de vecinos...",
+      "photo": "https://i.pravatar.cc/150?img=3",
+      "partyLogo": "/uploads/placeholder-logo.png",
+      "status": "pending"
+    },
+    {
+      "id": "Hola",
+      "name": "Hola Como Estas",
+      "party": "holatodos",
+      "email": "holacomoestas@gmail.com",
+      "biography": "",
+      "proposal": "",
+      "photo": "https://i.pravatar.cc/150?u=Hola",
+      "partyLogo": "/uploads\\partyLogo-1760375594166.png",
+      "status": "pending"
+    }
+  ],
+  "votes": {
+    "candidato1": 5
+  }
+}

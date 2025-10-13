@@ -1,7 +1,9 @@
+// src/components/Login.jsx
 import React, { useState } from "react";
 import "./Login.css";
 
-function Login({ onLogin, error }) {
+// Añade la prop 'onShowRegister'
+function Login({ onLogin, error, onShowRegister }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -13,8 +15,7 @@ function Login({ onLogin, error }) {
   return (
     <div className="login-container">
       <form onSubmit={handleSubmit} className="login-form">
-        <h2>Acceso al Sistema</h2>
-        <p>Por favor, identifíquese para continuar.</p>
+        {/* ... (el resto del formulario no cambia) ... */}
         <div className="input-group">
           <label htmlFor="username">Identificador (DNI / Cédula)</label>
           <input
@@ -39,6 +40,10 @@ function Login({ onLogin, error }) {
         </div>
         {error && <p className="error-message">{error}</p>}
         <button type="submit">Ingresar</button>
+        {/* 👇 AÑADIR ESTE BOTÓN 👇 */}
+        <button type="button" className="secondary-button" onClick={onShowRegister}>
+          Registrar Candidatura
+        </button>
       </form>
     </div>
   );

@@ -1,0 +1,80 @@
+.admin-dashboard {
+  width: 100%;
+  max-width: 1000px;
+  background: var(--card-background);
+  padding: 2rem 3rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+.admin-section {
+  padding-top: 1.5rem;
+  margin-top: 1.5rem;
+  border-top: 1px solid #f0f0f0;
+}
+.admin-dashboard > .admin-section:first-of-type {
+  border-top: none;
+  padding-top: 0;
+  margin-top: 0;
+}
+.admin-section h3 {
+  margin-top: 0;
+  color: var(--primary-color);
+}
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 2rem;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 1.5rem;
+}
+.status-active { color: var(--success-color); font-weight: 700; }
+.live-results-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+.secondary-action-btn { background-color: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer; }
+.results-list { list-style: none; padding: 0; }
+.result-info { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.9rem; }
+.progress-bar-container { background-color: #e9ecef; border-radius: 6px; height: 24px; overflow: hidden; }
+.progress-bar-fill { background: linear-gradient(90deg, var(--secondary-color), var(--success-color)); height: 100%; text-align: right; padding-right: 8px; color: white; font-weight: 600; font-size: 0.8rem; line-height: 24px; transition: width 0.5s ease; }
+
+/* ... (Estilos de tabla de candidatos no cambian) ... */
+.candidates-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+.candidates-table th, .candidates-table td { padding: 0.8rem; border-bottom: 1px solid #eee; text-align: left; }
+.status { padding: 0.2rem 0.5rem; border-radius: 12px; font-size: 0.8rem; font-weight: 600; text-transform: capitalize; }
+.status-pending { background-color: #fef0c7; color: #b54708; }
+.status-approved { background-color: #d1fadf; color: #03543f; }
+.status-rejected { background-color: #fde2e2; color: #9b1c1c; }
+.details-btn { padding: 0.4rem 0.8rem; background-color: #f0f0f0; border: 1px solid #ccc; border-radius: 6px; cursor: pointer; }
+
+/* ... (Estilos de Modal no cambian, pero los añadimos aquí para el nuevo modal) ... */
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.6); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+.modal-content { background: white; padding: 2rem; border-radius: var(--border-radius); width: 90%; max-width: 700px; position: relative; max-height: 90vh; overflow-y: auto; }
+.close-button { position: absolute; top: 1rem; right: 1rem; background: transparent; border: none; font-size: 1.5rem; cursor: pointer; }
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+.detail-section { margin-top: 1rem; }
+.modal-actions { margin-top: 2rem; display: flex; justify-content: flex-end; gap: 1rem; }
+.approve-btn, .reject-btn { padding: 0.6rem 1.2rem; border: none; border-radius: 6px; cursor: pointer; color: white; font-weight: 600; }
+.approve-btn { background-color: var(--success-color); }
+.reject-btn { background-color: var(--error-color); }
+.voters-list { list-style-type: none; padding: 0; }
+.voters-list li { display: flex; justify-content: space-between; padding: 0.75rem; border-bottom: 1px solid #eee; }
+.voters-list li:last-child { border: none; }
+.voter-id { font-family: monospace; color: #6c757d; }
+.modal-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 1rem;
+}
+
+.modal-header h2 {
+  margin: 0;
+}
+
+.party-logo-modal {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}

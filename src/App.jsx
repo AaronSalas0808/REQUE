@@ -1,4 +1,7 @@
-import React, { useState } from "react";
+// npm install express cors   --> para usar json
+// npm install multer         --> para subir y bajar imagenes 
+
+import React, { useState, useEffect } from "react";
 import "./App.css";
 
 // Importa todos los componentes nuevos
@@ -7,93 +10,123 @@ import Login from "./components/Login";
 import PreVoting from "./components/PreVoting";
 import Voting from "./components/Voting";
 import PostVoting from "./components/PostVoting";
-
-// --- DATOS SIMULADOS (Esto vendría de una base de datos) ---
-const CANDIDATES_DATA = [
-  {
-    id: 1,
-    name: "Elena Ríos",
-    party: "Partido de la Innovación",
-    photo: "https://i.pravatar.cc/150?img=1",
-  },
-  {
-    id: 2,
-    name: "Javier Morales",
-    party: "Alianza por el Progreso",
-    photo: "https://i.pravatar.cc/150?img=2",
-  },
-  {
-    id: 3,
-    name: "Sofía Castro",
-    party: "Unidad Democrática",
-    photo: "https://i.pravatar.cc/150?img=3",
-  },
-];
-
-const VOTERS_DATA = [
-  { id: "12345678A", password: "123", name: "Ana Torres" },
-  { id: "87654321B", password: "456", name: "Carlos Vera" },
-  { id: "11223344C", password: "789", name: "Luisa Méndez" },
-];
-// --- FIN DE DATOS SIMULADOS ---
+import AdminDashboard from "./components/admin/AdminDashboard"
+import CandidateDashboard from "./components/candidate/CandidateDashboard"
+import CandidateRegistration from "./components/candidate/CandidateRegistration"; // 👈 Importa el nuevo componente
 
 export default function App() {
-  const [phase, setPhase] = useState("login");
+  const [view, setView] = useState("login"); // 'login' o 'register'
   const [currentUser, setCurrentUser] = useState(null);
+  // ... (el resto de los estados no cambia)
   const [loginError, setLoginError] = useState("");
-  const [votesCast, setVotesCast] = useState(new Set());
-  const [results, setResults] = useState({});
+  const [electionData, setElectionData] = useState({
+    electionStatus: "inactive",
+    candidates: [],
+  });
 
-  const handleLogin = (username, password) => {
-    const user = VOTERS_DATA.find((v) => v.id === username);
-    if (user && user.password === password) {
-      if (votesCast.has(user.id)) {
-        setLoginError("Usted ya ha emitido su voto en esta elección.");
-      } else {
-        setCurrentUser(user);
-        setPhase("pre-voting");
-        setLoginError("");
+  // ... (la función useEffect no cambia)
+  useEffect(() => {
+    const fetchElectionData = async () => {
+      try {
+        const response = await fetch("http://localhost:3001/api/election-data");
+        setElectionData(await response.json());
+      } catch (error) {
+        console.error("Error al conectar con la API", error);
+        setLoginError("No se pudo conectar con el servidor de votación.");
       }
-    } else {
-      setLoginError("Credenciales incorrectas. Inténtelo de nuevo.");
+    };
+    fetchElectionData();
+  }, []);
+
+  // ... (la función handleLogin no cambia)
+  const handleLogin = async (username, password) => {
+    try {
+      const response = await fetch("http://localhost:3001/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (response.ok) {
+        const user = await response.json();
+        setCurrentUser(user);
+        setLoginError("");
+      } else {
+        setLoginError("Credenciales incorrectas.");
+      }
+    } catch (error) {
+      setLoginError("Error de conexión al intentar iniciar sesión.");
     }
   };
 
   const handleLogout = () => {
     setCurrentUser(null);
-    setPhase("login");
+    setView("login"); // Al cerrar sesión, vuelve al login
   };
 
-  const handleVote = (candidateId) => {
-    setResults((prevResults) => ({
-      ...prevResults,
-      [candidateId]: (prevResults[candidateId] || 0) + 1,
-    }));
-    setVotesCast((prevVotes) => new Set(prevVotes).add(currentUser.id));
-    setPhase("post-voting");
+  // ... (la función handleVote no cambia)
+  const handleVote = async (candidateId) => {
+    await fetch("http://localhost:3001/api/vote", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: currentUser.id, candidateId }),
+    });
+    // Actualizamos el estado local del usuario para reflejar el voto
+    setCurrentUser({ ...currentUser, hasVoted: true });
   };
 
-  const renderPhase = () => {
-    switch (phase) {
-      case "login":
-        return <Login onLogin={handleLogin} error={loginError} />;
-      case "pre-voting":
-        return <PreVoting onStartVoting={() => setPhase("voting")} />;
-      case "voting":
+  const renderContent = () => {
+    // Si no hay usuario logueado, decidimos entre login y registro
+    if (!currentUser) {
+      if (view === "register") {
+        return <CandidateRegistration onBackToLogin={() => setView("login")} />;
+      }
+      return (
+        <Login
+          onLogin={handleLogin}
+          error={loginError}
+          onShowRegister={() => setView("register")}
+        />
+      );
+    }
+
+    // Si hay usuario logueado, la lógica de roles se mantiene
+    switch (currentUser.role) {
+      // ... (el resto del switch no cambia)
+      case "admin":
+        return <AdminDashboard />;
+      case "candidate":
+        return <CandidateDashboard user={currentUser} />;
+      case "voter":
+        if (currentUser.hasVoted) {
+          return <PostVoting />; // Muestra agradecimiento, resultados al final
+        }
+        if (electionData.electionStatus === "active") {
+          return (
+            <Voting
+              candidates={electionData.candidates}
+              onFinishVoting={handleVote}
+            />
+          );
+        }
         return (
-          <Voting candidates={CANDIDATES_DATA} onFinishVoting={handleVote} />
+          <div className="phase-container">
+            <h2>Votación no activa</h2>
+            <p>
+              La votación no se encuentra activa en este momento. Por favor,
+              vuelva más tarde.
+            </p>
+          </div>
         );
-      case "post-voting":
-        return <PostVoting results={results} candidates={CANDIDATES_DATA} />;
       default:
-        return <Login onLogin={handleLogin} error={loginError} />;
+        return <p>Rol de usuario no reconocido.</p>;
     }
   };
 
   return (
     <div className="App">
       <Header user={currentUser} onLogout={handleLogout} />
-      <main className="main-content">{renderPhase()}</main>
+      <main className="main-content">{renderContent()}</main>
     </div>
   );
 }
