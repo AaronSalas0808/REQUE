@@ -1,0 +1,33 @@
+.candidates-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.confirmation-dialog {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background-color: var(--light-gray);
+  border-radius: 8px;
+  border: 1px solid var(--secondary-color);
+}
+
+.confirmation-dialog button {
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin: 0 0.5rem;
+  font-weight: 600;
+}
+
+.confirm-button {
+  background-color: var(--secondary-color);
+  color: white;
+}
+
+.cancel-button {
+  background-color: #ccc;
+}
