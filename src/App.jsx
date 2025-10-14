@@ -4,41 +4,38 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 
-// Importa todos los componentes nuevos
+// Importa todos los componentes
 import Header from "./components/Header";
 import Login from "./components/Login";
-import PreVoting from "./components/PreVoting";
 import Voting from "./components/Voting";
 import PostVoting from "./components/PostVoting";
-import AdminDashboard from "./components/admin/AdminDashboard"
-import CandidateDashboard from "./components/candidate/CandidateDashboard"
-import CandidateRegistration from "./components/candidate/CandidateRegistration"; // 👈 Importa el nuevo componente
+import AdminDashboard from "./components/admin/AdminDashboard";
+import CandidateDashboard from "./components/candidate/CandidateDashboard";
+import CandidateRegistration from "./components/candidate/CandidateRegistration";
+import CandidateInfoModal from "./components/CandidateInfoModal";
 
 export default function App() {
-  const [view, setView] = useState("login"); // 'login' o 'register'
+  const [view, setView] = useState("login");
   const [currentUser, setCurrentUser] = useState(null);
-  // ... (el resto de los estados no cambia)
   const [loginError, setLoginError] = useState("");
   const [electionData, setElectionData] = useState({
     electionStatus: "inactive",
     candidates: [],
   });
+  const [isCandidateInfoModalOpen, setCandidateInfoModalOpen] = useState(false);
 
-  // ... (la función useEffect no cambia)
-  useEffect(() => {
-    const fetchElectionData = async () => {
-      try {
-        const response = await fetch("http://localhost:3001/api/election-data");
-        setElectionData(await response.json());
-      } catch (error) {
-        console.error("Error al conectar con la API", error);
-        setLoginError("No se pudo conectar con el servidor de votación.");
-      }
-    };
-    fetchElectionData();
-  }, []);
+  const fetchElectionData = async () => {
+    try {
+      const response = await fetch("http://localhost:3001/api/election-data");
+      if (response.ok) setElectionData(await response.json());
+    } catch (error) {
+      console.error("Error al conectar con la API", error);
+      setLoginError("No se pudo conectar con el servidor de votación.");
+    }
+  };
 
-  // ... (la función handleLogin no cambia)
+  useEffect(() => { fetchElectionData() }, []);
+
   const handleLogin = async (username, password) => {
     try {
       const response = await fetch("http://localhost:3001/api/login", {
@@ -50,6 +47,7 @@ export default function App() {
       if (response.ok) {
         const user = await response.json();
         setCurrentUser(user);
+        await fetchElectionData();
         setLoginError("");
       } else {
         setLoginError("Credenciales incorrectas.");
@@ -59,73 +57,54 @@ export default function App() {
     }
   };
 
-  const handleLogout = () => {
-    setCurrentUser(null);
-    setView("login"); // Al cerrar sesión, vuelve al login
-  };
-
-  // ... (la función handleVote no cambia)
+  const handleLogout = () => { setCurrentUser(null); setView("login"); };
   const handleVote = async (candidateId) => {
     await fetch("http://localhost:3001/api/vote", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userId: currentUser.id, candidateId }),
     });
-    // Actualizamos el estado local del usuario para reflejar el voto
     setCurrentUser({ ...currentUser, hasVoted: true });
   };
 
   const renderContent = () => {
-    // Si no hay usuario logueado, decidimos entre login y registro
     if (!currentUser) {
       if (view === "register") {
         return <CandidateRegistration onBackToLogin={() => setView("login")} />;
       }
+      // ✅ LA CORRECCIÓN ESTÁ AQUÍ ✅
       return (
         <Login
           onLogin={handleLogin}
           error={loginError}
           onShowRegister={() => setView("register")}
+          electionStatus={electionData.electionStatus}
+          onShowCandidates={() => setCandidateInfoModalOpen(true)}
         />
       );
     }
 
-    // Si hay usuario logueado, la lógica de roles se mantiene
     switch (currentUser.role) {
-      // ... (el resto del switch no cambia)
-      case "admin":
-        return <AdminDashboard />;
-      case "candidate":
-        return <CandidateDashboard user={currentUser} />;
+      case "admin": return <AdminDashboard />;
+      case "candidate": return <CandidateDashboard user={currentUser} />;
       case "voter":
-        if (currentUser.hasVoted) {
-          return <PostVoting />; // Muestra agradecimiento, resultados al final
-        }
+        if (currentUser.hasVoted) return <PostVoting />;
         if (electionData.electionStatus === "active") {
-          return (
-            <Voting
-              candidates={electionData.candidates}
-              onFinishVoting={handleVote}
-            />
-          );
+          return <Voting candidates={electionData.candidates} onFinishVoting={handleVote} />;
         }
-        return (
-          <div className="phase-container">
-            <h2>Votación no activa</h2>
-            <p>
-              La votación no se encuentra activa en este momento. Por favor,
-              vuelva más tarde.
-            </p>
-          </div>
-        );
-      default:
-        return <p>Rol de usuario no reconocido.</p>;
+        return <div className="phase-container"><h2>Votación no activa</h2><p>La votación no se encuentra activa en este momento. Por favor, vuelva más tarde.</p></div>;
+      default: return <p>Rol de usuario no reconocido.</p>;
     }
   };
 
   return (
     <div className="App">
       <Header user={currentUser} onLogout={handleLogout} />
+      <CandidateInfoModal
+        isOpen={isCandidateInfoModalOpen}
+        onClose={() => setCandidateInfoModalOpen(false)}
+        candidates={electionData.candidates}
+      />
       <main className="main-content">{renderContent()}</main>
     </div>
   );
