@@ -18,7 +18,7 @@ function Login({ onLogin, error, onShowRegister, electionStatus, onShowCandidate
         <div className="election-status-indicator">
           <p>Actualmente la votación se encuentra:</p>
           <span className={`status-badge ${electionStatus}`}>
-            {electionStatus === 'active' ? 'Activa' : 'Cerrada'}
+            {electionStatus === 'active' ? 'Activa' : 'Inactiva'}
           </span>
         </div>
         <p className="info-text">
