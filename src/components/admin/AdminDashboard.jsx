@@ -79,6 +79,7 @@ function AdminDashboard() {
   // Pre-calculamos los datos para las vistas
   const totalVotes = Object.values(data.votes).reduce((a, b) => a + b, 0);
   const participatingVoters = data.users.filter(u => u.role === 'voter' && u.hasVoted);
+  const participatingCandidates = data.users.filter(u => u.role === 'candidate' && u.hasVoted);
 
   return (
     <div className="admin-dashboard">
@@ -91,6 +92,7 @@ function AdminDashboard() {
         isOpen={isVotersModalOpen}
         onClose={() => setIsVotersModalOpen(false)}
         voters={participatingVoters}
+        candidates={participatingCandidates}
       />
       
       {/* --- SECCIÓN DE ESTADO Y RESULTADOS --- */}
@@ -110,7 +112,7 @@ function AdminDashboard() {
           <div className="live-results-header">
             <span>Total de Votos: <strong>{totalVotes}</strong></span>
             <button className="secondary-action-btn" onClick={() => setIsVotersModalOpen(true)}>
-              Ver Votantes ({participatingVoters.length})
+              Ver Votantes ({participatingVoters.length + participatingCandidates.length})
             </button>
           </div>
           <ul className="results-list">
