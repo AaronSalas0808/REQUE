@@ -1,68 +1,29 @@
 const express = require("express");
 const cors = require("cors");
 const fs = require("fs");
-const path = require("path"); // 👈 Importa 'path' de Node.js
-const multer = require("multer"); // 👈 Importa 'multer'
+const path = require("path");
+const multer = require("multer");
 const app = express();
 const PORT = 3001;
 
 app.use(cors());
 app.use(express.json());
-// 👇 Sirve estáticamente los archivos de la carpeta 'public'
 app.use(express.static("public"));
 
 const DB_PATH = "./db.json";
 const readDB = () => JSON.parse(fs.readFileSync(DB_PATH, "utf-8"));
 const writeDB = (data) => fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2));
 
-// --- CONFIGURACIÓN DE MULTER ---
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "public/uploads"); // Carpeta donde se guardarán los archivos
+    cb(null, "public/uploads");
   },
   filename: function (req, file, cb) {
-    // Crea un nombre de archivo único para evitar colisiones
     cb(null, file.fieldname + "-" + Date.now() + path.extname(file.originalname));
   },
 });
 const upload = multer({ storage: storage });
-// --- FIN DE CONFIGURACIÓN DE MULTER ---
 
-
-// 👇 MODIFICA EL ENDPOINT DE REGISTRO DE CANDIDATO
-app.post("/api/register-candidate", upload.single("partyLogo"), (req, res) => {
-  const { id, password, name, party, email, biography, proposal } = req.body;
-  const db = readDB();
-
-  if (db.users.some((u) => u.id === id)) {
-    return res.status(409).json({ message: "Este número de cédula ya está registrado." });
-  }
-
-  // Comprueba si se subió un archivo
-  if (!req.file) {
-    return res.status(400).json({ message: "La foto del partido es requerida." });
-  }
-  
-  // Obtenemos la ruta del archivo para guardarla en la DB
-  const partyLogoPath = req.file.path.replace("public\\", "/").replace("public/", "/");
-
-  const newUser = { id, password, name, email, role: "candidate" };
-  const newCandidate = {
-    id, name, party, email, biography, proposal,
-    photo: `https://i.pravatar.cc/150?u=${id}`,
-    partyLogo: partyLogoPath, // 👈 Guardamos la ruta del logo
-    status: "pending",
-  };
-
-  db.users.push(newUser);
-  db.candidates.push(newCandidate);
-  writeDB(db);
-
-  res.status(201).json({ message: "Candidatura registrada con éxito." });
-});
-
-
-// ... (El resto de tus endpoints: /api/login, /api/vote, /api/admin/*, etc., no cambian) ...
 // Endpoint de Login
 app.post("/api/login", (req, res) => {
   const { username, password } = req.body;
@@ -90,18 +51,23 @@ app.get("/api/election-data", (req, res) => {
   });
 });
 
-// Endpoint para emitir un voto
+// 👇 MODIFICACIÓN CLAVE: Endpoint para emitir un voto y registrar nulos
 app.post("/api/vote", (req, res) => {
   const { userId, candidateId } = req.body;
   const db = readDB();
 
   const user = db.users.find((u) => u.id === userId);
   if (!user || user.hasVoted) {
-    return res.status(403).json({ message: "El usuario ya ha votado." });
+    return res.status(403).json({ message: "El usuario ya ha emitido su voto." });
   }
 
-  user.hasVoted = true;
-  db.votes[candidateId] = (db.votes[candidateId] || 0) + 1;
+  user.hasVoted = true; // El usuario marca que ya votó
+
+  if (candidateId === "null") { // Si el ID es "null", registra voto nulo
+    db.votes.null = (db.votes.null || 0) + 1;
+  } else { // Si es un ID de candidato, registra el voto al candidato
+    db.votes[candidateId] = (db.votes[candidateId] || 0) + 1;
+  }
 
   writeDB(db);
   res.json({ message: "Voto registrado con éxito." });
@@ -120,9 +86,39 @@ app.post("/api/admin/toggle-election", (req, res) => {
   res.json({ electionStatus: db.electionStatus });
 });
 
+// Endpoint para registrar una nueva candidatura
+app.post("/api/register-candidate", upload.single("partyLogo"), (req, res) => {
+  const { id, password, name, party, email, biography, proposal } = req.body;
+  const db = readDB();
+
+  if (db.users.some((u) => u.id === id)) {
+    return res.status(409).json({ message: "Este número de cédula ya está registrado." });
+  }
+
+  if (!req.file) {
+    return res.status(400).json({ message: "La foto del partido es requerida." });
+  }
+  
+  const partyLogoPath = req.file.path.replace("public\\", "/").replace("public/", "/");
+
+  const newUser = { id, password, name, email, role: "candidate" };
+  const newCandidate = {
+    id, name, party, email, biography, proposal,
+    photo: `https://i.pravatar.cc/150?u=${id}`,
+    partyLogo: partyLogoPath,
+    status: "pending",
+  };
+
+  db.users.push(newUser);
+  db.candidates.push(newCandidate);
+  writeDB(db);
+
+  res.status(201).json({ message: "Candidatura registrada con éxito." });
+});
+
 // Endpoint para que el admin apruebe o rechace candidatos
 app.post("/api/admin/update-candidate-status", (req, res) => {
-  const { candidateId, newStatus } = req.body; // newStatus será 'approved' o 'rejected'
+  const { candidateId, newStatus } = req.body;
   const db = readDB();
 
   const candidate = db.candidates.find((c) => c.id === candidateId);
@@ -139,25 +135,18 @@ app.post("/api/admin/update-candidate-status", (req, res) => {
 app.post("/api/admin/add-voter", (req, res) => {
   const { id, name, password } = req.body;
   
-  // Validación simple de campos
   if (!id || !name || !password) {
     return res.status(400).json({ message: "Todos los campos son requeridos." });
   }
 
   const db = readDB();
 
-  // Validar que el ID (cédula) no esté ya en uso
   if (db.users.some((user) => user.id === id)) {
     return res.status(409).json({ message: "El número de cédula ya está registrado." });
   }
 
-  // Crear el nuevo objeto de usuario (votante)
   const newVoter = {
-    id,
-    name,
-    password,
-    role: "voter",
-    hasVoted: false, // Por defecto, un nuevo votante no ha votado
+    id, name, password, role: "voter", hasVoted: false,
   };
 
   db.users.push(newVoter);

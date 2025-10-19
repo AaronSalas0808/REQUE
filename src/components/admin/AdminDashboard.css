@@ -154,3 +154,7 @@
   border-radius: 6px; 
   margin-bottom: 1rem;
 }
+
+.progress-bar-fill.null-vote-bar {
+  background: linear-gradient(90deg, #9e9e9e, #bdbdbd); /* Un gradiente gris */
+}

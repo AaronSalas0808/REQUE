@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./AdminDashboard.css";
 import VotersListModal from "./VotersListModal";
-import AddVoterModal from "./AddVoterModal"; // Importa el nuevo modal
+import AddVoterModal from "./AddVoterModal";
 
 // --- Componente Interno: Modal de Detalles del Candidato ---
 function CandidateDetailModal({ candidate, onClose, onUpdateStatus }) {
@@ -44,7 +44,6 @@ function CandidateDetailModal({ candidate, onClose, onUpdateStatus }) {
   );
 }
 
-
 // --- Componente Principal: Panel de Administración ---
 function AdminDashboard() {
   const [data, setData] = useState(null);
@@ -52,7 +51,6 @@ function AdminDashboard() {
   const [isVotersModalOpen, setIsVotersModalOpen] = useState(false);
   const [isAddVoterModalOpen, setIsAddVoterModalOpen] = useState(false);
 
-  // Función para obtener todos los datos del backend
   const fetchData = async () => {
     try {
       const response = await fetch("http://localhost:3001/api/admin/dashboard");
@@ -64,45 +62,40 @@ function AdminDashboard() {
     }
   };
 
-  // Efecto para la carga inicial y el polling en tiempo real
   useEffect(() => {
-    fetchData(); // Carga inicial
-    const interval = setInterval(fetchData, 3000); // Refresca cada 3 segundos
-    return () => clearInterval(interval); // Limpia el intervalo al desmontar el componente
+    fetchData();
+    const interval = setInterval(fetchData, 3000);
+    return () => clearInterval(interval);
   }, []);
 
-  // Función para aprobar o rechazar un candidato
   const handleUpdateStatus = async (candidateId, newStatus) => {
     await fetch("http://localhost:3001/api/admin/update-candidate-status", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ candidateId, newStatus }),
     });
-    setSelectedCandidate(null); // Cierra el modal de detalles
-    fetchData(); // Refresca los datos inmediatamente
+    setSelectedCandidate(null);
+    fetchData();
   };
 
-  // Función para iniciar o finalizar la elección
   const toggleElection = async () => {
     await fetch("http://localhost:3001/api/admin/toggle-election", { method: "POST" });
-    fetchData(); // Refresca los datos inmediatamente
+    fetchData();
   };
 
-  // Muestra un estado de carga mientras se obtienen los datos por primera vez
   if (!data) return <p>Cargando panel de administración...</p>;
 
   // Pre-calculamos valores para mantener el JSX limpio
+  // Los votos nulos también se consideran en el total de votos
   const totalVotes = Object.values(data.votes).reduce((sum, count) => sum + count, 0);
   const participatingVoters = data.users.filter(u => u.role === 'voter' && u.hasVoted);
 
   return (
     <div className="admin-dashboard">
-      {/* Renderizado de todos los modales */}
       <CandidateDetailModal candidate={selectedCandidate} onClose={() => setSelectedCandidate(null)} onUpdateStatus={handleUpdateStatus} />
       <VotersListModal isOpen={isVotersModalOpen} onClose={() => setIsVotersModalOpen(false)} voters={participatingVoters} />
       <AddVoterModal isOpen={isAddVoterModalOpen} onClose={() => setIsAddVoterModalOpen(false)} onVoterAdded={fetchData} />
       
-      {/* Sección superior con estado y resultados en vivo */}
       <div className="dashboard-grid">
         <section className="admin-section">
           <h3>Estado de la Elección</h3>
@@ -117,11 +110,9 @@ function AdminDashboard() {
           <h3>Resultados en Tiempo Real</h3>
           <div className="live-results-header">
             <span>Total de Votos: <strong>{totalVotes}</strong></span>
-            <button className="secondary-action-btn" onClick={() => setIsVotersModalOpen(true)}>
-              Ver Votantes ({participatingVoters.length})
-            </button>
           </div>
           <ul className="results-list">
+            {/* Resultados de candidatos aprobados */}
             {data.candidates.filter(c => c.status === 'approved').map(c => {
               const votes = data.votes[c.id] || 0;
               const percentage = totalVotes > 0 ? (votes / totalVotes) * 100 : 0;
@@ -132,11 +123,24 @@ function AdminDashboard() {
                 </li>
               );
             })}
+            {/* 👇 NUEVO: Mostrar Votos Nulos 👇 */}
+            {data.votes.null !== undefined && (
+              <li key="null-votes">
+                <div className="result-info"><span>Voto Nulo</span><span>{data.votes.null || 0} votos</span></div>
+                <div className="progress-bar-container">
+                  <div
+                    className="progress-bar-fill null-vote-bar"
+                    style={{ width: `${totalVotes > 0 ? ((data.votes.null || 0) / totalVotes) * 100 : 0}%` }}
+                  >
+                    {totalVotes > 0 ? (((data.votes.null || 0) / totalVotes) * 100).toFixed(1) : 0}%
+                  </div>
+                </div>
+              </li>
+            )}
           </ul>
         </section>
       </div>
 
-      {/* Sección de Gestión de Candidatos */}
       <section className="admin-section">
         <h3>Gestión y Aprobación de Candidatos</h3>
         <table className="candidates-table">
@@ -154,7 +158,6 @@ function AdminDashboard() {
         </table>
       </section>
 
-      {/* Sección de Gestión de Usuarios */}
       <section className="admin-section">
         <div className="section-header">
           <h3>Gestión de Usuarios</h3>
