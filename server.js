@@ -135,6 +135,36 @@ app.post("/api/admin/update-candidate-status", (req, res) => {
   }
 });
 
+// Endpoint para que el admin agregue un nuevo votante
+app.post("/api/admin/add-voter", (req, res) => {
+  const { id, name, password } = req.body;
+  
+  // Validación simple de campos
+  if (!id || !name || !password) {
+    return res.status(400).json({ message: "Todos los campos son requeridos." });
+  }
+
+  const db = readDB();
+
+  // Validar que el ID (cédula) no esté ya en uso
+  if (db.users.some((user) => user.id === id)) {
+    return res.status(409).json({ message: "El número de cédula ya está registrado." });
+  }
+
+  // Crear el nuevo objeto de usuario (votante)
+  const newVoter = {
+    id,
+    name,
+    password,
+    role: "voter",
+    hasVoted: false, // Por defecto, un nuevo votante no ha votado
+  };
+
+  db.users.push(newVoter);
+  writeDB(db);
+
+  res.status(201).json({ message: "Votante agregado con éxito." });
+});
 
 app.listen(PORT, () => {
   console.log(`Servidor API corriendo en http://localhost:${PORT}`);

@@ -8,67 +8,80 @@
       "role": "admin"
     },
     {
-      "id": "12345678A",
-      "password": "123",
-      "name": "Ana Torres",
+      "id": "208350713",
+      "name": "Brandon Vallejos Barquero ",
+      "password": "12345678",
       "role": "voter",
-      "hasVoted": true
+      "hasVoted": false
     },
     {
-      "id": "87654321B",
-      "password": "456",
-      "name": "Carlos Vera",
+      "id": "208600557",
+      "name": "Melany Arrieta Alfaro",
+      "password": "12345678",
       "role": "voter",
-      "hasVoted": true
+      "hasVoted": false
     },
     {
-      "id": "Hola",
-      "password": "123",
-      "name": "Hola Como Estas",
-      "email": "holacomoestas@gmail.com",
-      "role": "candidate",
-      "hasVoted": true
+      "id": "208680543",
+      "name": "Aaron Salas Urbina",
+      "password": "12345678",
+      "role": "voter",
+      "hasVoted": false
     },
     {
-      "id": "122201301513",
-      "password": "123",
-      "name": "Trocillo",
-      "role": "voter",
-      "hasVoted": true
+      "id": "candidato1",
+      "password": "12345678",
+      "name": "Valeria Montes",
+      "email": "v.montes@futurodigital.org",
+      "role": "candidate"
+    },
+    {
+      "id": "candidato2",
+      "password": "12345678",
+      "name": "Ricardo Soto",
+      "email": "r.soto@alianzaverde.org",
+      "role": "candidate"
+    },
+    {
+      "id": "candidato3",
+      "password": "12345678",
+      "name": "Javier Torres",
+      "email": "j.torres@civico-renovador.org",
+      "role": "candidate"
     }
   ],
   "candidates": [
     {
       "id": "candidato1",
-      "name": "Elena Ríos",
-      "party": "Partido de la Innovación",
-      "email": "elena.rios@example.com",
-      "biography": "Con más de 15 años de experiencia...",
-      "proposal": "Mi propuesta se centra en tres pilares...",
-      "photo": "https://i.pravatar.cc/150?img=1",
-      "partyLogo": "/uploads/placeholder-logo.png",
+      "name": "Valeria Montes",
+      "party": "Partido Futuro Digital",
+      "email": "v.montes@futurodigital.org",
+      "biography": "Ingeniera en sistemas con más de 10 años de experiencia liderando proyectos de transformación digital en el sector privado. Fundadora de dos startups tecnológicas exitosas, Valeria busca aplicar la innovación para crear un gobierno más eficiente, transparente y cercano a la gente.",
+      "proposal": "Mi plan se basa en tres ejes:\r\n1) Gobierno Digital: Implementar una plataforma única para todos los trámites, eliminando la burocracia. \r\n2) Transparencia Total: Crear un portal de datos abiertos donde cada ciudadano pueda fiscalizar en tiempo real el uso de los recursos públicos. \r\n3) Fomento a la Innovación: Desarrollar una incubadora de talentos locales en tecnología, ofreciendo capital semilla y mentoría para convertir buenas ideas en empresas que generen empleo.",
+      "photo": "https://i.pravatar.cc/150?u=candidato1",
+      "partyLogo": "/uploads\\partyLogo-1760899794539.png",
+      "status": "approved"
+    },
+    {
+      "id": "candidato2",
+      "name": "Ricardo Soto",
+      "party": "Alianza Verde Comunitaria",
+      "email": "r.soto@alianzaverde.org",
+      "biography": "Sociólogo y activista ambiental con una larga trayectoria en la defensa de los espacios públicos y el desarrollo sostenible. Ricardo ha coordinado proyectos de reforestación urbana y ha trabajado de la mano con juntas de vecinos para mejorar la calidad de vida en las comunidades.",
+      "proposal": "Nuestra propuesta es simple: devolverle la ciudad a sus habitantes. Impulsaremos un programa masivo de reciclaje con incentivos para los hogares, recuperaremos parques y plazas abandonadas para convertirlos en centros de actividad cultural y deportiva, y crearemos una red de huertos urbanos comunitarios para fomentar la soberanía alimentaria y fortalecer los lazos vecinales. Menos cemento, más comunidad.",
+      "photo": "https://i.pravatar.cc/150?u=candidato2",
+      "partyLogo": "/uploads\\partyLogo-1760899876541.png",
       "status": "approved"
     },
     {
       "id": "candidato3",
-      "name": "Sofía Castro",
-      "party": "Unidad Democrática",
-      "email": "sofia.castro@example.com",
-      "biography": "Activista social y defensora...",
-      "proposal": "Buscaremos fortalecer las juntas de vecinos...",
-      "photo": "https://i.pravatar.cc/150?img=3",
-      "partyLogo": "/uploads/placeholder-logo.png",
-      "status": "approved"
-    },
-    {
-      "id": "Hola",
-      "name": "Hola Como Estas",
-      "party": "holatodos",
-      "email": "holacomoestas@gmail.com",
-      "biography": "",
-      "proposal": "",
-      "photo": "https://i.pravatar.cc/150?u=Hola",
-      "partyLogo": "/uploads\\partyLogo-1760375594166.png",
+      "name": "Javier Torres",
+      "party": "Partido Cívico Renovador",
+      "email": "j.torres@civico-renovador.org",
+      "biography": "Abogado con 20 años de experiencia en gestión municipal y derecho administrativo. Javier ha ocupado diversos cargos públicos, donde se ha destacado por su capacidad de diálogo y su firmeza en la administración de los recursos. Mi lema es: 'Orden y Progreso'.",
+      "proposal": "La seguridad y el desarrollo económico son mis prioridades. Propongo reforzar la seguridad ciudadana con más patrullaje y tecnología de vigilancia. Impulsaremos un plan de atracción de inversiones para generar empleos de calidad y apoyaremos a las pequeñas y medianas empresas con la reducción de trámites y el acceso a créditos blandos. Con experiencia y mano firme, recuperaremos la tranquilidad y el crecimiento que todos merecemos.",
+      "photo": "https://i.pravatar.cc/150?u=candidato3",
+      "partyLogo": "/uploads\\partyLogo-1760900004094.png",
       "status": "approved"
     }
   ],

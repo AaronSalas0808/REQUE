@@ -78,3 +78,79 @@
   border-radius: 8px;
   border: 1px solid #ddd;
 }
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.add-voter-btn {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.add-voter-btn:hover {
+  background-color: var(--secondary-color);
+}
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.users-table th,
+.users-table td {
+  padding: 0.8rem;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.role-badge {
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.role-voter {
+  background-color: #e0e7ff;
+  color: #3730a3;
+}
+
+.role-candidate {
+  background-color: #d1fadf;
+  color: #03543f;
+}
+
+.role-admin {
+  background-color: #fef0c7;
+  color: #b45309;
+}
+
+/* Estilos para el modal de agregar votante */
+.modal-actions .cancel-btn {
+  background-color: #e0e0e0;
+  color: #333;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.error-message { 
+  text-align: center; 
+  color: #9b1c1c; 
+  background-color: #fde2e2; 
+  padding: 0.8rem; 
+  border-radius: 6px; 
+  margin-bottom: 1rem;
+}

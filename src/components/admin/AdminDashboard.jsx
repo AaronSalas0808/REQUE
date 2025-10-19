@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "./AdminDashboard.css";
-import VotersListModal from "./VotersListModal"; // 👈 Importa el nuevo modal
+import VotersListModal from "./VotersListModal";
+import AddVoterModal from "./AddVoterModal"; // Importa el nuevo modal
 
-// (El componente CandidateDetailModal se queda igual que antes)
+// --- Componente Interno: Modal de Detalles del Candidato ---
 function CandidateDetailModal({ candidate, onClose, onUpdateStatus }) {
   if (!candidate) return null;
 
@@ -11,11 +12,15 @@ function CandidateDetailModal({ candidate, onClose, onUpdateStatus }) {
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <button className="close-button" onClick={onClose}>×</button>
         <div className="modal-header">
-          {/* 👇 MOSTRAMOS LA FOTO DEL PARTIDO AQUÍ 👇 */}
-          <img src={`http://localhost:3001${candidate.partyLogo}`} alt={`Logo de ${candidate.party}`} className="party-logo-modal" />
+          {candidate.partyLogo && (
+            <img 
+              src={`http://localhost:3001${candidate.partyLogo}`} 
+              alt={`Logo de ${candidate.party}`} 
+              className="party-logo-modal" 
+            />
+          )}
           <h2>Detalles de Candidatura</h2>
         </div>
-        {/* ... (el resto del modal no cambia) ... */}
         <div className="detail-grid">
           <p><strong>Nombre:</strong> {candidate.name}</p>
           <p><strong>Cédula:</strong> {candidate.id}</p>
@@ -23,10 +28,12 @@ function CandidateDetailModal({ candidate, onClose, onUpdateStatus }) {
           <p><strong>Email:</strong> {candidate.email}</p>
         </div>
         <div className="detail-section">
-          <h3>Biografía</h3><p>{candidate.biography}</p>
+          <h3>Biografía</h3>
+          <p>{candidate.biography}</p>
         </div>
         <div className="detail-section">
-          <h3>Propuesta de Campaña</h3><p>{candidate.proposal}</p>
+          <h3>Propuesta de Campaña</h3>
+          <p>{candidate.proposal}</p>
         </div>
         <div className="modal-actions">
           <button className="approve-btn" onClick={() => onUpdateStatus(candidate.id, "approved")}>Aprobar</button>
@@ -37,65 +44,65 @@ function CandidateDetailModal({ candidate, onClose, onUpdateStatus }) {
   );
 }
 
+
+// --- Componente Principal: Panel de Administración ---
 function AdminDashboard() {
   const [data, setData] = useState(null);
   const [selectedCandidate, setSelectedCandidate] = useState(null);
-  const [isVotersModalOpen, setIsVotersModalOpen] = useState(false); // 👈 Nuevo estado para el modal
+  const [isVotersModalOpen, setIsVotersModalOpen] = useState(false);
+  const [isAddVoterModalOpen, setIsAddVoterModalOpen] = useState(false);
 
+  // Función para obtener todos los datos del backend
   const fetchData = async () => {
-    const response = await fetch("http://localhost:3001/api/admin/dashboard");
-    setData(await response.json());
+    try {
+      const response = await fetch("http://localhost:3001/api/admin/dashboard");
+      if (response.ok) {
+        setData(await response.json());
+      }
+    } catch (error) {
+      console.error("Error fetching admin data:", error);
+    }
   };
 
-  // 👇 EFECTO PARA POLLING EN TIEMPO REAL 👇
+  // Efecto para la carga inicial y el polling en tiempo real
   useEffect(() => {
     fetchData(); // Carga inicial
-    const interval = setInterval(() => {
-      fetchData();
-    }, 3000); // Pide los datos cada 3 segundos
-
-    return () => clearInterval(interval); // Limpia el intervalo al salir
+    const interval = setInterval(fetchData, 3000); // Refresca cada 3 segundos
+    return () => clearInterval(interval); // Limpia el intervalo al desmontar el componente
   }, []);
 
+  // Función para aprobar o rechazar un candidato
   const handleUpdateStatus = async (candidateId, newStatus) => {
-    // ... (esta función no cambia)
     await fetch("http://localhost:3001/api/admin/update-candidate-status", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ candidateId, newStatus }),
     });
-    setSelectedCandidate(null);
-    fetchData();
+    setSelectedCandidate(null); // Cierra el modal de detalles
+    fetchData(); // Refresca los datos inmediatamente
   };
-  
+
+  // Función para iniciar o finalizar la elección
   const toggleElection = async () => {
-    // ... (esta función no cambia)
     await fetch("http://localhost:3001/api/admin/toggle-election", { method: "POST" });
-    fetchData();
+    fetchData(); // Refresca los datos inmediatamente
   };
-  
+
+  // Muestra un estado de carga mientras se obtienen los datos por primera vez
   if (!data) return <p>Cargando panel de administración...</p>;
 
-  // Pre-calculamos los datos para las vistas
-  const totalVotes = Object.values(data.votes).reduce((a, b) => a + b, 0);
+  // Pre-calculamos valores para mantener el JSX limpio
+  const totalVotes = Object.values(data.votes).reduce((sum, count) => sum + count, 0);
   const participatingVoters = data.users.filter(u => u.role === 'voter' && u.hasVoted);
-  const participatingCandidates = data.users.filter(u => u.role === 'candidate' && u.hasVoted);
 
   return (
     <div className="admin-dashboard">
-      <CandidateDetailModal 
-        candidate={selectedCandidate}
-        onClose={() => setSelectedCandidate(null)}
-        onUpdateStatus={handleUpdateStatus}
-      />
-      <VotersListModal
-        isOpen={isVotersModalOpen}
-        onClose={() => setIsVotersModalOpen(false)}
-        voters={participatingVoters}
-        candidates={participatingCandidates}
-      />
+      {/* Renderizado de todos los modales */}
+      <CandidateDetailModal candidate={selectedCandidate} onClose={() => setSelectedCandidate(null)} onUpdateStatus={handleUpdateStatus} />
+      <VotersListModal isOpen={isVotersModalOpen} onClose={() => setIsVotersModalOpen(false)} voters={participatingVoters} />
+      <AddVoterModal isOpen={isAddVoterModalOpen} onClose={() => setIsAddVoterModalOpen(false)} onVoterAdded={fetchData} />
       
-      {/* --- SECCIÓN DE ESTADO Y RESULTADOS --- */}
+      {/* Sección superior con estado y resultados en vivo */}
       <div className="dashboard-grid">
         <section className="admin-section">
           <h3>Estado de la Elección</h3>
@@ -106,13 +113,12 @@ function AdminDashboard() {
             {data.electionStatus === "active" ? "Finalizar Elección" : "Iniciar Elección"}
           </button>
         </section>
-
         <section className="admin-section">
           <h3>Resultados en Tiempo Real</h3>
           <div className="live-results-header">
             <span>Total de Votos: <strong>{totalVotes}</strong></span>
             <button className="secondary-action-btn" onClick={() => setIsVotersModalOpen(true)}>
-              Ver Votantes ({participatingVoters.length + participatingCandidates.length})
+              Ver Votantes ({participatingVoters.length})
             </button>
           </div>
           <ul className="results-list">
@@ -121,15 +127,8 @@ function AdminDashboard() {
               const percentage = totalVotes > 0 ? (votes / totalVotes) * 100 : 0;
               return (
                 <li key={c.id}>
-                  <div className="result-info">
-                    <span>{c.name}</span>
-                    <span>{votes} votos</span>
-                  </div>
-                  <div className="progress-bar-container">
-                    <div className="progress-bar-fill" style={{ width: `${percentage}%` }}>
-                      {percentage.toFixed(1)}%
-                    </div>
-                  </div>
+                  <div className="result-info"><span>{c.name}</span><span>{votes} votos</span></div>
+                  <div className="progress-bar-container"><div className="progress-bar-fill" style={{ width: `${percentage}%` }}>{percentage.toFixed(1)}%</div></div>
                 </li>
               );
             })}
@@ -137,10 +136,9 @@ function AdminDashboard() {
         </section>
       </div>
 
-      {/* --- SECCIÓN DE GESTIÓN DE CANDIDATOS --- */}
+      {/* Sección de Gestión de Candidatos */}
       <section className="admin-section">
         <h3>Gestión y Aprobación de Candidatos</h3>
-        {/* ... (la tabla de candidatos no cambia) ... */}
         <table className="candidates-table">
           <thead><tr><th>Nombre</th><th>Partido</th><th>Estado</th><th>Acciones</th></tr></thead>
           <tbody>
@@ -150,6 +148,38 @@ function AdminDashboard() {
                 <td>{c.party}</td>
                 <td><span className={`status status-${c.status}`}>{c.status}</span></td>
                 <td><button className="details-btn" onClick={() => setSelectedCandidate(c)}>Ver Detalles</button></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+
+      {/* Sección de Gestión de Usuarios */}
+      <section className="admin-section">
+        <div className="section-header">
+          <h3>Gestión de Usuarios</h3>
+          <button className="add-voter-btn" onClick={() => setIsAddVoterModalOpen(true)}>
+            + Agregar Votante
+          </button>
+        </div>
+        <table className="users-table">
+          <thead>
+            <tr>
+              <th>Nombre Completo</th>
+              <th>Cédula / ID</th>
+              <th>Rol</th>
+              <th>Estado de Voto</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.users.map((user) => (
+              <tr key={user.id}>
+                <td>{user.name}</td>
+                <td>{user.id}</td>
+                <td><span className={`role-badge role-${user.role}`}>{user.role}</span></td>
+                <td>
+                  {user.role === 'admin' || 'voter' && (user.hasVoted ? 'Ha votado' : 'Pendiente')}
+                </td>
               </tr>
             ))}
           </tbody>
