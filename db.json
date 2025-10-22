@@ -86,6 +86,7 @@
     }
   ],
   "votes": {
-    "null": 0
+    "null": 0,
+    "candidato1": 1
   }
 }

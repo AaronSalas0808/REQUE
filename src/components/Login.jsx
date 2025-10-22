@@ -1,7 +1,7 @@
+// Login.jsx - Versión Minimalista
 import React from "react";
 import "./Login.css";
 
-// 👇 LA CORRECCIÓN ESTÁ EN ESTA LÍNEA 👇
 function Login({ onLogin, error, onShowRegister, electionStatus, onShowCandidates }) {
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -13,33 +13,82 @@ function Login({ onLogin, error, onShowRegister, electionStatus, onShowCandidate
 
   return (
     <div className="home-screen-container">
-      <div className="info-card">
-        <h2>Estado de la Votación</h2>
-        <div className="election-status-indicator">
-          <p>Actualmente la votación se encuentra:</p>
-          <span className={`status-badge ${electionStatus}`}>
-            {electionStatus === 'active' ? 'Activa' : 'Inactiva'}
-          </span>
-        </div>
-        <p className="info-text">
-          Consulte la información de los candidatos aprobados antes de participar.
-        </p>
-        <button type="button" className="info-button" onClick={onShowCandidates}>
-          Ver Información de Candidatos
-        </button>
-      </div>
-      <div className="login-card">
-        <form onSubmit={handleSubmit} className="login-form">
-          <h2>Acceso al Sistema</h2>
-          <div className="input-group"><label htmlFor="username">Identificador</label><input id="username" type="text" value={username} onChange={(e) => setUsername(e.target.value)} required /></div>
-          <div className="input-group"><label htmlFor="password">Contraseña</label><input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required /></div>
-          {error && <p className="error-message">{error}</p>}
-          <button type="submit">Ingresar</button>
-          <button type="button" className="secondary-button" onClick={onShowRegister}>
-            Registrar Candidatura
+      <div className="login-wrapper">
+        {/* Panel izquierdo - Información */}
+        <div className="info-panel">
+          <h2>Votación Electrónica</h2>
+          <div className="election-status-indicator">
+            <span className={`status-badge ${electionStatus}`}>
+              {electionStatus === 'active' ? 'Votación Activa' : 'Votación Inactiva'}
+            </span>
+          </div>
+          <p className="info-text">
+            Sistema seguro y confiable para ejercer su derecho al voto de manera digital.
+          </p>
+          <button type="button" className="info-button" onClick={onShowCandidates}>
+            Ver Candidatos
           </button>
-        </form>
+        </div>
+
+        {/* Panel derecho - Login */}
+        <div className="login-panel">
+          <div className="login-header">
+            <h2>Iniciar Sesión</h2>
+            <p>Ingrese sus credenciales para continuar</p>
+          </div>
+          
+          <form onSubmit={handleSubmit} className="login-form">
+            {error && <div className="error-message">{error}</div>}
+            
+            <div className="input-group">
+              <label htmlFor="username">Identificador</label>
+              <input 
+                id="username" 
+                type="text" 
+                value={username} 
+                onChange={(e) => setUsername(e.target.value)} 
+                placeholder="Ingrese su identificador"
+                required 
+              />
+            </div>
+            
+            <div className="input-group">
+              <label htmlFor="password">Contraseña</label>
+              <input 
+                id="password" 
+                type="password" 
+                value={password} 
+                onChange={(e) => setPassword(e.target.value)} 
+                placeholder="Ingrese su contraseña"
+                required 
+              />
+            </div>
+            
+            <button type="submit" className="login-button">
+              Ingresar al Sistema
+            </button>
+            
+            <button type="button" className="secondary-button" onClick={onShowRegister}>
+              Registrar Candidatura
+            </button>
+          </form>
+        </div>
       </div>
+
+      {/* Footer */}
+      <footer className="login-footer">
+        <div className="footer-content">
+          <div className="help-section">
+            <h4>¿Tiene dudas o necesita ayuda?</h4>
+            <p>Contacte a nuestra Mesa de Ayuda entre 06:00 y 16:30 hrs. (Hora Costa Rica)</p>
+            <p>Email: soporte@votaelect.com | Teléfono: +506 4000 1673</p>
+          </div>
+          <div className="footer-links">
+          <a href="#" className="footer-link">Revisar la participación</a>
+            <a href="#" className="footer-link">Registrar observación</a>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
