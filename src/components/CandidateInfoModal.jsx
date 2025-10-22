@@ -1,3 +1,4 @@
+// CandidateInfoModal.jsx - Ultra Minimalista
 import React, { useState } from "react";
 import "./CandidateInfoModal.css";
 
@@ -13,8 +14,11 @@ function CandidateInfoModal({ isOpen, onClose, candidates }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <button className="close-button" onClick={onClose}>×</button>
-        <h2>Candidatos Aprobados para la Elección</h2>
+        <div className="modal-header">
+          <h2>Candidatos</h2>
+          <button className="close-button" onClick={onClose}>×</button>
+        </div>
+        
         <div className="candidates-list">
           {candidates.length > 0 ? (
             candidates.map((candidate) => (
@@ -40,18 +44,20 @@ function CandidateInfoModal({ isOpen, onClose, candidates }) {
                   <div className="accordion-content">
                     <div className="detail-section">
                       <h3>Biografía</h3>
-                      <p>{candidate.biography}</p>
+                      <p>{candidate.biography || "Información no disponible."}</p>
                     </div>
                     <div className="detail-section">
-                      <h3>Propuesta de Campaña</h3>
-                      <p>{candidate.proposal}</p>
+                      <h3>Propuesta</h3>
+                      <p>{candidate.proposal || "Información no disponible."}</p>
                     </div>
                   </div>
                 )}
               </div>
             ))
           ) : (
-            <p>No hay candidatos aprobados en este momento.</p>
+            <div className="empty-state">
+              <p>No hay candidatos aprobados</p>
+            </div>
           )}
         </div>
       </div>
