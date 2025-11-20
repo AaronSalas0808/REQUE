@@ -687,10 +687,6 @@ function App() {
             </p>
           </div>
         </div>
-        <div className="app-user-block">
-          <span className="app-role">Rol: Usuario general</span>
-          <button className="btn-outline small">🔔</button>
-        </div>
       </header>
 
       {/* CONTENIDO PRINCIPAL */}
@@ -740,7 +736,7 @@ function App() {
           <section className="card stats-card">
             <h2 className="card-title">Resumen de tu asistente</h2>
             <p className="card-subtitle">
-              Estos datos provienen del catálogo actual (prototipo).
+              Estos datos provienen del catálogo actual.
             </p>
             <div className="stats-row">
               <div className="stat-box">
@@ -932,7 +928,6 @@ function App() {
                   </div>
 
                   <div className="map-placeholder">
-                    <p>🗺️ Aquí iría un mapa interactivo (prototipo visual).</p>
                   </div>
 
                   <div className="centers-list">
@@ -1020,7 +1015,7 @@ function App() {
                             </div>
                           ) : (
                             <small>
-                              Este centro no tiene coordenadas configuradas en el prototipo.
+                              Este centro no tiene coordenadas configuradas.
                             </small>
                           )}
 
@@ -1104,9 +1099,6 @@ function App() {
                       </button>
                     ))}
                   </div>
-                  <button className="btn-outline small">
-                    Ver solo tutoriales oficiales
-                  </button>
                 </div>
 
                 <div className="grid-three">
@@ -1463,7 +1455,7 @@ function App() {
 
       <footer className="app-footer">
         <p>
-          Prototipo visual de EcoTrack · Clasificación de materiales, directorio de centros,
+          EcoTrack · Clasificación de materiales, directorio de centros,
           tutoriales, comunidad y empresas recicladoras.
         </p>
         <p>
