@@ -276,7 +276,7 @@ const RecyclingCenters = () => {
         <div className="map-loading">
           <FaMapMarkerAlt className="empty-icon" style={{ fontSize: '3rem' }} />
           <p>Selecciona un centro para ver el mapa</p>
-          <p className="map-note">Centros reales en Ciudad Quesada, San Carlos</p>
+          <p className="map-note">Centros reales</p>
         </div>
       );
     }
@@ -331,10 +331,10 @@ const RecyclingCenters = () => {
         <div className="card-header">
           <div className="card-title">
             <FaRecycle className="title-icon" />
-            <span>Centros de Reciclaje - Ciudad Quesada, San Carlos</span>
+            <span>Centros de Reciclaje</span>
           </div>
           <p className="card-subtitle">
-            Ubicaciones reales de centros de reciclaje y acopio en Ciudad Quesada y alrededores.
+            Ubicaciones reales de centros de reciclaje y acopio
             <br />
             <small>Coordenadas GPS precisas para ubicación exacta</small>
           </p>
@@ -344,7 +344,7 @@ const RecyclingCenters = () => {
           <div className="filter-section">
             <div className="filter-header">
               <FaSearch />
-              <h3>Buscar centros en Ciudad Quesada</h3>
+              <h3>Buscar centros:</h3>
             </div>
             
             <div className="form-group">
@@ -699,7 +699,7 @@ const RecyclingCenters = () => {
                       </div>
                     </div>
                     <div className="location-note">
-                      <p><strong>💡 Nota:</strong> Todas las ubicaciones son reales en Ciudad Quesada, San Carlos</p>
+                      <p><strong>💡 Nota:</strong> Todas las ubicaciones son reales</p>
                     </div>
                   </div>
                 </div>
