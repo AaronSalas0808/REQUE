@@ -34,6 +34,11 @@ const RecyclingCompanyPanel = () => {
     setNewMaterial({ name: '', category: 'Plástico', requirements: '' });
   };
 
+  const handleDeleteMaterial = (id) => {
+    const updatedMaterials = acceptedMaterials.filter(material => material.id !== id);
+    setAcceptedMaterials(updatedMaterials);
+  };
+
   const handleUpdateInfo = () => {
     alert('Información actualizada correctamente');
   };
@@ -199,9 +204,15 @@ const RecyclingCompanyPanel = () => {
                   <div className="material-requirements">
                     <strong>Requisitos:</strong> {material.requirements}
                   </div>
-                  <button className="remove-btn" title="Eliminar">
-                    🗑️
-                  </button>
+                  <div className="material-actions">
+                    <button 
+                      className="btn-delete" 
+                      onClick={() => handleDeleteMaterial(material.id)}
+                      title="Eliminar material"
+                    >
+                      🗑️ Eliminar
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>

@@ -1,3 +1,4 @@
+// components/Navigation.jsx - OPCIÓN MÁS LIMPIA
 import React from 'react';
 import './Navigation.css';
 
@@ -41,35 +42,37 @@ const Navigation = ({ currentPage, setCurrentPage, userRole, isAuthenticated, on
           >
             Comunidad
           </button>
-          
-          {userRole === 'admin' && (
-            <button 
-              className={`nav-link ${currentPage === 'admin' ? 'active' : ''}`}
-              onClick={() => setCurrentPage('admin')}
-            >
-              Administración
-            </button>
-          )}
-          
-          {userRole === 'company' && (
-            <button 
-              className={`nav-link ${currentPage === 'company' ? 'active' : ''}`}
-              onClick={() => setCurrentPage('company')}
-            >
-              Empresa
-            </button>
-          )}
         </div>
         
         <div className="user-actions">
           {isAuthenticated ? (
             <>
-              <button 
-                className="btn btn-outline"
-                onClick={() => setCurrentPage('profile')}
-              >
-                Perfil
-              </button>
+              {/* Botón principal según el rol */}
+              {userRole === 'general' && (
+                <button 
+                  className="btn btn-outline"
+                  onClick={() => setCurrentPage('profile')}
+                >
+                  👤 Mi Perfil
+                </button>
+              )}
+              {userRole === 'admin' && (
+                <button 
+                  className="btn btn-outline"
+                  onClick={() => setCurrentPage('admin')}
+                >
+                  ⚙️ Admin
+                </button>
+              )}
+              {userRole === 'company' && (
+                <button 
+                  className="btn btn-outline"
+                  onClick={() => setCurrentPage('company')}
+                >
+                  🏭 Mi Empresa
+                </button>
+              )}
+              
               <button 
                 className="btn btn-secondary"
                 onClick={onLogout}

@@ -64,10 +64,10 @@ function App() {
                 <div className="hero-actions">
                   <button 
                     className="btn btn-primary btn-hero"
-                    onClick={() => setCurrentPage('classification')}
+                    onClick={() => setCurrentPage('centers')}
                   >
-                    <span className="btn-icon">♻️</span>
-                    Comenzar a reciclar
+                    <span className="btn-icon">📍</span>
+                    Encontrar centros
                   </button>
                   <button 
                     className="btn btn-outline btn-hero"
@@ -91,22 +91,6 @@ function App() {
               <p className="section-subtitle">Todas las herramientas que necesitas para un reciclaje efectivo</p>
               
               <div className="features-grid">
-                <div className="feature-card" onClick={() => setCurrentPage('classification')}>
-                  <div className="feature-icon-wrapper">
-                    <div className="feature-icon">🔍</div>
-                    <div className="feature-badge">Nuevo</div>
-                  </div>
-                  <h3 className="feature-title">Clasificación Inteligente</h3>
-                  <p className="feature-description">
-                    Identifica materiales correctamente con nuestro sistema de búsqueda avanzada y reconocimiento por IA
-                  </p>
-                  <div className="feature-stats">
-                    <span>+200 materiales</span>
-                    <span>•</span>
-                    <span>Guías paso a paso</span>
-                  </div>
-                </div>
-
                 <div className="feature-card" onClick={() => setCurrentPage('centers')}>
                   <div className="feature-icon-wrapper">
                     <div className="feature-icon">📍</div>
@@ -144,7 +128,7 @@ function App() {
                   </div>
                   <h3 className="feature-title">Comunidad Activa</h3>
                   <p className="feature-description">
-                    Conéctate con otros recicladores, comparte experiencias y resuelve duntas en tiempo real
+                    Conéctate con otros recicladores, comparte experiencias y resuelve dudas en tiempo real
                   </p>
                   <div className="feature-stats">
                     <span>1,000+ miembros</span>
@@ -161,12 +145,12 @@ function App() {
                 <div className="stat-item">
                   <div className="stat-value">2,500+</div>
                   <div className="stat-label">Usuarios activos</div>
-                  <div className="stat-trend positive">↑ 15% este mes</div>
+              
                 </div>
                 <div className="stat-item">
                   <div className="stat-value">45,000+ kg</div>
                   <div className="stat-label">Material reciclado</div>
-                  <div className="stat-trend positive">↑ 8% este mes</div>
+                
                 </div>
                 <div className="stat-item">
                   <div className="stat-value">150+</div>
@@ -241,9 +225,8 @@ function App() {
           <div className="footer-section">
             <h4 className="footer-title">Enlaces rápidos</h4>
             <ul className="footer-links">
-              <li><button onClick={() => setCurrentPage('classification')}>Clasificación</button></li>
-              <li><button onClick={() => setCurrentPage('centers')}>Centros</button></li>
-              <li><button onClick={() => setCurrentPage('reuse')}>Reutilización</button></li>
+              <li><button onClick={() => setCurrentPage('centers')}>Centros de Reciclaje</button></li>
+              <li><button onClick={() => setCurrentPage('reuse')}>Ideas de Reutilización</button></li>
               <li><button onClick={() => setCurrentPage('community')}>Comunidad</button></li>
             </ul>
           </div>

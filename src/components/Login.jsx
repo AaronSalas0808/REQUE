@@ -152,7 +152,7 @@ const Login = ({ onLogin }) => {
           )}
           
           <button type="submit" className="btn btn-primary btn-large">
-            {isLogin ? 'Iniciar Sesión' : '**Crear Cuenta**'}
+            {isLogin ? 'Iniciar Sesión' : 'Crear Cuenta'}
           </button>
         </form>
         

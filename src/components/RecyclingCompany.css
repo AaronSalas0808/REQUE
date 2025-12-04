@@ -167,6 +167,49 @@
   margin-right: 0.5rem;
 }
 
+/* Botón de Eliminar (Estilo del Admin Planner) */
+.btn-delete {
+  background: var(--error-500) !important;
+  color: white !important;
+  border: none !important;
+  padding: 0.5rem 1rem !important;
+  border-radius: var(--radius-md) !important;
+  font-weight: 500 !important;
+  font-size: 0.875rem !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  flex-shrink: 0 !important;
+}
+
+.btn-delete:hover {
+  background: var(--error-600) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2) !important;
+}
+
+.btn-delete:active {
+  transform: translateY(0) !important;
+  background: var(--error-700) !important;
+}
+
+.btn-delete:disabled {
+  background: var(--neutral-300) !important;
+  color: var(--neutral-500) !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Material Actions */
+.material-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
 /* Announcements */
 .company-announcements {
   background: white;
@@ -254,6 +297,16 @@
   .material-info, .material-requirements {
     width: 100%;
     margin: 0;
+  }
+  
+  .material-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  
+  .btn-delete {
+    width: 100% !important;
+    justify-content: center !important;
   }
   
   .announcement-actions {

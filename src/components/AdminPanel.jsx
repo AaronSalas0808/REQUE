@@ -1,50 +1,81 @@
-// components/AdminPanel.jsx
+// components/AdminPanel.jsx - COMPLETO Y MODIFICADO
 import React, { useState } from 'react';
-// En la parte superior del archivo AdminPanel.jsx
 import './AdminPanel.css';
 
 const AdminPanel = () => {
-  const [activeTab, setActiveTab] = useState('content');
-  
-  const [materials, setMaterials] = useState([
-    { id: 1, name: 'PET', category: 'Plástico', description: 'Polietileno tereftalato', status: 'active' },
-    { id: 2, name: 'HDPE', category: 'Plástico', description: 'Polietileno de alta densidad', status: 'active' },
-    { id: 3, name: 'Vidrio transparente', category: 'Vidrio', description: 'Vidrio incoloro', status: 'active' },
-    { id: 4, name: 'Aluminio', category: 'Metales', description: 'Latas de aluminio', status: 'active' },
-  ]);
-  
-  const [centers, setCenters] = useState([
-    { id: 1, name: 'EcoCentro Central', status: 'active', pendingChanges: false },
-    { id: 2, name: 'ReciColecta', status: 'active', pendingChanges: true },
-    { id: 3, name: 'Punto Azul', status: 'inactive', pendingChanges: false },
-  ]);
-  
-  const [pendingContent, setPendingContent] = useState([
-    { id: 1, type: 'idea', title: 'Cómo reciclar pilas', user: 'Juan López', date: '2025-12-03' },
-    { id: 2, type: 'tutorial', title: 'Compostaje casero', user: 'María García', date: '2025-12-02' },
-    { id: 3, type: 'question', title: 'Centros para electrónicos', user: 'Carlos Ruiz', date: '2025-12-02' },
-  ]);
+  const [activeTab, setActiveTab] = useState('moderation');
+  const [selectedPendingItem, setSelectedPendingItem] = useState(null);
+  const [editingMaterial, setEditingMaterial] = useState(null);
 
-  const [newMaterial, setNewMaterial] = useState({ name: '', category: '', description: '' });
+  const pendingItems = [
+    { 
+      id: 1, 
+      type: 'idea', 
+      title: 'Bolsa con jeans viejos', 
+      user: 'Carlos Martínez',
+      submitted: '2025-12-01',
+      details: 'Idea de reutilización de jeans para crear bolsas reutilizables. Requiere revisión de materiales y seguridad.'
+    },
+    { 
+      id: 2, 
+      type: 'comment', 
+      title: 'Comentario en "Compostaje avanzado"', 
+      user: 'Ana Gómez',
+      submitted: '2025-11-30',
+      details: 'Comentario reportado por posible información incorrecta sobre tiempos de compostaje.'
+    },
+    { 
+      id: 3, 
+      type: 'center', 
+      title: 'Nuevo centro: EcoPunto Norte', 
+      user: 'Centro EcoPunto',
+      submitted: '2025-11-29',
+      details: 'Solicitud de registro de nuevo centro de reciclaje. Verificar documentación y ubicación.'
+    },
+  ];
 
-  const handleAddMaterial = () => {
-    const material = {
-      ...newMaterial,
-      id: materials.length + 1,
-      status: 'active'
-    };
-    setMaterials([...materials, material]);
-    setNewMaterial({ name: '', category: '', description: '' });
+  const materials = [
+    { id: 1, name: 'PET', category: 'Plástico', recyclingCode: '1', status: 'active' },
+    { id: 2, name: 'HDPE', category: 'Plástico', recyclingCode: '2', status: 'active' },
+    { id: 3, name: 'PVC', category: 'Plástico', recyclingCode: '3', status: 'inactive' },
+    { id: 4, name: 'Vidrio transparente', category: 'Vidrio', recyclingCode: 'GL-70', status: 'active' },
+    { id: 5, name: 'Aluminio', category: 'Metales', recyclingCode: 'ALU', status: 'active' },
+  ];
+
+  const users = [
+    { id: 1, name: 'María Pérez', email: 'maria@email.com', role: 'user', joinDate: '2025-10-15' },
+    { id: 2, name: 'Juan Rodríguez', email: 'juan@email.com', role: 'user', joinDate: '2025-11-02' },
+    { id: 3, name: 'EcoCentro Central', email: 'info@ecocentro.com', role: 'company', joinDate: '2025-09-20' },
+    { id: 4, name: 'Admin Sistema', email: 'admin@ecotrack.com', role: 'admin', joinDate: '2025-01-10' },
+  ];
+
+  const roleStats = {
+    users: 45,
+    companies: 12,
+    admins: 3,
+    total: 60
   };
 
-  const handleApproveContent = (id) => {
-    setPendingContent(pendingContent.filter(item => item.id !== id));
-    alert('Contenido aprobado');
+  const handleApprove = (id) => {
+    alert(`Elemento ${id} aprobado`);
+    // Lógica de aprobación aquí
   };
 
-  const handleRejectContent = (id) => {
-    setPendingContent(pendingContent.filter(item => item.id !== id));
-    alert('Contenido rechazado');
+  const handleReject = (id) => {
+    alert(`Elemento ${id} rechazado`);
+    // Lógica de rechazo aquí
+  };
+
+  const handleEditMaterial = (material) => {
+    setEditingMaterial(material);
+    alert(`Editando material: ${material.name}`);
+  };
+
+  const handleDeleteMaterial = (id) => {
+    if (window.confirm('¿Estás seguro de eliminar este material?')) {
+      alert(`Material ${id} eliminado`);
+      // Lógica de eliminación aquí
+    }
   };
 
   return (
@@ -52,138 +83,236 @@ const AdminPanel = () => {
       <div className="card">
         <h2 className="card-title">Panel de Administración</h2>
         
+        {/* Tabs */}
         <div className="admin-tabs">
           <button 
-            className={`admin-tab ${activeTab === 'content' ? 'active' : ''}`}
-            onClick={() => setActiveTab('content')}
+            className={`admin-tab ${activeTab === 'moderation' ? 'active' : ''}`}
+            onClick={() => setActiveTab('moderation')}
           >
-            Moderación de Contenido
+            <span className="tab-icon">📋</span>
+            Moderación
           </button>
           <button 
             className={`admin-tab ${activeTab === 'materials' ? 'active' : ''}`}
             onClick={() => setActiveTab('materials')}
           >
-            Gestión de Materiales
-          </button>
-          <button 
-            className={`admin-tab ${activeTab === 'centers' ? 'active' : ''}`}
-            onClick={() => setActiveTab('centers')}
-          >
-            Centros de Reciclaje
+            <span className="tab-icon">♻️</span>
+            Materiales
           </button>
           <button 
             className={`admin-tab ${activeTab === 'users' ? 'active' : ''}`}
             onClick={() => setActiveTab('users')}
           >
-            Usuarios y Roles
+            <span className="tab-icon">👥</span>
+            Usuarios
+          </button>
+          <button 
+            className={`admin-tab ${activeTab === 'analytics' ? 'active' : ''}`}
+            onClick={() => setActiveTab('analytics')}
+          >
+            <span className="tab-icon">📊</span>
+            Analíticas
           </button>
         </div>
         
+        {/* Content */}
         <div className="admin-content">
-          {activeTab === 'content' && (
-            <div className="content-moderation">
-              <h3>Contenido Pendiente de Revisión ({pendingContent.length})</h3>
+          {activeTab === 'moderation' && (
+            <div className="moderation-section">
+              <div className="section-header">
+                <h3>Contenido Pendiente de Revisión <span className="badge-count">{pendingItems.length}</span></h3>
+                <p className="section-description">Revisa y aprueba contenido enviado por usuarios y empresas</p>
+              </div>
               
-              {pendingContent.length > 0 ? (
+              <div className="pending-container">
                 <div className="pending-list">
-                  {pendingContent.map(item => (
-                    <div key={item.id} className="pending-item">
+                  {pendingItems.map(item => (
+                    <div 
+                      key={item.id} 
+                      className={`pending-item ${selectedPendingItem?.id === item.id ? 'selected' : ''}`}
+                      onClick={() => setSelectedPendingItem(item)}
+                    >
                       <div className="item-info">
-                        <div className="item-type">{item.type === 'idea' ? '💡' : '📝'}</div>
-                        <div>
+                        <div className="item-type">
+                          {item.type === 'idea' ? '💡' : item.type === 'comment' ? '💬' : '🏭'}
+                        </div>
+                        <div className="item-content">
                           <h4>{item.title}</h4>
-                          <p>Por: {item.user} • {item.date}</p>
+                          <div className="item-meta">
+                            <span className="meta-user">👤 {item.user}</span>
+                            <span className="meta-date">📅 {item.submitted}</span>
+                            <span className={`meta-type ${item.type}`}>
+                              {item.type === 'idea' ? 'Idea' : item.type === 'comment' ? 'Comentario' : 'Centro'}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                      
                       <div className="item-actions">
                         <button 
-                          className="btn btn-secondary"
-                          onClick={() => handleApproveContent(item.id)}
+                          className="btn btn-success"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleApprove(item.id);
+                          }}
                         >
+                          <span className="btn-icon">✓</span>
                           Aprobar
                         </button>
                         <button 
-                          className="btn btn-outline"
-                          onClick={() => handleRejectContent(item.id)}
+                          className="btn btn-danger"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleReject(item.id);
+                          }}
                         >
+                          <span className="btn-icon">✗</span>
                           Rechazar
                         </button>
-                        <button className="btn btn-outline">
-                          Ver detalles
+                        <button 
+                          className="btn btn-outline"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedPendingItem(item);
+                          }}
+                        >
+                          <span className="btn-icon">👁️</span>
+                          Ver
                         </button>
                       </div>
                     </div>
                   ))}
                 </div>
-              ) : (
-                <p className="no-pending">No hay contenido pendiente de revisión.</p>
-              )}
+                
+                {/* Detalles del item seleccionado */}
+                <div className="pending-details">
+                  {selectedPendingItem ? (
+                    <div className="details-card">
+                      <div className="details-header">
+                        <h4>Detalles de revisión</h4>
+                        <span className="item-type-large">
+                          {selectedPendingItem.type === 'idea' ? '💡' : selectedPendingItem.type === 'comment' ? '💬' : '🏭'}
+                        </span>
+                      </div>
+                      <div className="details-content">
+                        <h3>{selectedPendingItem.title}</h3>
+                        <div className="details-meta">
+                          <div className="meta-item">
+                            <span className="meta-label">Usuario:</span>
+                            <span className="meta-value">{selectedPendingItem.user}</span>
+                          </div>
+                          <div className="meta-item">
+                            <span className="meta-label">Fecha:</span>
+                            <span className="meta-value">{selectedPendingItem.submitted}</span>
+                          </div>
+                          <div className="meta-item">
+                            <span className="meta-label">Tipo:</span>
+                            <span className="meta-value">
+                              {selectedPendingItem.type === 'idea' ? 'Idea de Reutilización' : 
+                               selectedPendingItem.type === 'comment' ? 'Comentario' : 'Centro de Reciclaje'}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="details-description">
+                          <h5>Descripción:</h5>
+                          <p>{selectedPendingItem.details}</p>
+                        </div>
+                        <div className="action-history">
+                          <h5>Historial de acciones:</h5>
+                          <ul>
+                            <li>📅 Enviado para revisión: {selectedPendingItem.submitted}</li>
+                            <li>⏳ Estado actual: Pendiente de revisión</li>
+                            <li>👤 Asignado a: Administrador actual</li>
+                          </ul>
+                        </div>
+                        <div className="details-actions">
+                          <button className="btn btn-success">
+                            <span className="btn-icon">✓</span>
+                            Aprobar y publicar
+                          </button>
+                          <button className="btn btn-danger">
+                            <span className="btn-icon">✗</span>
+                            Rechazar con comentarios
+                          </button>
+                          <button className="btn btn-outline">
+                            <span className="btn-icon">💾</span>
+                            Guardar borrador
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="no-selection">
+                      <div className="no-selection-icon">👈</div>
+                      <h4>Selecciona un elemento</h4>
+                      <p>Haz clic en cualquier elemento de la lista para ver sus detalles y tomar acciones</p>
+                    </div>
+                  )}
+                </div>
+              </div>
               
               <div className="moderation-stats">
                 <div className="stat">
-                  <h4>Total moderado</h4>
-                  <p>156 publicaciones</p>
+                  <h4>Total pendientes</h4>
+                  <p>{pendingItems.length}</p>
                 </div>
                 <div className="stat">
-                  <h4>Aprobadas</h4>
-                  <p>142 (91%)</p>
+                  <h4>Aprobados hoy</h4>
+                  <p>8</p>
                 </div>
                 <div className="stat">
-                  <h4>Rechazadas</h4>
-                  <p>14 (9%)</p>
+                  <h4>Tiempo promedio</h4>
+                  <p>2.4h</p>
+                </div>
+                <div className="stat">
+                  <h4>Ratio aprobación</h4>
+                  <p>85%</p>
                 </div>
               </div>
             </div>
           )}
           
           {activeTab === 'materials' && (
-            <div className="materials-management">
-              <h3>Gestión de Categorías de Materiales</h3>
+            <div className="materials-section">
+              <div className="section-header">
+                <h3>Gestión de Materiales Reciclables</h3>
+                <p className="section-description">Administra los materiales que pueden ser reciclados en la plataforma</p>
+              </div>
               
               <div className="add-material">
-                <h4>Agregar nuevo material</h4>
+                <h4>{editingMaterial ? `Editando: ${editingMaterial.name}` : 'Agregar nuevo material'}</h4>
                 <div className="form-row">
                   <div className="form-group">
-                    <input
-                      type="text"
-                      className="form-input"
-                      placeholder="Nombre del material"
-                      value={newMaterial.name}
-                      onChange={(e) => setNewMaterial({...newMaterial, name: e.target.value})}
-                    />
+                    <input type="text" className="form-input" placeholder="Nombre del material" />
                   </div>
-                  
                   <div className="form-group">
-                    <select
-                      className="form-select"
-                      value={newMaterial.category}
-                      onChange={(e) => setNewMaterial({...newMaterial, category: e.target.value})}
-                    >
-                      <option value="">Seleccionar categoría</option>
-                      <option value="Plástico">Plástico</option>
-                      <option value="Vidrio">Vidrio</option>
-                      <option value="Metales">Metales</option>
-                      <option value="Papel">Papel</option>
-                      <option value="Electrónicos">Electrónicos</option>
-                      <option value="Orgánicos">Orgánicos</option>
-                      <option value="Textiles">Textiles</option>
+                    <select className="form-select">
+                      <option>Categoría</option>
+                      <option>Plástico</option>
+                      <option>Vidrio</option>
+                      <option>Metales</option>
+                      <option>Papel</option>
+                      <option>Electrónicos</option>
                     </select>
                   </div>
+                  <div className="form-group">
+                    <input type="text" className="form-input" placeholder="Código de reciclaje" />
+                  </div>
                 </div>
-                
-                <div className="form-group">
-                  <textarea
-                    className="form-textarea"
-                    placeholder="Descripción del material"
-                    value={newMaterial.description}
-                    onChange={(e) => setNewMaterial({...newMaterial, description: e.target.value})}
-                  />
+                <div className="form-actions">
+                  <button className="btn btn-primary">
+                    <span className="btn-icon">💾</span>
+                    {editingMaterial ? 'Actualizar material' : 'Agregar material'}
+                  </button>
+                  {editingMaterial && (
+                    <button 
+                      className="btn btn-outline"
+                      onClick={() => setEditingMaterial(null)}
+                    >
+                      <span className="btn-icon">↶</span>
+                      Cancelar edición
+                    </button>
+                  )}
                 </div>
-                
-                <button className="btn btn-primary" onClick={handleAddMaterial}>
-                  Agregar material
-                </button>
               </div>
               
               <div className="materials-list">
@@ -193,7 +322,7 @@ const AdminPanel = () => {
                     <tr>
                       <th>Nombre</th>
                       <th>Categoría</th>
-                      <th>Descripción</th>
+                      <th>Código</th>
                       <th>Estado</th>
                       <th>Acciones</th>
                     </tr>
@@ -201,17 +330,52 @@ const AdminPanel = () => {
                   <tbody>
                     {materials.map(material => (
                       <tr key={material.id}>
-                        <td>{material.name}</td>
-                        <td>{material.category}</td>
-                        <td>{material.description}</td>
+                        <td>
+                          <div className="material-info">
+                            <span className="material-icon">
+                              {material.category === 'Plástico' ? '🥤' : 
+                               material.category === 'Vidrio' ? '🍶' : 
+                               material.category === 'Metales' ? '🔩' : '📄'}
+                            </span>
+                            {material.name}
+                          </div>
+                        </td>
+                        <td>
+                          <span className="material-category">
+                            {material.category}
+                          </span>
+                        </td>
+                        <td>
+                          <code className="recycling-code">{material.recyclingCode}</code>
+                        </td>
                         <td>
                           <span className={`status-badge ${material.status}`}>
                             {material.status === 'active' ? 'Activo' : 'Inactivo'}
                           </span>
                         </td>
                         <td>
-                          <button className="action-btn">✏️ Editar</button>
-                          <button className="action-btn">🗑️ Eliminar</button>
+                          <div className="action-buttons">
+                            <button 
+                              className="btn-action edit"
+                              onClick={() => handleEditMaterial(material)}
+                              title="Editar"
+                            >
+                              Editar
+                            </button>
+                            <button 
+                              className="btn-action delete"
+                              onClick={() => handleDeleteMaterial(material.id)}
+                              title="Eliminar"
+                            >
+                              Eliminar
+                            </button>
+                            <button 
+                              className={`btn-action toggle ${material.status}`}
+                              title={material.status === 'active' ? 'Desactivar' : 'Activar'}
+                            >
+                              {material.status === 'active' ? 'Desactivar' : 'Activar'}
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -221,57 +385,31 @@ const AdminPanel = () => {
             </div>
           )}
           
-          {activeTab === 'centers' && (
-            <div className="centers-management">
-              <h3>Gestión de Centros de Reciclaje</h3>
-              
-              <div className="centers-status">
-                {centers.map(center => (
-                  <div key={center.id} className="center-status-card">
-                    <div className="center-status-header">
-                      <h4>{center.name}</h4>
-                      {center.pendingChanges && <span className="pending-badge">⚠️ Cambios pendientes</span>}
-                    </div>
-                    <div className="center-status-info">
-                      <p>ID: {center.id}</p>
-                      <p>Estado: <span className={`status ${center.status}`}>{center.status}</span></p>
-                    </div>
-                    <div className="center-actions">
-                      <button className="btn btn-secondary">Ver detalles</button>
-                      <button className="btn btn-outline">Editar</button>
-                      {center.status === 'active' ? (
-                        <button className="btn btn-outline">Desactivar</button>
-                      ) : (
-                        <button className="btn btn-primary">Activar</button>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-              
-              <div className="add-center-section">
-                <button className="btn btn-primary">
-                  + Agregar nuevo centro
-                </button>
-              </div>
-            </div>
-          )}
-          
           {activeTab === 'users' && (
-            <div className="users-management">
-              <h3>Gestión de Usuarios y Roles</h3>
+            <div className="users-section">
+              <div className="section-header">
+                <h3>Usuarios y Roles</h3>
+                <p className="section-description">Administra usuarios, empresas y permisos del sistema</p>
+              </div>
               
               <div className="search-users">
-                <input
-                  type="text"
-                  className="form-input"
-                  placeholder="Buscar usuario por nombre o email"
+                <input 
+                  type="text" 
+                  className="form-input" 
+                  placeholder="Buscar usuarios por nombre, email o rol..."
                 />
-                <button className="btn btn-secondary">Buscar</button>
+                <button className="btn btn-outline">
+                  <span className="btn-icon">🔍</span>
+                  Buscar
+                </button>
+                <button className="btn btn-primary">
+                  <span className="btn-icon">➕</span>
+                  Nuevo usuario
+                </button>
               </div>
               
-              <div className="users-table">
-                <table>
+              <div className="users-table-container">
+                <table className="users-table">
                   <thead>
                     <tr>
                       <th>Usuario</th>
@@ -283,32 +421,56 @@ const AdminPanel = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>María Pérez</td>
-                      <td>maria@email.com</td>
-                      <td>
-                        <select className="role-select">
-                          <option>Usuario General</option>
-                          <option>Empresa Recicladora</option>
-                          <option>Administrador</option>
-                        </select>
-                      </td>
-                      <td>2025-11-15</td>
-                      <td><span className="status active">Activo</span></td>
-                      <td>
-                        <button className="action-btn">Editar</button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>EcoCentro CR</td>
-                      <td>info@ecocentro.com</td>
-                      <td>Empresa Recicladora</td>
-                      <td>2025-11-10</td>
-                      <td><span className="status active">Activo</span></td>
-                      <td>
-                        <button className="action-btn">Editar</button>
-                      </td>
-                    </tr>
+                    {users.map(user => (
+                      <tr key={user.id}>
+                        <td>
+                          <div className="user-info">
+                            <div className="user-avatar">
+                              {user.name.charAt(0)}
+                            </div>
+                            <div>
+                              <strong>{user.name}</strong>
+                              <div className="user-id">ID: {user.id}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td>{user.email}</td>
+                        <td>
+                          <span className={`role-badge ${user.role}`}>
+                            {user.role === 'admin' ? 'Administrador' : 
+                             user.role === 'company' ? 'Empresa' : 'Usuario'}
+                          </span>
+                        </td>
+                        <td>{user.joinDate}</td>
+                        <td>
+                          <span className="status-badge active">
+                            Activo
+                          </span>
+                        </td>
+                        <td>
+                          <div className="action-buttons">
+                            <button 
+                              className="btn-action edit"
+                              title="Editar usuario"
+                            >
+                              Editar
+                            </button>
+                            <button 
+                              className="btn-action role"
+                              title="Cambiar rol"
+                            >
+                              Rol
+                            </button>
+                            <button 
+                              className="btn-action delete"
+                              title="Eliminar usuario"
+                            >
+                              Eliminar
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
@@ -316,19 +478,60 @@ const AdminPanel = () => {
               <div className="role-stats">
                 <div className="stat">
                   <h4>Usuarios totales</h4>
-                  <p>456</p>
+                  <p>{roleStats.total}</p>
                 </div>
                 <div className="stat">
                   <h4>Usuarios generales</h4>
-                  <p>420</p>
+                  <p>{roleStats.users}</p>
                 </div>
                 <div className="stat">
                   <h4>Empresas</h4>
-                  <p>25</p>
+                  <p>{roleStats.companies}</p>
                 </div>
                 <div className="stat">
                   <h4>Administradores</h4>
-                  <p>3</p>
+                  <p>{roleStats.admins}</p>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {activeTab === 'analytics' && (
+            <div className="analytics-section">
+              <div className="section-header">
+                <h3>Analíticas del Sistema</h3>
+                <p className="section-description">Métricas y estadísticas de uso de la plataforma</p>
+              </div>
+              
+              <div className="analytics-grid">
+                <div className="analytic-card large">
+                  <h4>📈 Actividad de usuarios</h4>
+                  <div className="analytic-value">1,240</div>
+                  <div className="analytic-label">Visitas hoy (+12%)</div>
+                  <div className="analytic-chart">
+                    <div className="chart-bar" style={{height: '80%'}}></div>
+                    <div className="chart-bar" style={{height: '60%'}}></div>
+                    <div className="chart-bar" style={{height: '90%'}}></div>
+                    <div className="chart-bar" style={{height: '70%'}}></div>
+                  </div>
+                </div>
+                
+                <div className="analytic-card">
+                  <h4>♻️ Materiales registrados</h4>
+                  <div className="analytic-value">24</div>
+                  <div className="analytic-label">Tipos diferentes</div>
+                </div>
+                
+                <div className="analytic-card">
+                  <h4>🏭 Centros activos</h4>
+                  <div className="analytic-value">156</div>
+                  <div className="analytic-label">+8 este mes</div>
+                </div>
+                
+                <div className="analytic-card">
+                  <h4>💡 Ideas publicadas</h4>
+                  <div className="analytic-value">89</div>
+                  <div className="analytic-label">+15 esta semana</div>
                 </div>
               </div>
             </div>
