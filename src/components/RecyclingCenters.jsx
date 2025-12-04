@@ -1,5 +1,5 @@
 // components/RecyclingCenters.jsx
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   FaSearch, 
   FaFilter, 
@@ -9,7 +9,8 @@ import {
   FaClock, 
   FaRecycle,
   FaDirections,
-  FaLocationArrow
+  FaLocationArrow,
+  FaExternalLinkAlt
 } from 'react-icons/fa';
 import { IoMdClose } from 'react-icons/io';
 import './RecyclingCenters.css';
@@ -20,15 +21,9 @@ const RecyclingCenters = () => {
   const [selectedCenter, setSelectedCenter] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
-  const [map, setMap] = useState(null);
-  const [markers, setMarkers] = useState([]);
-  const [userMarker, setUserMarker] = useState(null);
-  const [directionsRenderer, setDirectionsRenderer] = useState(null);
   const [directions, setDirections] = useState(null);
-  const [travelMode, setTravelMode] = useState('DRIVING');
-  const [isMapLoaded, setIsMapLoaded] = useState(false);
-  const mapRef = useRef(null);
-  const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY || 'AIzaSyDB5KtINM3A1lJzFxnW5xIJm7l-F31EJjM'; // Usar variable de entorno
+  const [travelMode, setTravelMode] = useState('driving');
+  const [mapType, setMapType] = useState('roadmap'); // roadmap o satellite
 
   const centers = [
     { 
@@ -87,163 +82,8 @@ const RecyclingCenters = () => {
     ? centers 
     : centers.filter(center => center.materials.includes(selectedMaterialFilter));
 
-  // Cargar Google Maps API
-  useEffect(() => {
-    if (!window.google) {
-      const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places,geometry`;
-      script.async = true;
-      script.defer = true;
-      script.onload = () => {
-        console.log('Google Maps API cargada');
-        setIsMapLoaded(true);
-      };
-      script.onerror = () => {
-        console.error('Error cargando Google Maps API');
-        setIsMapLoaded(false);
-      };
-      document.head.appendChild(script);
-
-      return () => {
-        if (script.parentNode) {
-          script.parentNode.removeChild(script);
-        }
-      };
-    } else {
-      setIsMapLoaded(true);
-    }
-  }, [GOOGLE_MAPS_API_KEY]);
-
-  // Inicializar mapa cuando la API está cargada
-  useEffect(() => {
-    if (isMapLoaded && window.google && mapRef.current && !map) {
-      console.log('Inicializando mapa...');
-      
-      const mapOptions = {
-        center: { lat: 10.3157, lng: -84.4281 },
-        zoom: 12,
-        mapTypeControl: true,
-        streetViewControl: false,
-        fullscreenControl: true,
-        zoomControl: true,
-        styles: [
-          {
-            featureType: "poi",
-            elementType: "labels",
-            stylers: [{ visibility: "off" }]
-          },
-          {
-            featureType: "transit",
-            elementType: "labels",
-            stylers: [{ visibility: "off" }]
-          }
-        ]
-      };
-      
-      try {
-        const newMap = new window.google.maps.Map(mapRef.current, mapOptions);
-        setMap(newMap);
-        console.log('Mapa inicializado correctamente');
-        
-        // Crear renderizador de direcciones
-        const newDirectionsRenderer = new window.google.maps.DirectionsRenderer({
-          map: newMap,
-          suppressMarkers: true,
-          polylineOptions: {
-            strokeColor: '#3B82F6',
-            strokeOpacity: 0.8,
-            strokeWeight: 5
-          }
-        });
-        setDirectionsRenderer(newDirectionsRenderer);
-        
-        // Agregar marcadores iniciales
-        addMarkersToMap(newMap);
-        
-      } catch (error) {
-        console.error('Error inicializando mapa:', error);
-      }
-    }
-  }, [isMapLoaded, map]);
-
-  // Agregar marcadores al mapa
-  const addMarkersToMap = (mapInstance) => {
-    if (!mapInstance || !window.google) return;
-    
-    // Limpiar marcadores anteriores
-    markers.forEach(marker => {
-      if (marker) marker.setMap(null);
-    });
-    
-    const newMarkers = centers.map(center => {
-      const marker = new window.google.maps.Marker({
-        position: center.coordinates,
-        map: mapInstance,
-        title: center.name,
-        icon: {
-          url: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
-          scaledSize: new window.google.maps.Size(40, 40)
-        },
-        animation: window.google.maps.Animation.DROP
-      });
-      
-      const infoWindow = new window.google.maps.InfoWindow({
-        content: `
-          <div style="padding: 10px; min-width: 250px;">
-            <h3 style="margin: 0 0 5px 0; color: #1E293B; font-size: 16px;">${center.name}</h3>
-            <p style="margin: 0 0 5px 0; color: #64748B; font-size: 14px;">
-              <span style="color: #10B981;">📍</span> ${center.address}
-            </p>
-            <p style="margin: 0 0 5px 0; color: #64748B; font-size: 14px;">
-              <span style="color: #F59E0B;">🕒</span> ${center.hours}
-            </p>
-            <div style="margin-top: 8px;">
-              ${center.materials.map(mat => 
-                `<span style="background: #EFF6FF; color: #3B82F6; padding: 4px 10px; border-radius: 12px; margin-right: 4px; margin-bottom: 4px; font-size: 12px; display: inline-block;">${mat}</span>`
-              ).join('')}
-            </div>
-            <div style="margin-top: 10px; display: flex; gap: 8px;">
-              <span style="background: #FEF3C7; color: #92400E; padding: 4px 8px; border-radius: 8px; font-size: 12px;">
-                ⭐ ${center.rating} (${center.reviews})
-              </span>
-            </div>
-          </div>
-        `
-      });
-      
-      marker.addListener('click', () => {
-        setSelectedCenter(center);
-        infoWindow.open(mapInstance, marker);
-        mapInstance.panTo(center.coordinates);
-        mapInstance.setZoom(15);
-      });
-      
-      return marker;
-    });
-    
-    setMarkers(newMarkers);
-  };
-
-  // Actualizar marcadores cuando se filtran los centros
-  useEffect(() => {
-    if (map && markers.length > 0) {
-      markers.forEach(marker => {
-        const centerId = parseInt(marker.getTitle()?.match(/\d+/)?.[0]) || marker.getTitle();
-        const isVisible = filteredCenters.some(center => 
-          center.id === centerId || center.name === marker.getTitle()
-        );
-        marker.setVisible(isVisible);
-      });
-    }
-  }, [filteredCenters, map, markers]);
-
   // Obtener ubicación del usuario
   const getUserLocation = () => {
-    if (!isMapLoaded || !window.google) {
-      alert('Google Maps aún no está cargado. Por favor espera unos segundos.');
-      return;
-    }
-
     if (navigator.geolocation) {
       setIsLoadingLocation(true);
       navigator.geolocation.getCurrentPosition(
@@ -254,41 +94,14 @@ const RecyclingCenters = () => {
           };
           setUserLocation(userPos);
           
-          // Actualizar campo de ubicación usando geocoding
-          const geocoder = new window.google.maps.Geocoder();
-          geocoder.geocode({ location: userPos }, (results, status) => {
-            if (status === window.google.maps.GeocoderStatus.OK && results[0]) {
-              setLocation(results[0].formatted_address);
-            } else {
-              setLocation(`Lat: ${userPos.lat.toFixed(6)}, Lng: ${userPos.lng.toFixed(6)}`);
-            }
-          });
-          
-          // Agregar marcador del usuario
-          if (map) {
-            if (userMarker) {
-              userMarker.setMap(null);
-            }
-            
-            const newUserMarker = new window.google.maps.Marker({
-              position: userPos,
-              map: map,
-              title: 'Tu ubicación',
-              icon: {
-                url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-                scaledSize: new window.google.maps.Size(50, 50)
-              },
-              animation: window.google.maps.Animation.BOUNCE
-            });
-            
-            setUserMarker(newUserMarker);
-            
-            // Centrar mapa en la ubicación del usuario
-            map.panTo(userPos);
-            map.setZoom(14);
-          }
+          // Simular geocoding inverso
+          const address = `Lat: ${userPos.lat.toFixed(6)}, Lng: ${userPos.lng.toFixed(6)}`;
+          setLocation(address);
           
           setIsLoadingLocation(false);
+          
+          // Mostrar mensaje de éxito
+          alert('Ubicación obtenida correctamente. Puedes calcular rutas a los centros.');
         },
         (error) => {
           console.error('Error obteniendo ubicación:', error);
@@ -320,13 +133,8 @@ const RecyclingCenters = () => {
     }
   };
 
-  // Calcular ruta
+  // Calcular distancia aproximada (simulada)
   const calculateRoute = () => {
-    if (!isMapLoaded || !window.google) {
-      alert('Google Maps aún no está cargado. Por favor espera unos segundos.');
-      return;
-    }
-
     if (!userLocation) {
       alert('Primero obtén tu ubicación usando el botón "Usar ubicación"');
       return;
@@ -337,113 +145,137 @@ const RecyclingCenters = () => {
       return;
     }
 
-    if (!directionsRenderer) {
-      alert('El renderizador de rutas no está disponible');
-      return;
+    // Simular cálculo de distancia (Haversine formula simplificada)
+    const R = 6371; // Radio de la Tierra en km
+    const dLat = (selectedCenter.coordinates.lat - userLocation.lat) * Math.PI / 180;
+    const dLon = (selectedCenter.coordinates.lng - userLocation.lng) * Math.PI / 180;
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(userLocation.lat * Math.PI / 180) * Math.cos(selectedCenter.coordinates.lat * Math.PI / 180) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const distance = R * c;
+
+    // Tiempo estimado basado en modo de transporte
+    let duration;
+    let speed;
+    switch(travelMode) {
+      case 'driving':
+        speed = 50; // km/h promedio
+        duration = (distance / speed) * 60; // minutos
+        break;
+      case 'walking':
+        speed = 5; // km/h caminando
+        duration = (distance / speed) * 60;
+        break;
+      case 'bicycling':
+        speed = 15; // km/h en bicicleta
+        duration = (distance / speed) * 60;
+        break;
+      default:
+        speed = 30;
+        duration = (distance / speed) * 60;
     }
 
-    const directionsService = new window.google.maps.DirectionsService();
-    
-    directionsService.route(
-      {
-        origin: userLocation,
-        destination: selectedCenter.coordinates,
-        travelMode: window.google.maps.TravelMode[travelMode],
-        unitSystem: window.google.maps.UnitSystem.METRIC,
-        language: 'es'
-      },
-      (result, status) => {
-        if (status === window.google.maps.DirectionsStatus.OK) {
-          directionsRenderer.setDirections(result);
-          setDirections(result);
-          
-          // Ajustar el mapa para mostrar toda la ruta
-          const bounds = new window.google.maps.LatLngBounds();
-          bounds.extend(userLocation);
-          bounds.extend(selectedCenter.coordinates);
-          map.fitBounds(bounds);
-          
-        } else {
-          console.error('Error calculando ruta:', status);
-          let errorMsg = 'No se pudo calcular la ruta. ';
-          switch(status) {
-            case 'ZERO_RESULTS':
-              errorMsg += 'No se encontró una ruta entre los puntos especificados.';
-              break;
-            case 'OVER_QUERY_LIMIT':
-              errorMsg += 'Se ha excedido el límite de consultas. Intenta más tarde.';
-              break;
-            case 'REQUEST_DENIED':
-              errorMsg += 'La solicitud fue denegada. Verifica tu API key.';
-              break;
-            case 'INVALID_REQUEST':
-              errorMsg += 'La solicitud es inválida.';
-              break;
-            default:
-              errorMsg += 'Error desconocido.';
-          }
-          alert(errorMsg);
-        }
-      }
-    );
+    setDirections({
+      distance: `${distance.toFixed(1)} km`,
+      duration: `${Math.round(duration)} min`,
+      mode: travelMode
+    });
   };
 
   // Limpiar ruta
   const clearRoute = () => {
-    if (directionsRenderer) {
-      directionsRenderer.setDirections({ routes: [] });
-      setDirections(null);
-      if (selectedCenter && map) {
-        map.panTo(selectedCenter.coordinates);
-        map.setZoom(15);
-      }
+    setDirections(null);
+  };
+
+  // Abrir en Google Maps
+  const openInGoogleMaps = () => {
+    if (selectedCenter) {
+      const { lat, lng } = selectedCenter.coordinates;
+      window.open(`https://www.google.com/maps?q=${lat},${lng}&z=15`, '_blank');
     }
+  };
+
+  // Obtener URL del mapa embebido
+  const getMapEmbedUrl = (center) => {
+    if (!center) return '';
+    const { lat, lng } = center.coordinates;
+    return `https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed&t=${mapType}`;
+  };
+
+  // Obtener URL para navegación
+  const getNavigationUrl = () => {
+    if (!userLocation || !selectedCenter) return '#';
+    const { lat: destLat, lng: destLng } = selectedCenter.coordinates;
+    return `https://www.google.com/maps/dir/${userLocation.lat},${userLocation.lng}/${destLat},${destLng}/`;
   };
 
   // Manejar clic en un centro
   const handleCenterClick = (center) => {
     setSelectedCenter(center);
-    if (map) {
-      map.panTo(center.coordinates);
-      map.setZoom(15);
-    }
+    setDirections(null); // Limpiar ruta anterior
   };
 
   // Renderizar contenido del mapa
   const renderMapContent = () => {
-    if (!isMapLoaded) {
+    if (!selectedCenter) {
       return (
         <div className="map-loading">
-          <div className="spinner"></div>
-          <p>Cargando mapa...</p>
-          <p className="map-note">Si el mapa no carga, verifica tu conexión y API key</p>
+          <FaMapMarkerAlt className="empty-icon" style={{ fontSize: '3rem' }} />
+          <p>Selecciona un centro para ver el mapa</p>
         </div>
       );
     }
 
     return (
       <div className="map-wrapper">
-        <div ref={mapRef} className="google-map"></div>
+        <div className="map-embed">
+          <iframe
+            title={`Mapa de ${selectedCenter.name}`}
+            width="100%"
+            height="400"
+            loading="lazy"
+            style={{ border: 0, borderRadius: "var(--radius-lg)" }}
+            allowFullScreen
+            src={getMapEmbedUrl(selectedCenter)}
+          ></iframe>
+        </div>
         <div className="map-controls">
-          <button 
-            className="btn btn-sm btn-secondary"
-            onClick={() => map && map.setZoom(map.getZoom() + 1)}
-          >
-            +
-          </button>
-          <button 
-            className="btn btn-sm btn-secondary"
-            onClick={() => map && map.setZoom(map.getZoom() - 1)}
-          >
-            -
-          </button>
-          <button 
-            className="btn btn-sm btn-primary"
-            onClick={getUserLocation}
-          >
-            <FaLocationArrow />
-            Mi ubicación
-          </button>
+          <div className="map-type-buttons">
+            <button
+              className={`btn btn-sm ${mapType === 'roadmap' ? 'btn-primary' : 'btn-secondary'}`}
+              onClick={() => setMapType('roadmap')}
+            >
+              Mapa
+            </button>
+            <button
+              className={`btn btn-sm ${mapType === 'satellite' ? 'btn-primary' : 'btn-secondary'}`}
+              onClick={() => setMapType('satellite')}
+            >
+              Satélite
+            </button>
+          </div>
+          <div className="map-actions">
+            <button 
+              className="btn btn-sm btn-primary"
+              onClick={openInGoogleMaps}
+            >
+              <FaExternalLinkAlt />
+              Abrir en Maps
+            </button>
+            {userLocation && selectedCenter && (
+              <a
+                href={getNavigationUrl()}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-sm btn-success"
+              >
+                <FaDirections />
+                Cómo llegar
+              </a>
+            )}
+          </div>
         </div>
       </div>
     );
@@ -458,7 +290,9 @@ const RecyclingCenters = () => {
             <span>Centros de Reciclaje Cercanos</span>
           </div>
           <p className="card-subtitle">
-            Encuentra el centro más cercano para reciclar tus materiales de manera responsable
+            Encuentra el centro más cercano para reciclar tus materiales de manera responsable.
+            <br />
+            <small>Los mapas se muestran usando Google Maps embebido</small>
           </p>
         </div>
         
@@ -536,7 +370,11 @@ const RecyclingCenters = () => {
               <div className="list-actions">
                 <button 
                   className="btn btn-sm btn-secondary"
-                  onClick={() => setSelectedMaterialFilter('')}
+                  onClick={() => {
+                    setSelectedMaterialFilter('');
+                    setSelectedCenter(null);
+                    clearRoute();
+                  }}
                 >
                   <IoMdClose />
                   Limpiar filtros
@@ -685,16 +523,16 @@ const RecyclingCenters = () => {
                   
                   <div className="route-actions">
                     <div className="travel-mode-selector">
-                      <label>Modo de viaje:</label>
+                      <label>Modo de viaje para cálculo:</label>
                       <div className="mode-buttons">
-                        {['DRIVING', 'WALKING', 'BICYCLING'].map(mode => (
+                        {['driving', 'walking', 'bicycling'].map(mode => (
                           <button
                             key={mode}
                             className={`mode-btn ${travelMode === mode ? 'active' : ''}`}
                             onClick={() => setTravelMode(mode)}
                           >
-                            {mode === 'DRIVING' ? '🚗 Conducir' :
-                             mode === 'WALKING' ? '🚶‍♂️ Caminar' :
+                            {mode === 'driving' ? '🚗 Conducir' :
+                             mode === 'walking' ? '🚶‍♂️ Caminar' :
                              '🚴‍♂️ Bicicleta'}
                           </button>
                         ))}
@@ -708,23 +546,37 @@ const RecyclingCenters = () => {
                         disabled={!userLocation}
                       >
                         <FaDirections />
-                        {directions ? 'Actualizar ruta' : 'Calcular ruta'}
+                        {directions ? 'Actualizar cálculo' : 'Calcular ruta aprox.'}
                       </button>
+                      {userLocation && selectedCenter && (
+                        <a
+                          href={getNavigationUrl()}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn btn-success"
+                        >
+                          <FaExternalLinkAlt />
+                          Navegación en Maps
+                        </a>
+                      )}
                       <button className="btn btn-secondary">
                         <FaPhone />
                         Contactar
                       </button>
                     </div>
                     
-                    {directions && directions.routes[0] && (
+                    {directions && (
                       <div className="route-info">
                         <div className="route-summary">
-                          <p><strong>Distancia:</strong> {directions.routes[0].legs[0].distance.text}</p>
-                          <p><strong>Tiempo estimado:</strong> {directions.routes[0].legs[0].duration.text}</p>
-                          <p><strong>Modo:</strong> {travelMode === 'DRIVING' ? 'Conducir' : 
-                                                     travelMode === 'WALKING' ? 'Caminar' : 
+                          <p><strong>Distancia aproximada:</strong> {directions.distance}</p>
+                          <p><strong>Tiempo estimado:</strong> {directions.duration}</p>
+                          <p><strong>Modo:</strong> {travelMode === 'driving' ? 'Conducir' : 
+                                                     travelMode === 'walking' ? 'Caminar' : 
                                                      'Bicicleta'}</p>
                         </div>
+                        <p className="map-note" style={{ marginTop: '0.5rem', fontSize: '0.8rem' }}>
+                          * Para navegación precisa, usa el botón "Navegación en Maps"
+                        </p>
                       </div>
                     )}
                   </div>
@@ -743,7 +595,7 @@ const RecyclingCenters = () => {
                     <div className="tips">
                       <div className="tip">
                         <FaMapMarkerAlt />
-                        <span>Usa tu ubicación para encontrar centros cercanos</span>
+                        <span>Usa tu ubicación para calcular distancias</span>
                       </div>
                       <div className="tip">
                         <FaFilter />
@@ -751,7 +603,7 @@ const RecyclingCenters = () => {
                       </div>
                       <div className="tip">
                         <FaDirections />
-                        <span>Calcula rutas en tiempo real</span>
+                        <span>Calcula rutas aproximadas y abre navegación en Google Maps</span>
                       </div>
                     </div>
                   </div>
