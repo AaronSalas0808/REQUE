@@ -605,6 +605,27 @@
   justify-content: center;
 }
 
+.btn-success {
+  background: linear-gradient(135deg, #3B82F6, #2563EB); /* Azul */
+  color: white;
+  border: none;
+  border-radius: var(--radius-lg);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-success:hover {
+  background: linear-gradient(135deg, #0dac32cb, #0dac32cb); /* Azul más oscuro */
+  transform: translateY(-2px);
+  opacity: 1 !important; /* Evita que se ponga transparente */
+}
+
+.btn-success:active {
+  opacity: 1 !important; /* Evita transparencia al presionar */
+  transform: translateY(0); /* Efecto de "presionado" más sutil */
+}
+
 /* Map Container */
 .map-container {
   margin-top: auto;
@@ -645,16 +666,9 @@
 /* Map Controls */
 .map-controls {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   margin-top: 1rem;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.map-type-buttons {
-  display: flex;
-  gap: 0.5rem;
 }
 
 .map-actions {
@@ -668,21 +682,6 @@
   gap: 0.5rem;
   padding: 0.5rem 1rem;
   font-size: 0.9rem;
-}
-
-.btn-success {
-  background: linear-gradient(135deg, var(--success-500), var(--success-600));
-  color: white;
-  border: none;
-  border-radius: var(--radius-lg);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-}
-
-.btn-success:hover {
-  background: linear-gradient(135deg, var(--success-600), var(--success-700));
-  transform: translateY(-2px);
 }
 
 /* Map Loading State */
@@ -914,7 +913,7 @@
     align-items: stretch;
   }
   
-  .map-type-buttons, .map-actions {
+  .map-actions {
     justify-content: center;
     width: 100%;
   }

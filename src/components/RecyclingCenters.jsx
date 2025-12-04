@@ -263,17 +263,6 @@ const RecyclingCenters = () => {
     return `https://www.google.com/maps/dir/?api=1&origin=${userLocation.lat},${userLocation.lng}&destination=${destLat},${destLng}&travelmode=${travelMode}&hl=es`;
   };
 
-  // Simular ubicación en el Parque Central de Ciudad Quesada para pruebas
-  const simulateCiudadQuesadaLocation = () => {
-    const parqueCentralQuesada = {
-      lat: 10.321944, // Parque Central de Ciudad Quesada
-      lng: -84.426389
-    };
-    setUserLocation(parqueCentralQuesada);
-    setLocation('Ubicación simulada: Parque Central de Ciudad Quesada');
-    alert('Ubicación simulada en el Parque Central de Ciudad Quesada. Ahora puedes calcular rutas.');
-  };
-
   // Manejar clic en un centro
   const handleCenterClick = (center) => {
     setSelectedCenter(center);
@@ -308,18 +297,8 @@ const RecyclingCenters = () => {
         </div>
         <div className="map-controls">
           <div className="map-type-buttons">
-            <button
-              className={`btn btn-sm ${mapType === 'roadmap' ? 'btn-primary' : 'btn-secondary'}`}
-              onClick={() => setMapType('roadmap')}
-            >
-              Mapa
-            </button>
-            <button
-              className={`btn btn-sm ${mapType === 'satellite' ? 'btn-primary' : 'btn-secondary'}`}
-              onClick={() => setMapType('satellite')}
-            >
-              Satélite
-            </button>
+           
+           
           </div>
           <div className="map-actions">
             <button 
@@ -376,7 +355,7 @@ const RecyclingCenters = () => {
                   <input
                     type="text"
                     className="form-input"
-                    placeholder="Usa ubicación real o simula ubicación en Ciudad Quesada"
+                    placeholder="Obtén tu ubicación para calcular rutas"
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
                   />
@@ -399,16 +378,10 @@ const RecyclingCenters = () => {
                       </>
                     )}
                   </button>
-                  <button 
-                    className="btn btn-outline"
-                    onClick={simulateCiudadQuesadaLocation}
-                  >
-                    📍 Simular en Ciudad Quesada
-                  </button>
                 </div>
               </div>
               <p className="location-hint">
-                <small>Para pruebas, usa "Simular en Ciudad Quesada" para calcular rutas desde el Parque Central</small>
+                <small>Activa tu GPS para obtener ubicación precisa y calcular rutas</small>
               </p>
             </div>
             
@@ -714,7 +687,7 @@ const RecyclingCenters = () => {
                     <div className="tips">
                       <div className="tip">
                         <FaMapMarkerAlt />
-                        <span>Usa "Simular en Ciudad Quesada" para pruebas sin GPS</span>
+                        <span>Obtén tu ubicación para calcular rutas precisas</span>
                       </div>
                       <div className="tip">
                         <FaFilter />
