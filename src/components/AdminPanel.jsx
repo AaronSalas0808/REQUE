@@ -1,5 +1,7 @@
 // components/AdminPanel.jsx
 import React, { useState } from 'react';
+// En la parte superior del archivo AdminPanel.jsx
+import './AdminPanel.css';
 
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState('content');

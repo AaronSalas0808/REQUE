@@ -1,6 +1,6 @@
 // components/Login.jsx
 import React, { useState } from 'react';
-
+import './Login.css'; 
 
 const Login = ({ onLogin }) => {
   const [isLogin, setIsLogin] = useState(true);
@@ -66,6 +66,7 @@ const Login = ({ onLogin }) => {
                 value={formData.name}
                 onChange={(e) => setFormData({...formData, name: e.target.value})}
                 required={!isLogin}
+                placeholder="Tu nombre completo"
               />
             </div>
           )}
@@ -78,6 +79,7 @@ const Login = ({ onLogin }) => {
               value={formData.email}
               onChange={(e) => setFormData({...formData, email: e.target.value})}
               required
+              placeholder="ejemplo@correo.com"
             />
           </div>
           
@@ -89,10 +91,11 @@ const Login = ({ onLogin }) => {
               value={formData.password}
               onChange={(e) => setFormData({...formData, password: e.target.value})}
               required
+              placeholder="••••••••"
             />
-            <p className="password-requirements">
-              Mínimo 8 caracteres, incluir mayúscula, minúscula, número y símbolo
-            </p>
+            <div className="password-requirements">
+              <p>Mínimo 8 caracteres, incluir mayúscula, minúscula, número y símbolo</p>
+            </div>
           </div>
           
           {!isLogin && (
@@ -148,8 +151,8 @@ const Login = ({ onLogin }) => {
             </div>
           )}
           
-          <button type="submit" className="btn btn-primary">
-            {isLogin ? 'Iniciar Sesión' : 'Crear Cuenta'}
+          <button type="submit" className="btn btn-primary btn-large">
+            {isLogin ? 'Iniciar Sesión' : '**Crear Cuenta**'}
           </button>
         </form>
         
