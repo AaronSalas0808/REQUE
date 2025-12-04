@@ -1,5 +1,6 @@
 // components/ReuseIdeas.jsx
 import React, { useState } from 'react';
+import './ReuseIdeas.css';
 
 const ReuseIdeas = () => {
   const [ideas, setIdeas] = useState([

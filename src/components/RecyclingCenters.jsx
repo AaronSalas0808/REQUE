@@ -1,5 +1,6 @@
 // components/RecyclingCenters.jsx
 import React, { useState } from 'react';
+import './RecyclingCenters.css';
 
 const RecyclingCenters = () => {
   const [location, setLocation] = useState('');

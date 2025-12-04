@@ -1,5 +1,6 @@
-// components/RecyclingCompanyPanel.jsx
+// components/RecyclingCompany.jsx
 import React, { useState } from 'react';
+import './RecyclingCompany.css';
 
 const RecyclingCompanyPanel = () => {
   const [companyInfo, setCompanyInfo] = useState({

@@ -1,5 +1,6 @@
 // components/Community.jsx
 import React, { useState } from 'react';
+import './Community.css';
 
 const Community = () => {
   const [posts, setPosts] = useState([
