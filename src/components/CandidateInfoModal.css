@@ -1,0 +1,13 @@
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.7); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+.modal-content { background: white; padding: 2rem; border-radius: var(--border-radius); width: 90%; max-width: 800px; position: relative; max-height: 90vh; overflow-y: auto; }
+.close-button { position: absolute; top: 1rem; right: 1rem; background: transparent; border: none; font-size: 1.5rem; cursor: pointer; }
+.candidates-list { margin-top: 1.5rem; }
+.candidate-accordion { border: 1px solid #ddd; border-radius: 8px; margin-bottom: 1rem; overflow: hidden; }
+.accordion-header { background: #f8f9fa; width: 100%; text-align: left; padding: 1rem; border: none; display: flex; align-items: center; gap: 1rem; cursor: pointer; }
+.accordion-logo { width: 50px; height: 50px; object-fit: cover; border-radius: 6px; }
+.accordion-title { flex-grow: 1; }
+.accordion-title h4, .accordion-title p { margin: 0; }
+.accordion-title p { color: #666; font-size: 0.9rem; }
+.accordion-icon { font-size: 1.5rem; font-weight: bold; color: var(--primary-color); }
+.accordion-content { padding: 1.5rem; border-top: 1px solid #ddd; animation: fadeIn 0.5s; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
