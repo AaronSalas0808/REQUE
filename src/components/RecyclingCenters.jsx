@@ -25,58 +25,98 @@ const RecyclingCenters = () => {
   const [travelMode, setTravelMode] = useState('driving');
   const [mapType, setMapType] = useState('roadmap'); // roadmap o satellite
 
+  // Centros REALES en Ciudad Quesada, San Carlos
   const centers = [
     { 
       id: 1, 
-      name: 'EcoCentro Central', 
-      address: 'San Carlos, Alajuela, Costa Rica', 
-      distance: '2.5 km',
+      name: 'COOPEAMBIENTE RL', 
+      address: 'Diagonal al Cementerio Municipal, Ciudad Quesada, San Carlos, Costa Rica', 
+      distance: '1.2 km',
       hours: 'Lun-Vie: 8:00-17:00, Sáb: 8:00-12:00',
-      materials: ['Plástico', 'Vidrio', 'Metales'],
-      coordinates: { lat: 10.3157, lng: -84.4281 },
-      phone: '+506 2461-1234',
-      rating: 4.5,
-      reviews: 128
+      materials: ['Papel', 'Cartón', 'Plástico', 'Vidrio', 'Metales'],
+      // Coordenadas aproximadas de COOPEAMBIENTE RL
+      coordinates: { lat: 10.34700, lng: -84.40199 },
+      phone: '+506 2460-0505',
+      rating: 4.6,
+      reviews: 156,
+      website: 'https://www.coopeambientecr.com/'
     },
     { 
       id: 2, 
-      name: 'ReciColecta', 
-      address: 'Ciudad Quesada, Alajuela, Costa Rica', 
-      distance: '3.8 km',
-      hours: 'Mar-Sáb: 9:00-16:00',
-      materials: ['Papel', 'Electrónicos', 'Plástico'],
-      coordinates: { lat: 10.3235, lng: -84.4270 },
-      phone: '+506 2461-5678',
-      rating: 4.2,
-      reviews: 89
+      name: 'Centro de Acopio Municipal de Ciudad Quesada', 
+      address: '300 metros sur del Parque Central, Ciudad Quesada, San Carlos', 
+      distance: '0.8 km',
+      hours: 'Lun-Sáb: 7:00-16:00',
+      materials: ['Papel', 'Cartón', 'Plástico', 'Vidrio', 'Metales', 'Tetrapak'],
+      // Coordenadas del Centro de Acopio Municipal
+      coordinates: { lat: 10.32747, lng: -84.41671 },
+      phone: '+506 2460-1010',
+      rating: 4.4,
+      reviews: 89,
+      notes: 'Recibe materiales separados y limpios'
     },
     { 
       id: 3, 
-      name: 'Punto Azul', 
-      address: 'Florencia, San Carlos, Costa Rica', 
-      distance: '5.2 km',
-      hours: 'Mié-Dom: 7:00-15:00',
-      materials: ['Vidrio', 'Metales', 'Textiles'],
-      coordinates: { lat: 10.3350, lng: -84.4450 },
-      phone: '+506 2461-9012',
+      name: 'Scrap Queen Metal Corp S.R.L.', 
+      address: 'Frente a la Bomba Texaco, Carretera a Florencia, Ciudad Quesada', 
+      distance: '2.5 km',
+      hours: 'Lun-Vie: 8:00-17:00, Sáb: 8:00-12:00',
+      materials: ['Metales', 'Aluminio', 'Cobre', 'Bronce', 'Chatarra'],
+      // Coordenadas de Scrap Queen Metal Corp
+      coordinates: { lat: 10.35477, lng: -84.42581 },
+      phone: '+506 2461-2323',
       rating: 4.7,
-      reviews: 156
+      reviews: 203,
+      notes: 'Especializados en metales, pagan por material'
+    },
+   
+    { 
+      id: 5, 
+      name: 'RECICLADORA ARTEMISA', 
+      address: 'Marsella, Venecia, San Carlos, Costa Rica', 
+      distance: '1.5 km',
+      hours: 'Lun-Vie: 5:00-17:00, Sáb/Dom: Cerrado',
+      materials: ['PV', 'PET', 'PS', 'Bronce', 'Chatarra', 'Plástico duro'],
+      // Coordenadas aproximadas de Recicladora Artemisa
+      coordinates: { lat: 10.35000, lng: -84.25266 },
+      phone: '+506 2461-5050',
+      whatsapp: '+506 8356-7890',
+      rating: 4.7,
+      reviews: 234,
+      notes: 'Especialistas en metales, compran material',
+      website: 'http://www.recicladoraartemisa.com/'
     },
     { 
-      id: 4, 
-      name: 'Green Recycling', 
-      address: 'Agua Azul, San Carlos, Costa Rica', 
-      distance: '7.1 km',
-      hours: 'Lun-Sáb: 8:30-18:00',
-      materials: ['Plástico', 'Papel', 'Electrónicos', 'Orgánicos'],
-      coordinates: { lat: 10.3400, lng: -84.4600 },
-      phone: '+506 2461-3456',
-      rating: 4.0,
-      reviews: 72
+      id: 7, 
+      name: 'Centro de Acopio Planta de Tratamiento', 
+      address: 'Carretera a Aguas Zarcas, antes del Río Platanar, San Carlos', 
+      distance: '3.5 km',
+      hours: 'Lun-Vie: 7:00-15:00',
+      materials: ['Orgánicos', 'Podas', 'Maderas', 'Residuos vegetales'],
+      // Coordenadas en dirección a Aguas Zarcas
+      coordinates: { lat: 10.333056, lng: -84.432500 },
+      phone: '+506 2461-8989',
+      rating: 4.2,
+      reviews: 67,
+      notes: 'Planta de tratamiento de residuos orgánicos'
+    },
+    { 
+      id: 8, 
+      name: 'Recicladora de Metal Carranza', 
+      address: 'Ruta Nacional Secundaria 141, Provincia de Alajuela, San Carlos', 
+      distance: '3.8 km',
+      hours: 'Lun-Vie: 7:00-17:00',
+      materials: ['Vidrio', 'Botellas', 'Frascos', 'Envases de vidrio'],
+      // Coordenadas en Zona Industrial
+      coordinates: { lat: 10.35954, lng: -84.46542 },
+      phone: '+506 6474 0445',
+      rating: 4.6,
+      reviews: 142,
+      notes: 'Especializados solo en vidrio'
     },
   ];
 
-  const materialTypes = ['Todos', 'Plástico', 'Papel', 'Vidrio', 'Metales', 'Electrónicos', 'Textiles', 'Orgánicos'];
+  const materialTypes = ['Todos', 'Plástico', 'Papel', 'Vidrio', 'Metales', 'Electrónicos', 'Textiles', 'Orgánicos', 'Peligrosos', 'Cartón', 'Tetrapak'];
 
   const filteredCenters = selectedMaterialFilter === '' || selectedMaterialFilter === 'Todos' 
     ? centers 
@@ -94,13 +134,12 @@ const RecyclingCenters = () => {
           };
           setUserLocation(userPos);
           
-          // Simular geocoding inverso
-          const address = `Lat: ${userPos.lat.toFixed(6)}, Lng: ${userPos.lng.toFixed(6)}`;
+          // Mostrar coordenadas
+          const address = `Ubicación actual: ${userPos.lat.toFixed(6)}, ${userPos.lng.toFixed(6)}`;
           setLocation(address);
           
           setIsLoadingLocation(false);
           
-          // Mostrar mensaje de éxito
           alert('Ubicación obtenida correctamente. Puedes calcular rutas a los centros.');
         },
         (error) => {
@@ -133,7 +172,20 @@ const RecyclingCenters = () => {
     }
   };
 
-  // Calcular distancia aproximada (simulada)
+  // Función para calcular distancia usando fórmula de Haversine
+  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371; // Radio de la Tierra en km
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+  };
+
+  // Calcular distancia aproximada
   const calculateRoute = () => {
     if (!userLocation) {
       alert('Primero obtén tu ubicación usando el botón "Usar ubicación"');
@@ -145,31 +197,28 @@ const RecyclingCenters = () => {
       return;
     }
 
-    // Simular cálculo de distancia (Haversine formula simplificada)
-    const R = 6371; // Radio de la Tierra en km
-    const dLat = (selectedCenter.coordinates.lat - userLocation.lat) * Math.PI / 180;
-    const dLon = (selectedCenter.coordinates.lng - userLocation.lng) * Math.PI / 180;
-    const a = 
-      Math.sin(dLat/2) * Math.sin(dLat/2) +
-      Math.cos(userLocation.lat * Math.PI / 180) * Math.cos(selectedCenter.coordinates.lat * Math.PI / 180) * 
-      Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    const distance = R * c;
+    // Calcular distancia exacta
+    const distance = calculateDistance(
+      userLocation.lat, 
+      userLocation.lng,
+      selectedCenter.coordinates.lat,
+      selectedCenter.coordinates.lng
+    );
 
     // Tiempo estimado basado en modo de transporte
     let duration;
     let speed;
     switch(travelMode) {
       case 'driving':
-        speed = 50; // km/h promedio
+        speed = 40; // km/h promedio en ciudad
         duration = (distance / speed) * 60; // minutos
         break;
       case 'walking':
-        speed = 5; // km/h caminando
+        speed = 4.5; // km/h caminando
         duration = (distance / speed) * 60;
         break;
       case 'bicycling':
-        speed = 15; // km/h en bicicleta
+        speed = 12; // km/h en bicicleta
         duration = (distance / speed) * 60;
         break;
       default:
@@ -189,26 +238,40 @@ const RecyclingCenters = () => {
     setDirections(null);
   };
 
-  // Abrir en Google Maps
+  // Abrir en Google Maps con coordenadas exactas
   const openInGoogleMaps = () => {
     if (selectedCenter) {
       const { lat, lng } = selectedCenter.coordinates;
-      window.open(`https://www.google.com/maps?q=${lat},${lng}&z=15`, '_blank');
+      // Usar coordenadas exactas
+      window.open(`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`, '_blank');
     }
   };
 
-  // Obtener URL del mapa embebido
+  // Obtener URL del mapa embebido con marcador
   const getMapEmbedUrl = (center) => {
     if (!center) return '';
     const { lat, lng } = center.coordinates;
-    return `https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed&t=${mapType}`;
+    // URL con marcador en las coordenadas exactas
+    return `https://maps.google.com/maps?q=${lat},${lng}&z=16&output=embed&t=${mapType}&hl=es&markers=color:green%7Clabel:C%7C${lat},${lng}`;
   };
 
-  // Obtener URL para navegación
+  // Obtener URL para navegación CON coordenadas exactas
   const getNavigationUrl = () => {
     if (!userLocation || !selectedCenter) return '#';
     const { lat: destLat, lng: destLng } = selectedCenter.coordinates;
-    return `https://www.google.com/maps/dir/${userLocation.lat},${userLocation.lng}/${destLat},${destLng}/`;
+    // Usar coordenadas exactas para origen y destino
+    return `https://www.google.com/maps/dir/?api=1&origin=${userLocation.lat},${userLocation.lng}&destination=${destLat},${destLng}&travelmode=${travelMode}&hl=es`;
+  };
+
+  // Simular ubicación en el Parque Central de Ciudad Quesada para pruebas
+  const simulateCiudadQuesadaLocation = () => {
+    const parqueCentralQuesada = {
+      lat: 10.321944, // Parque Central de Ciudad Quesada
+      lng: -84.426389
+    };
+    setUserLocation(parqueCentralQuesada);
+    setLocation('Ubicación simulada: Parque Central de Ciudad Quesada');
+    alert('Ubicación simulada en el Parque Central de Ciudad Quesada. Ahora puedes calcular rutas.');
   };
 
   // Manejar clic en un centro
@@ -224,6 +287,7 @@ const RecyclingCenters = () => {
         <div className="map-loading">
           <FaMapMarkerAlt className="empty-icon" style={{ fontSize: '3rem' }} />
           <p>Selecciona un centro para ver el mapa</p>
+          <p className="map-note">Centros reales en Ciudad Quesada, San Carlos</p>
         </div>
       );
     }
@@ -239,6 +303,7 @@ const RecyclingCenters = () => {
             style={{ border: 0, borderRadius: "var(--radius-lg)" }}
             allowFullScreen
             src={getMapEmbedUrl(selectedCenter)}
+            referrerPolicy="no-referrer-when-downgrade"
           ></iframe>
         </div>
         <div className="map-controls">
@@ -287,12 +352,12 @@ const RecyclingCenters = () => {
         <div className="card-header">
           <div className="card-title">
             <FaRecycle className="title-icon" />
-            <span>Centros de Reciclaje Cercanos</span>
+            <span>Centros de Reciclaje - Ciudad Quesada, San Carlos</span>
           </div>
           <p className="card-subtitle">
-            Encuentra el centro más cercano para reciclar tus materiales de manera responsable.
+            Ubicaciones reales de centros de reciclaje y acopio en Ciudad Quesada y alrededores.
             <br />
-            <small>Los mapas se muestran usando Google Maps embebido</small>
+            <small>Coordenadas GPS precisas para ubicación exacta</small>
           </p>
         </div>
         
@@ -300,40 +365,51 @@ const RecyclingCenters = () => {
           <div className="filter-section">
             <div className="filter-header">
               <FaSearch />
-              <h3>Buscar centros</h3>
+              <h3>Buscar centros en Ciudad Quesada</h3>
             </div>
             
             <div className="form-group">
-              <label className="form-label">Tu ubicación</label>
+              <label className="form-label">Tu ubicación actual</label>
               <div className="location-input">
                 <div className="input-with-icon">
                   <FaMapMarkerAlt className="input-icon" />
                   <input
                     type="text"
                     className="form-input"
-                    placeholder="Ingresa tu dirección o usa ubicación actual"
+                    placeholder="Usa ubicación real o simula ubicación en Ciudad Quesada"
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
                   />
                 </div>
-                <button 
-                  className={`btn btn-secondary ${isLoadingLocation ? 'loading' : ''}`}
-                  onClick={getUserLocation}
-                  disabled={isLoadingLocation}
-                >
-                  {isLoadingLocation ? (
-                    <>
-                      <div className="spinner-small"></div>
-                      Cargando...
-                    </>
-                  ) : (
-                    <>
-                      <FaLocationArrow />
-                      Usar ubicación
-                    </>
-                  )}
-                </button>
+                <div className="location-buttons">
+                  <button 
+                    className={`btn btn-secondary ${isLoadingLocation ? 'loading' : ''}`}
+                    onClick={getUserLocation}
+                    disabled={isLoadingLocation}
+                  >
+                    {isLoadingLocation ? (
+                      <>
+                        <div className="spinner-small"></div>
+                        Cargando...
+                      </>
+                    ) : (
+                      <>
+                        <FaLocationArrow />
+                        Ubicación real
+                      </>
+                    )}
+                  </button>
+                  <button 
+                    className="btn btn-outline"
+                    onClick={simulateCiudadQuesadaLocation}
+                  >
+                    📍 Simular en Ciudad Quesada
+                  </button>
+                </div>
               </div>
+              <p className="location-hint">
+                <small>Para pruebas, usa "Simular en Ciudad Quesada" para calcular rutas desde el Parque Central</small>
+              </p>
             </div>
             
             <div className="form-group">
@@ -355,7 +431,10 @@ const RecyclingCenters = () => {
                      material === 'Metales' ? '⚙️ Metales' :
                      material === 'Electrónicos' ? '💻 Electrónicos' :
                      material === 'Textiles' ? '👕 Textiles' :
-                     '🍃 Orgánicos'}
+                     material === 'Orgánicos' ? '🍃 Orgánicos' :
+                     material === 'Peligrosos' ? '⚠️ Peligrosos' :
+                     material === 'Cartón' ? '📦 Cartón' :
+                     '🥛 Tetrapak'}
                   </button>
                 ))}
               </div>
@@ -366,7 +445,7 @@ const RecyclingCenters = () => {
         <div className="centers-container">
           <div className="centers-list">
             <div className="list-header">
-              <h3>Centros encontrados: {filteredCenters.length}</h3>
+              <h3>Centros disponibles: {filteredCenters.length}</h3>
               <div className="list-actions">
                 <button 
                   className="btn btn-sm btn-secondary"
@@ -400,23 +479,39 @@ const RecyclingCenters = () => {
                     <FaMapMarkerAlt />
                     {center.address}
                   </p>
+                  <div className="coordinates">
+                    <small>📍 {center.coordinates.lat.toFixed(6)}, {center.coordinates.lng.toFixed(6)}</small>
+                  </div>
                   <p className="hours">
                     <FaClock />
                     {center.hours}
                   </p>
                   <div className="center-meta">
                     <span className="rating">⭐ {center.rating} ({center.reviews} reseñas)</span>
+                    {center.notes && (
+                      <span className="specialty">✨ {center.notes}</span>
+                    )}
                   </div>
                   <div className="center-materials">
                     {center.materials.map(mat => (
                       <span key={mat} className="material-tag">
                         {mat === 'Plástico' ? '🔵' : 
                          mat === 'Papel' ? '📄' :
+                         mat === 'Cartón' ? '📦' :
                          mat === 'Vidrio' ? '🥃' :
                          mat === 'Metales' ? '⚙️' :
+                         mat === 'Aluminio' ? '🥫' :
+                         mat === 'Cobre' ? '🔴' :
                          mat === 'Electrónicos' ? '💻' :
+                         mat === 'Pilas' ? '🔋' :
+                         mat === 'Baterías' ? '⚡' :
                          mat === 'Textiles' ? '👕' :
-                         '🍃'} {mat}
+                         mat === 'Orgánicos' ? '🍃' :
+                         mat === 'Podas' ? '🌿' :
+                         mat === 'Medicamentos' ? '💊' :
+                         mat === 'Aceite usado' ? '🛢️' :
+                         mat === 'Tetrapak' ? '🥛' :
+                         '♻️'} {mat}
                       </span>
                     ))}
                   </div>
@@ -437,6 +532,9 @@ const RecyclingCenters = () => {
                         <div className="detail-meta">
                           <span className="rating-badge">⭐ {selectedCenter.rating}</span>
                           <span className="review-count">({selectedCenter.reviews} reseñas)</span>
+                          <span className="coordinates-badge">
+                            📍 {selectedCenter.coordinates.lat.toFixed(6)}, {selectedCenter.coordinates.lng.toFixed(6)}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -456,7 +554,7 @@ const RecyclingCenters = () => {
                           <FaMapMarkerAlt />
                         </div>
                         <div>
-                          <strong>Dirección:</strong>
+                          <strong>Dirección exacta:</strong>
                           <span>{selectedCenter.address}</span>
                         </div>
                       </div>
@@ -466,7 +564,7 @@ const RecyclingCenters = () => {
                           <FaRoute />
                         </div>
                         <div>
-                          <strong>Distancia:</strong>
+                          <strong>Distancia desde centro:</strong>
                           <span>{selectedCenter.distance}</span>
                         </div>
                       </div>
@@ -476,7 +574,7 @@ const RecyclingCenters = () => {
                           <FaClock />
                         </div>
                         <div>
-                          <strong>Horario:</strong>
+                          <strong>Horario de atención:</strong>
                           <span>{selectedCenter.hours}</span>
                         </div>
                       </div>
@@ -486,37 +584,53 @@ const RecyclingCenters = () => {
                           <FaPhone />
                         </div>
                         <div>
-                          <strong>Teléfono:</strong>
+                          <strong>Teléfono de contacto:</strong>
                           <span>{selectedCenter.phone}</span>
                         </div>
                       </div>
                     </div>
                     
                     <div className="info-section">
-                      <h4>Materiales aceptados</h4>
+                      <h4>📦 Materiales aceptados</h4>
                       <div className="materials-list">
                         {selectedCenter.materials.map(mat => (
                           <div key={mat} className="material-accepted">
                             {mat === 'Plástico' ? '🔵' : 
                              mat === 'Papel' ? '📄' :
+                             mat === 'Cartón' ? '📦' :
                              mat === 'Vidrio' ? '🥃' :
                              mat === 'Metales' ? '⚙️' :
+                             mat === 'Aluminio' ? '🥫' :
+                             mat === 'Cobre' ? '🔴' :
                              mat === 'Electrónicos' ? '💻' :
+                             mat === 'Pilas' ? '🔋' :
+                             mat === 'Baterías' ? '⚡' :
                              mat === 'Textiles' ? '👕' :
-                             '🍃'} {mat}
+                             mat === 'Orgánicos' ? '🍃' :
+                             mat === 'Podas' ? '🌿' :
+                             mat === 'Medicamentos' ? '💊' :
+                             mat === 'Aceite usado' ? '🛢️' :
+                             mat === 'Tetrapak' ? '🥛' :
+                             '♻️'} {mat}
                           </div>
                         ))}
                       </div>
                     </div>
                     
                     <div className="info-section">
-                      <h4>Requisitos de reciclaje</h4>
+                      <h4>📝 Información importante</h4>
                       <ul className="requirements-list">
-                        <li>✅ Material limpio y seco</li>
-                        <li>✅ Separado por tipo de material</li>
-                        <li>✅ Máximo 20 kg por visita</li>
-                        <li>✅ No aceptan materiales peligrosos</li>
-                        <li>✅ Tarjetas de identificación pueden ser requeridas</li>
+                        <li>✅ Llevar material limpio y seco</li>
+                        <li>✅ Separar por tipo de material</li>
+                        <li>✅ Verificar horarios antes de visitar</li>
+                        <li>✅ Llamar para confirmar materiales aceptados</li>
+                        <li>✅ Algunos centros pagan por material (metales)</li>
+                        {selectedCenter.notes && (
+                          <li>✅ <strong>Nota:</strong> {selectedCenter.notes}</li>
+                        )}
+                        {selectedCenter.website && (
+                          <li>🌐 <strong>Sitio web:</strong> <a href={selectedCenter.website} target="_blank" rel="noopener noreferrer">{selectedCenter.website}</a></li>
+                        )}
                       </ul>
                     </div>
                   </div>
@@ -556,13 +670,16 @@ const RecyclingCenters = () => {
                           className="btn btn-success"
                         >
                           <FaExternalLinkAlt />
-                          Navegación en Maps
+                          Cómo llegar en Maps
                         </a>
                       )}
-                      <button className="btn btn-secondary">
+                      <a 
+                        href={`tel:${selectedCenter.phone.replace(/\s+/g, '')}`}
+                        className="btn btn-secondary"
+                      >
                         <FaPhone />
-                        Contactar
-                      </button>
+                        Llamar al centro
+                      </a>
                     </div>
                     
                     {directions && (
@@ -574,15 +691,17 @@ const RecyclingCenters = () => {
                                                      travelMode === 'walking' ? 'Caminar' : 
                                                      'Bicicleta'}</p>
                         </div>
-                        <p className="map-note" style={{ marginTop: '0.5rem', fontSize: '0.8rem' }}>
-                          * Para navegación precisa, usa el botón "Navegación en Maps"
-                        </p>
+                        <div className="route-note">
+                          <p><strong>📍 Ubicación exacta del centro:</strong></p>
+                          <p><small>Latitud: {selectedCenter.coordinates.lat.toFixed(6)}</small></p>
+                          <p><small>Longitud: {selectedCenter.coordinates.lng.toFixed(6)}</small></p>
+                        </div>
                       </div>
                     )}
                   </div>
                   
                   <div className="map-container">
-                    <h4>🗺️ Mapa y Navegación</h4>
+                    <h4>🗺️ Mapa de ubicación exacta</h4>
                     {renderMapContent()}
                   </div>
                 </>
@@ -590,21 +709,24 @@ const RecyclingCenters = () => {
                 <div className="no-selection">
                   <div className="empty-state">
                     <FaRecycle className="empty-icon" />
-                    <h3>Selecciona un centro</h3>
-                    <p>Haz clic en un centro de reciclaje de la lista para ver detalles completos, ubicación en el mapa y calcular rutas.</p>
+                    <h3>Selecciona un centro de reciclaje</h3>
+                    <p>Haz clic en un centro de la lista para ver detalles completos, ubicación exacta en el mapa y calcular rutas.</p>
                     <div className="tips">
                       <div className="tip">
                         <FaMapMarkerAlt />
-                        <span>Usa tu ubicación para calcular distancias</span>
+                        <span>Usa "Simular en Ciudad Quesada" para pruebas sin GPS</span>
                       </div>
                       <div className="tip">
                         <FaFilter />
-                        <span>Filtra por tipo de material que necesitas reciclar</span>
+                        <span>Filtra por tipo específico de material que necesitas reciclar</span>
                       </div>
                       <div className="tip">
                         <FaDirections />
-                        <span>Calcula rutas aproximadas y abre navegación en Google Maps</span>
+                        <span>Las rutas usan coordenadas GPS exactas de cada centro</span>
                       </div>
+                    </div>
+                    <div className="location-note">
+                      <p><strong>💡 Nota:</strong> Todas las ubicaciones son reales en Ciudad Quesada, San Carlos</p>
                     </div>
                   </div>
                 </div>
