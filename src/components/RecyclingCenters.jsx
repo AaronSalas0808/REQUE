@@ -30,16 +30,16 @@ const RecyclingCenters = () => {
     { 
       id: 1, 
       name: 'COOPEAMBIENTE RL', 
-      address: 'Diagonal al Cementerio Municipal, Ciudad Quesada, San Carlos, Costa Rica', 
+      address: 'San Juan Quebrada del Palo, Ciudad Quesada, Costa Rica', 
       distance: '1.2 km',
       hours: 'Lun-Vie: 8:00-17:00, Sáb: 8:00-12:00',
-      materials: ['Papel', 'Cartón', 'Plástico', 'Vidrio', 'Metales'],
+      materials: ['Papel', 'Cartón', 'Plástico', 'Vidrio'],
       // Coordenadas aproximadas de COOPEAMBIENTE RL
-      coordinates: { lat: 10.34700, lng: -84.40199 },
-      phone: '+506 2460-0505',
+      coordinates: { lat: 10.34645, lng: -84.40186 },
+      phone: '+506 4000 1142',
       rating: 4.6,
       reviews: 156,
-      website: 'https://www.coopeambientecr.com/'
+      website: 'https://www.facebook.com/coopeambiente'
     },
     { 
       id: 2, 

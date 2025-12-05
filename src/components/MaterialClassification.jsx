@@ -1,7 +1,7 @@
 // src/components/MaterialClassification.jsx
 import React, { useState } from 'react';
 import './MaterialClassification.css';
-import { FaSearch, FaCamera, FaHeart, FaIndustry, FaLightbulb, FaMapMarkerAlt, FaBookmark, FaRecycle, FaLeaf, FaFire, FaArrowRight, FaTimes, FaExclamationTriangle, FaRegHeart, FaRegBookmark } from 'react-icons/fa';
+import { FaHeart, FaIndustry, FaLightbulb, FaMapMarkerAlt, FaBookmark, FaRecycle, FaLeaf, FaFire, FaArrowRight, FaTimes, FaExclamationTriangle, FaRegHeart, FaRegBookmark } from 'react-icons/fa';
 
 const MaterialClassification = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -45,7 +45,7 @@ const MaterialClassification = () => {
     },
     {
       id: 2,
-      name: 'Latas Alu- minio',
+      name: 'Latas Aluminio',
       category: 'metal',
       recyclability: 'Alta',
       recyclabilityScore: 98,
@@ -67,7 +67,7 @@ const MaterialClassification = () => {
     },
     {
       id: 3,
-      name: 'Vidrio Trans- parente',
+      name: 'Vidrio Transparente',
       category: 'glass',
       recyclability: 'Alta',
       recyclabilityScore: 90,
@@ -89,7 +89,7 @@ const MaterialClassification = () => {
     },
     {
       id: 4,
-      name: 'Cartón Corru- gado',
+      name: 'Cartón Corrugado',
       category: 'paper',
       recyclability: 'Alta',
       recyclabilityScore: 85,
@@ -111,7 +111,7 @@ const MaterialClassification = () => {
     },
     {
       id: 5,
-      name: 'Elect Peque- ño',
+      name: 'Electrónicos Pequeños',
       category: 'electronics',
       recyclability: 'Media',
       recyclabilityScore: 65,
@@ -133,7 +133,7 @@ const MaterialClassification = () => {
     },
     {
       id: 6,
-      name: 'Envase Tetra- pak',
+      name: 'Envase Tetrapak',
       category: 'paper',
       recyclability: 'Media',
       recyclabilityScore: 70,
@@ -186,35 +186,13 @@ const MaterialClassification = () => {
           <p className="material-subtitle">Identifica, clasifica y aprende a reciclar correctamente cada material. Encuentra centros cercanos y descubre ideas creativas de reutilización.</p>
         </div>
 
-        {/* Search Bar */}
-        <div className="material-search">
-          <div className="search-container">
-            <FaSearch className="search-icon" />
-            <input
-              type="text"
-              className="search-input"
-              placeholder="Buscar material por nombre (ej: botella plástica, latas, vidrio, cartón, electrónicos...)"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <button className="search-camera">
-              <FaCamera className="camera-icon" />
-              <span className="camera-text">Escanear</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Categories Filter */}
+        {/* Categories Filter - Sin barra de búsqueda */}
         <div className="material-categories">
           <div className="categories-header">
             <h2 className="categories-title">
               <span className="categories-icon">🏷️</span>
               Categorías de Materiales
             </h2>
-            <button className="categories-all">
-              Ver todas las categorías
-              <FaArrowRight className="arrow-icon" />
-            </button>
           </div>
           <div className="categories-grid">
             {categories.map(category => (
@@ -235,7 +213,7 @@ const MaterialClassification = () => {
           </div>
         </div>
 
-        {/* Materials Grid */}
+        {/* Materials Grid - Versión compacta */}
         <div className="materials-grid">
           {filteredMaterials.map(material => (
             <div 
@@ -245,9 +223,6 @@ const MaterialClassification = () => {
               }`}
               onClick={() => setSelectedMaterial(material)}
             >
-              <div className="material-card-badge">
-                <span className="badge-text">{material.category.toUpperCase()}</span>
-              </div>
               
               <div className="material-card-header">
                 <div className="material-card-left">
@@ -256,7 +231,9 @@ const MaterialClassification = () => {
                     <div className="material-icon-bg"></div>
                   </div>
                   <div className="material-info">
-                    <h3 className="material-name">{material.name}</h3>
+                    <h3 className="material-name">
+                      {material.name}
+                    </h3>
                     <div className="material-recyclability">
                       <span className={`recyclability-badge ${getRecyclabilityColor(material.recyclabilityScore)}`}>
                         <span className="recycle-icon">♻️</span>
@@ -364,16 +341,13 @@ const MaterialClassification = () => {
               </div>
             </div>
             <a 
-        
-            href="https://chat.deepseek.com/" 
-            //target="_blank" 
-            //rel="noopener noreferrer"
-            className="ai-button"
+              href="https://chat.deepseek.com/" 
+              className="ai-button"
             >
-          <span className="ai-icon"></span>
-            Usar DeepSeek AI
+              <span className="ai-icon"></span>
+              Usar DeepSeek AI
             </a>
-        </div>
+          </div>
         </div>
 
         {/* Material Detail Modal */}
