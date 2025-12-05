@@ -188,7 +188,7 @@ const RecyclingCenters = () => {
   // Calcular distancia aproximada
   const calculateRoute = () => {
     if (!userLocation) {
-      alert('Primero obtén tu ubicación usando el botón "Usar ubicación"');
+      alert('Primero obtén tu ubicación usando el botón "Obtener ubicación GPS"');
       return;
     }
 
@@ -362,7 +362,7 @@ const RecyclingCenters = () => {
                 </div>
                 <div className="location-buttons">
                   <button 
-                    className={`btn btn-secondary ${isLoadingLocation ? 'loading' : ''}`}
+                    className={`btn btn-primary ${isLoadingLocation ? 'loading' : ''}`}
                     onClick={getUserLocation}
                     disabled={isLoadingLocation}
                   >
@@ -374,7 +374,7 @@ const RecyclingCenters = () => {
                     ) : (
                       <>
                         <FaLocationArrow />
-                        Ubicación real
+                        Obtener ubicación GPS
                       </>
                     )}
                   </button>
@@ -421,7 +421,7 @@ const RecyclingCenters = () => {
               <h3>Centros disponibles: {filteredCenters.length}</h3>
               <div className="list-actions">
                 <button 
-                  className="btn btn-sm btn-secondary"
+                  className="btn btn-xs btn-secondary"
                   onClick={() => {
                     setSelectedMaterialFilter('');
                     setSelectedCenter(null);
@@ -429,7 +429,7 @@ const RecyclingCenters = () => {
                   }}
                 >
                   <IoMdClose />
-                  Limpiar filtros
+                  Limpiar
                 </button>
               </div>
             </div>
@@ -511,13 +511,6 @@ const RecyclingCenters = () => {
                         </div>
                       </div>
                     </div>
-                    <button 
-                      className="btn btn-sm btn-secondary"
-                      onClick={clearRoute}
-                    >
-                      <IoMdClose />
-                      Limpiar ruta
-                    </button>
                   </div>
                   
                   <div className="detail-info">
