@@ -87,7 +87,7 @@ function App() {
 
             {/* Features Grid */}
             <section className="features-section">
-              <h2 className="section-title">¿Qué ofrece EcoTrack?</h2>
+              <h2 className="section-titulo">¿Qué ofrece EcoTrack?</h2>
               <p className="section-subtitle">Todas las herramientas que necesitas para un reciclaje efectivo</p>
               
               <div className="features-grid">
@@ -144,22 +144,22 @@ function App() {
               <div className="stats-container">
                 <div className="stat-item">
                   <div className="stat-value">2,500+</div>
-                  <div className="stat-label">Usuarios activos</div>
+                  <div className="stat-white">Usuarios activos</div>
               
                 </div>
                 <div className="stat-item">
                   <div className="stat-value">45,000+ kg</div>
-                  <div className="stat-label">Material reciclado</div>
+                  <div className="stat-white">Material reciclado</div>
                 
                 </div>
                 <div className="stat-item">
                   <div className="stat-value">150+</div>
-                  <div className="stat-label">Centros registrados</div>
+                  <div className="stat-white">Centros registrados</div>
                   <div className="stat-trend positive">↑ 5% este mes</div>
                 </div>
                 <div className="stat-item">
                   <div className="stat-value">4.8</div>
-                  <div className="stat-label">Calificación promedio</div>
+                  <div className="stat-white">Calificación promedio</div>
                   <div className="stat-trend positive">⭐ ⭐ ⭐ ⭐ ⭐</div>
                 </div>
               </div>

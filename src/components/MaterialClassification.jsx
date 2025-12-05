@@ -45,7 +45,7 @@ const MaterialClassification = () => {
     },
     {
       id: 2,
-      name: 'Lata de Aluminio',
+      name: 'Latas Alu- minio',
       category: 'metal',
       recyclability: 'Alta',
       recyclabilityScore: 98,
@@ -67,7 +67,7 @@ const MaterialClassification = () => {
     },
     {
       id: 3,
-      name: 'Vidrio Transparente',
+      name: 'Vidrio Trans- parente',
       category: 'glass',
       recyclability: 'Alta',
       recyclabilityScore: 90,
@@ -82,14 +82,14 @@ const MaterialClassification = () => {
         'No romper - depositar enteros'
       ],
       warnings: ['No incluir vidrio templado, cerámica o porcelana', 'Separar por color es esencial para calidad', 'Evitar vidrios con productos químicos'],
-      centers: 8,
+      centers: 10,
       reuseIdeas: 12,
       energySaved: '30%',
       co2Reduced: '1.2 kg'
     },
     {
       id: 4,
-      name: 'Cartón Corrugado',
+      name: 'Cartón Corru- gado',
       category: 'paper',
       recyclability: 'Alta',
       recyclabilityScore: 85,
@@ -111,7 +111,7 @@ const MaterialClassification = () => {
     },
     {
       id: 5,
-      name: 'Electrónicos Pequeños',
+      name: 'Elect Peque- ño',
       category: 'electronics',
       recyclability: 'Media',
       recyclabilityScore: 65,
@@ -126,14 +126,14 @@ const MaterialClassification = () => {
         'No desarmar - puede ser peligroso'
       ],
       warnings: ['Contienen metales pesados tóxicos (plomo, mercurio)', 'Requieren tratamiento especializado', 'No mezclar con residuos normales'],
-      centers: 5,
+      centers: 10,
       reuseIdeas: 3,
       energySaved: '40%',
       co2Reduced: '15 kg'
     },
     {
       id: 6,
-      name: 'Envases Tetrapak',
+      name: 'Envase Tetra- pak',
       category: 'paper',
       recyclability: 'Media',
       recyclabilityScore: 70,
@@ -148,7 +148,7 @@ const MaterialClassification = () => {
         'Verificar símbolo de reciclaje específico'
       ],
       warnings: ['Algunos centros de reciclaje no los aceptan', 'Debe estar completamente seco antes de reciclar', 'No todos los tipos son reciclables'],
-      centers: 7,
+      centers: 11,
       reuseIdeas: 4,
       energySaved: '50%',
       co2Reduced: '1.8 kg'
