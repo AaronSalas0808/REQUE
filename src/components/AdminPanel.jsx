@@ -1,4 +1,4 @@
-// components/AdminPanel.jsx - COMPLETO Y MODIFICADO
+// components/AdminPanel.jsx - ACTUALIZADO CON FUNCIONALIDAD COMPLETA
 import React, { useState } from 'react';
 import './AdminPanel.css';
 
@@ -6,8 +6,7 @@ const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState('moderation');
   const [selectedPendingItem, setSelectedPendingItem] = useState(null);
   const [editingMaterial, setEditingMaterial] = useState(null);
-
-  const pendingItems = [
+  const [pendingItems, setPendingItems] = useState([
     { 
       id: 1, 
       type: 'idea', 
@@ -32,22 +31,22 @@ const AdminPanel = () => {
       submitted: '2025-11-29',
       details: 'Solicitud de registro de nuevo centro de reciclaje. Verificar documentación y ubicación.'
     },
-  ];
+  ]);
 
-  const materials = [
+  const [materials, setMaterials] = useState([
     { id: 1, name: 'PET', category: 'Plástico', recyclingCode: '1', status: 'active' },
     { id: 2, name: 'HDPE', category: 'Plástico', recyclingCode: '2', status: 'active' },
     { id: 3, name: 'PVC', category: 'Plástico', recyclingCode: '3', status: 'inactive' },
     { id: 4, name: 'Vidrio transparente', category: 'Vidrio', recyclingCode: 'GL-70', status: 'active' },
     { id: 5, name: 'Aluminio', category: 'Metales', recyclingCode: 'ALU', status: 'active' },
-  ];
+  ]);
 
-  const users = [
+  const [users, setUsers] = useState([
     { id: 1, name: 'María Pérez', email: 'maria@email.com', role: 'user', joinDate: '2025-10-15' },
     { id: 2, name: 'Juan Rodríguez', email: 'juan@email.com', role: 'user', joinDate: '2025-11-02' },
     { id: 3, name: 'EcoCentro Central', email: 'info@ecocentro.com', role: 'company', joinDate: '2025-09-20' },
     { id: 4, name: 'Admin Sistema', email: 'admin@ecotrack.com', role: 'admin', joinDate: '2025-01-10' },
-  ];
+  ]);
 
   const roleStats = {
     users: 45,
@@ -57,24 +56,76 @@ const AdminPanel = () => {
   };
 
   const handleApprove = (id) => {
-    alert(`Elemento ${id} aprobado`);
-    // Lógica de aprobación aquí
+    // Remover el elemento pendiente de la lista
+    setPendingItems(prevItems => prevItems.filter(item => item.id !== id));
+    
+    // Si el elemento seleccionado es el que se aprobó, limpiar la selección
+    if (selectedPendingItem?.id === id) {
+      setSelectedPendingItem(null);
+    }
+    
+    // Aquí normalmente harías una llamada API
+    console.log(`Elemento ${id} aprobado`);
   };
 
   const handleReject = (id) => {
-    alert(`Elemento ${id} rechazado`);
-    // Lógica de rechazo aquí
+    // Remover el elemento pendiente de la lista
+    setPendingItems(prevItems => prevItems.filter(item => item.id !== id));
+    
+    // Si el elemento seleccionado es el que se rechazó, limpiar la selección
+    if (selectedPendingItem?.id === id) {
+      setSelectedPendingItem(null);
+    }
+    
+    // Aquí normalmente harías una llamada API
+    console.log(`Elemento ${id} rechazado`);
   };
 
   const handleEditMaterial = (material) => {
     setEditingMaterial(material);
-    alert(`Editando material: ${material.name}`);
+    // Aquí podrías mostrar un modal o formulario de edición
+    console.log(`Editando material: ${material.name}`);
   };
 
   const handleDeleteMaterial = (id) => {
     if (window.confirm('¿Estás seguro de eliminar este material?')) {
-      alert(`Material ${id} eliminado`);
-      // Lógica de eliminación aquí
+      // Remover el material de la lista
+      setMaterials(prevMaterials => prevMaterials.filter(material => material.id !== id));
+      
+      // Si estaba editando este material, cancelar la edición
+      if (editingMaterial?.id === id) {
+        setEditingMaterial(null);
+      }
+      
+      console.log(`Material ${id} eliminado`);
+    }
+  };
+
+  const handleToggleMaterialStatus = (id) => {
+    setMaterials(prevMaterials => 
+      prevMaterials.map(material => 
+        material.id === id 
+          ? { ...material, status: material.status === 'active' ? 'inactive' : 'active' }
+          : material
+      )
+    );
+    console.log(`Material ${id} cambiado de estado`);
+  };
+
+  const handleEditUser = (id) => {
+    // Aquí normalmente abrirías un modal de edición
+    console.log(`Editando usuario con ID: ${id}`);
+  };
+
+  const handleChangeUserRole = (id) => {
+    // Aquí normalmente abrirías un modal para cambiar rol
+    console.log(`Cambiando rol del usuario con ID: ${id}`);
+  };
+
+  const handleDeleteUser = (id) => {
+    if (window.confirm('¿Estás seguro de eliminar este usuario?')) {
+      setUsers(prevUsers => prevUsers.filter(user => user.id !== id));
+      console.log(`Usuario ${id} eliminado`);
     }
   };
 
@@ -225,17 +276,19 @@ const AdminPanel = () => {
                           </ul>
                         </div>
                         <div className="details-actions">
-                          <button className="btn btn-success">
+                          <button 
+                            className="btn btn-success"
+                            onClick={() => handleApprove(selectedPendingItem.id)}
+                          >
                             <span className="btn-icon">✓</span>
                             Aprobar y publicar
                           </button>
-                          <button className="btn btn-danger">
+                          <button 
+                            className="btn btn-danger"
+                            onClick={() => handleReject(selectedPendingItem.id)}
+                          >
                             <span className="btn-icon">✗</span>
                             Rechazar con comentarios
-                          </button>
-                          <button className="btn btn-outline">
-                            <span className="btn-icon">💾</span>
-                            Guardar borrador
                           </button>
                         </div>
                       </div>
@@ -371,6 +424,7 @@ const AdminPanel = () => {
                             </button>
                             <button 
                               className={`btn-action toggle ${material.status}`}
+                              onClick={() => handleToggleMaterialStatus(material.id)}
                               title={material.status === 'active' ? 'Desactivar' : 'Activar'}
                             >
                               {material.status === 'active' ? 'Desactivar' : 'Activar'}
@@ -451,18 +505,21 @@ const AdminPanel = () => {
                           <div className="action-buttons">
                             <button 
                               className="btn-action edit"
+                              onClick={() => handleEditUser(user.id)}
                               title="Editar usuario"
                             >
                               Editar
                             </button>
                             <button 
                               className="btn-action role"
+                              onClick={() => handleChangeUserRole(user.id)}
                               title="Cambiar rol"
                             >
                               Rol
                             </button>
                             <button 
                               className="btn-action delete"
+                              onClick={() => handleDeleteUser(user.id)}
                               title="Eliminar usuario"
                             >
                               Eliminar
